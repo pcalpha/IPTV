@@ -1,0 +1,17 @@
+频道号,频道名称,频道类别,频道图片,源地址
+1,央视一套,1,,"http://106.39.32.186/hls/ch1.m3u8,http://223.110.243.172/PLTV/2510088/224/3221227177/1.m3u8,http://223.110.243.170/PLTV/3/224/3221226316/index.m3u8,http://tv.cwu.edu.cn/hls/ch1.m3u8,http://111.11.121.132:6610/000000001000/reallive-cctv1/1.m3u8?channel-id=ystenlive&IASHttpSessionId=SLB17352201802131915434727871"
+2,央视二套,1,,"http://106.39.32.186/hls/ch2.m3u8,http://tv.cwu.edu.cn/hls/ch2.m3u8,http://ivi.bupt.edu.cn/hls/cctv2.m3u8?"
+3,央视三套,1,,"http://106.39.32.186/hls/ch3.m3u8,http://tv.cwu.edu.cn/hls/ch3.m3u8,http://223.110.243.136/PLTV/3/224/3221227206/index.m3u8,http://223.110.243.172/PLTV/2510088/224/3221227165/1.m3u8,http://223.110.243.170/PLTV/3/224/3221225588/index.m3u8"
+4,央视四套,1,,"http://106.39.32.186/hls/ch4.m3u8,http://tv.cwu.edu.cn/hls/ch4.m3u8,http://223.110.243.173/PLTV/3/224/3221225534/index.m3u8"
+5,央视五套,1,,"http://106.39.32.186/hls/ch5.m3u8,http://tv.cwu.edu.cn/hls/ch5.m3u8,http://223.110.243.149/PLTV/3/224/3221227166/index.m3u8"
+6,央视六套,1,,"http://106.39.32.186/hls/ch6.m3u8,http://tv.cwu.edu.cn/hls/ch6.m3u8
+,http://223.110.243.170/PLTV/2510088/224/3221227145/1.m3u8"
+7,央视七套,1,,"http://183.207.248.8/PLTV/3/224/3221225546/index.m3u8,http://223.110.243.136/PLTV/2510088/224/3221227142/1.m3u8,http://ivi.bupt.edu.cn/hls/cctv7.m3u8,"
+8,央视八套,1,,"http://tv.cwu.edu.cn/hls/ch11.m3u8,http://223.110.243.170/PLTV/4/224/3221225866/index.m3u8,http://223.110.243.170/PLTV/3/224/3221227204/index.m3u8,http://106.39.32.186/hls/ch11.m3u8"
+9,央视九套,1,,"http://106.39.32.186/hls/ch9.m3u8,http://106.39.32.186/hls/ch12.m3u8,http://tv.cwu.edu.cn/hls/ch12.m3u8"
+10,央视十套,1,,"http://tv.cwu.edu.cn/hls/ch13.m3u8,http://106.39.32.186/hls/ch13.m3u8,http://ivi.bupt.edu.cn/hls/cctv10.m3u8?"
+11,戏曲频道,1,,"http://183.251.61.204//PLTV/88888888/224/3221225815/index.m3u8,http://223.110.243.136/PLTV/2510088/224/3221227174/1.m3u8"
+12,社会与法,1,,"http://106.39.32.186/hls/ch7.m3u8,http://tv.cwu.edu.cn/hls/ch7.m3u8,http://183.207.249.15/PLTV/2/224/3221226019/index.m3u8"
+13,新闻频道,1,,"http://106.39.32.186/hls/ch14.m3u8,http://tv.cwu.edu.cn/hls/ch14.m3u8,http://223.110.243.172/PLTV/2510088/224/3221227168/1.m3u8,http://223.110.243.150/PLTV/3/224/3221225560/index.m3u8"
+14,央视少儿,1,,"http://106.39.32.186/hls/ch15.m3u8,http://tv.cwu.edu.cn/hls/ch15.m3u8"
+15,央视音乐,1,,"http://106.39.32.186/hls/ch16.m3u8,http://183.207.249.7/PLTV/3/224/3221225568/index.m3u8"

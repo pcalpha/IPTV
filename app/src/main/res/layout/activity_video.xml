@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cn.com.pcalpha.iptv.activities.VideoActivity">
+
+    <tv.danmaku.ijk.example.widget.media.IjkVideoView
+        android:id="@+id/ijkPlayer"
+        android:layout_width="match_parent"
+        android:background="@color/black_overlay"
+        android:layout_height="match_parent"
+        />
+
+    <TextView
+        android:id="@+id/showChannelNo"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="50dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:text=""
+        android:textSize="40dp"/>
+
+    <TextView
+        android:id="@+id/inputChannelNo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="#55ffffff"
+        android:gravity="center"
+        android:text=""
+        android:textSize="150dp"/>
+    <!--<TableLayout-->
+        <!--android:id="@+id/hud_view"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="right|center_vertical"-->
+        <!--android:background="@color/ijk_transparent_dark"-->
+        <!--android:padding="8dp" />-->
+</RelativeLayout>

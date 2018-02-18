@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="IjkAppTheme" parent="IjkTheme.App.Light.NoActionBar">
+    </style>
+
+    <style name="IjkFullscreenTheme" parent="IjkTheme.App.NoActionBar">
+    </style>
+</resources>
