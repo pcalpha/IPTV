@@ -18,7 +18,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.v17.leanback.widget.ImageCardView;
@@ -27,14 +26,8 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-
 import cn.com.pcalpha.iptv.R;
 import cn.com.pcalpha.iptv.model.Channel;
-import cn.com.pcalpha.iptv.widget.CustomImageCardView;
 
 /*
  * A CardPresenter is used to generate Views and bind Objects to them on demand.
@@ -51,7 +44,7 @@ public class CardPresenter extends Presenter {
     private Drawable mDefaultCardImage;
     private Channel selectedChannel;
 
-    private static void updateCardBackgroundColor(CustomImageCardView view, boolean selected) {
+    private static void updateCardBackgroundColor(ImageCardView view, boolean selected) {
         int color = selected ? sSelectedBackgroundColor : sDefaultBackgroundColor;
         // Both background colors should be set because the view's background is temporarily visible
         // during animations.
@@ -59,7 +52,7 @@ public class CardPresenter extends Presenter {
         view.findViewById(R.id.info_field).setBackgroundColor(color);
     }
 
-    private static void updatePlayingCardBackgroundColor(CustomImageCardView view, boolean selected) {
+    private static void updatePlayingCardBackgroundColor(ImageCardView view, boolean selected) {
         int color = selected ? sPlayingBackgroundColor : sDefaultBackgroundColor;
         // Both background colors should be set because the view's background is temporarily visible
         // during animations.
@@ -81,7 +74,7 @@ public class CardPresenter extends Presenter {
          */
         mDefaultCardImage = parent.getResources().getDrawable(R.drawable.movie);
 
-        final CustomImageCardView cardView = new CustomImageCardView(parent.getContext()) {
+        final ImageCardView cardView = new ImageCardView(parent.getContext()) {
             @Override
             public void setSelected(boolean selected) {
                 updateCardBackgroundColor(this, selected);
@@ -102,7 +95,7 @@ public class CardPresenter extends Presenter {
     @Override
     public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object item) {
         Channel channel = (Channel) item;
-        CustomImageCardView cardView = (CustomImageCardView) viewHolder.view;
+        ImageCardView cardView = (ImageCardView) viewHolder.view;
 
         Log.d(TAG, "onBindViewHolder");
 
@@ -152,7 +145,7 @@ public class CardPresenter extends Presenter {
     @Override
     public void onUnbindViewHolder(Presenter.ViewHolder viewHolder) {
         Log.d(TAG, "onUnbindViewHolder");
-        CustomImageCardView cardView = (CustomImageCardView) viewHolder.view;
+        ImageCardView cardView = (ImageCardView) viewHolder.view;
         // Remove references to images so that the garbage collector can free up memory
         cardView.setBadgeImage(null);
         cardView.setMainImage(null);

@@ -47,34 +47,40 @@ public class UploadService extends NanoHTTPD {
     //当接受到连接时会调用此方法
     public Response serve(IHTTPSession session) {
         if (PATH_ROOT.equals(session.getUri())) {
-            return response404(session, "http://www.baidu.com");
+            return responseHtml(session, "web/404.html");
         } else if (PATH_UPLOAD.equals(session.getUri())) {
             if(Method.GET==session.getMethod()){
                 return responseHtml(session, "web/upload.html");
             }else if(Method.POST==session.getMethod()){
                 return responseUpload(session);
             }
-
+        } else if("/channel.csv".equals(session.getUri())){
+            return responseFile(session, "web/channel.csv");
         }
         return responseHtml(session, "web/404.html");
     }
 
+    public Response responseFile(IHTTPSession session, String fileName) {
+        return response(session,fileName,"application/octet-stream");
+    }
+
     public Response responseHtml(IHTTPSession session, String fileName) {
+        return response(session,fileName,"text/html");
+    }
+
+    public Response response(IHTTPSession session, String fileName, String mimeType) {
         try {
             AssetManager assetMgr = context.getAssets();
             InputStream is = assetMgr.open(fileName, AssetManager.ACCESS_BUFFER);
 
             // 返回OK，同时传送文件，为了安全这里应该再加一个处理，即判断这个文件是否是我们所分享的文件，避免客户端访问了其他个人文件
-            return newFixedLengthResponse(Response.Status.OK, "text/html", is, is.available());
-        } catch (FileNotFoundException e) {
+            return newFixedLengthResponse(Response.Status.OK, mimeType, is, is.available());
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            return response404(session, e.getMessage());
         }
-        return response404(session, null);
     }
 
-    //对于请求文件的，返回下载的文件
     public Response responseUpload(IHTTPSession session) {
         try {
             Map<String, String> files = new HashMap<>();
@@ -99,31 +105,14 @@ public class UploadService extends NanoHTTPD {
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("请检查格式");
-                    return responseHtml(session, "web/error.html");
+                    return responseFile(session, "web/error.html");
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return responseHtml(session, "web/error.html");
+            return responseFile(session, "web/error.html");
         }
-        return responseHtml(session, "web/success.html");
-    }
-
-    //对于请求文件的，返回下载的文件
-    public Response responseFile(IHTTPSession session) {
-        try {
-            //uri：用于标示文件资源的字符串，这里即是文件路径
-            String uri = session.getUri();
-            //文件输入流
-            FileInputStream fis = new FileInputStream(uri);
-            // 返回OK，同时传送文件，为了安全这里应该再加一个处理，即判断这个文件是否是我们所分享的文件，避免客户端访问了其他个人文件
-            return newFixedLengthResponse(Response.Status.OK, "application/octet-stream", fis, fis.available());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return response404(session, null);
+        return responseFile(session, "web/success.html");
     }
 
     //页面不存在，或者文件不存在时
@@ -136,7 +125,7 @@ public class UploadService extends NanoHTTPD {
     }
 
     // 读取csv文件 传参数 文件 表头 从第几行开始
-    public static List<CSVRecord> readCsvFile(File file, String[] fileHeaders, Integer lineStart) {
+    private static List<CSVRecord> readCsvFile(File file, String[] fileHeaders, Integer lineStart) {
         BufferedReader br = null;
         CSVParser csvFileParser = null;
         List<CSVRecord> list = null;

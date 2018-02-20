@@ -14,18 +14,12 @@
 
 package cn.com.pcalpha.iptv.activities;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import android.annotation.SuppressLint;
-import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -33,18 +27,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v17.leanback.app.BackgroundManager;
 import android.support.v17.leanback.app.BrowseFragment;
-import android.support.v17.leanback.app.HeadersFragment;
 import android.support.v17.leanback.app.RowsFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.HeaderItem;
+import android.support.v17.leanback.widget.HorizontalGridView;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
+import android.support.v17.leanback.widget.ListRowView;
 import android.support.v17.leanback.widget.OnItemViewClickedListener;
 import android.support.v17.leanback.widget.OnItemViewSelectedListener;
 import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
-import android.support.v17.leanback.widget.VerticalGridView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -62,7 +56,6 @@ import cn.com.pcalpha.iptv.R;
 import cn.com.pcalpha.iptv.model.Category;
 import cn.com.pcalpha.iptv.model.Channel;
 import cn.com.pcalpha.iptv.service.ChannelService;
-import cn.com.pcalpha.iptv.widget.CustomImageCardView;
 
 public class MainFragment extends BrowseFragment {
     private static final String TAG = "MainFragment";
@@ -83,12 +76,18 @@ public class MainFragment extends BrowseFragment {
 
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        Log.i(TAG, "onCreate");
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
 
         channelService = new ChannelService(getActivity());
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.i(TAG, "onCreate");
+
+        initedSelectedChannel=false;
 
         //prepareBackgroundManager();
 
@@ -99,7 +98,14 @@ public class MainFragment extends BrowseFragment {
         startChannel();
 
         loadRows();
+    }
 
+
+    @Override
+    public void onStart(){
+        super.onStart();
+
+        initSelectedChannel();
     }
 
     @Override
@@ -109,6 +115,21 @@ public class MainFragment extends BrowseFragment {
             Log.d(TAG, "onDestroy: " + mBackgroundTimer.toString());
             mBackgroundTimer.cancel();
         }
+    }
+
+    private void setSelectedPosition(final int position, final int subPosition){
+        final RowsFragment views = getRowsFragment();
+        views.setSelectedPosition(position,true, new Presenter.ViewHolderTask(){
+            @Override
+            public void run(Presenter.ViewHolder holder) {
+                ListRowView listRowView = (ListRowView)holder.view;
+                HorizontalGridView horizontalGridView = listRowView.getGridView();
+                if(subPosition+1>horizontalGridView.getChildCount()){
+                    return ;
+                }
+                horizontalGridView.setSelectedPosition(subPosition);
+            }
+        });
     }
 
     private void startChannel(){
@@ -129,11 +150,38 @@ public class MainFragment extends BrowseFragment {
         }
     }
 
+
+
+    private static class Position{
+        private int row;
+        private int col;
+
+        public Position(int row, int col) {
+            this.row = row;
+            this.col = col;
+        }
+
+        public int getRow() {
+            return row;
+        }
+
+        public void setRow(int row) {
+            this.row = row;
+        }
+
+        public int getCol() {
+            return col;
+        }
+
+        public void setCol(int col) {
+            this.col = col;
+        }
+    }
     /**
-     * key Category id
-     * value position
+     * key channel no
+     * value position[][]
      */
-    private Map<Integer,Integer> headPosition = new HashMap<>();
+    private Map<Integer,Position> channelPosition = new HashMap<>();
     private void loadRows() {
         //channelService.initChannel();
         List<Channel> channels = channelService.query();
@@ -147,30 +195,21 @@ public class MainFragment extends BrowseFragment {
         HeaderItem STVHeader = new HeaderItem(Category.STV, "卫视");
         HeaderItem OtherHeader = new HeaderItem(Category.OTHER, "其他");
 
-        headPosition.put(Category.CCTV,0);
-        headPosition.put(Category.STV,1);
-        headPosition.put(Category.OTHER,2);
-
         ArrayObjectAdapter CCTVListRowAdapter = new ArrayObjectAdapter(cardPresenter);
         ArrayObjectAdapter STVListRowAdapter = new ArrayObjectAdapter(cardPresenter);
         ArrayObjectAdapter OtherListRowAdapter = new ArrayObjectAdapter(cardPresenter);
 
         if(null!=channels){
             for(Channel channel:channels){
-                if(1==channel.getLastAccess()){
-                    Integer position = headPosition.get(channel.getType());
-                    if(null==position){
-                        position=0;
-                    }
-                    //setSelectedPosition(position);
-                    //setHeadersState(HEADERS_HIDDEN);
-                }
                 if(Category.CCTV==channel.getType()){
                     CCTVListRowAdapter.add(channel);
+                    channelPosition.put(channel.getNo(),new Position(0,CCTVListRowAdapter.size()-1));
                 }else if(Category.STV==channel.getType()){
                     STVListRowAdapter.add(channel);
+                    channelPosition.put(channel.getNo(),new Position(1,STVListRowAdapter.size()-1));
                 }else{
                     OtherListRowAdapter.add(channel);
+                    channelPosition.put(channel.getNo(),new Position(2,OtherListRowAdapter.size()-1));
                 }
             }
         }
@@ -192,15 +231,20 @@ public class MainFragment extends BrowseFragment {
         mRowsAdapter.add(new ListRow(gridHeader, gridRowAdapter));
 
         setAdapter(mRowsAdapter);
-//        for(View view:views){
-//            CustomImageCardView cv = (CustomImageCardView)view;
-//            if(cv.isFocus()){
-//                cv.setSelected(true);
-//            }
-//        }
     }
 
+    private boolean initedSelectedChannel = false;
+    private void initSelectedChannel(){
+        if(!initedSelectedChannel){
+            Channel channel = channelService.getLastAccess();
+            if(null!=channel){
+                Position p = channelPosition.get(channel.getNo());
 
+                setSelectedPosition(p.getRow(),p.getCol());
+                initedSelectedChannel = true;
+            }
+        }
+    }
 
     private void prepareBackgroundManager() {
 
@@ -283,18 +327,6 @@ public class MainFragment extends BrowseFragment {
         @Override
         public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
                                   RowPresenter.ViewHolder rowViewHolder, Row row) {
-//            ArrayList<View> views = rowViewHolder.view.getFocusables(View.FOCUS_UP);
-//            for(View view:views){
-//                CustomImageCardView cv = (CustomImageCardView)view;
-//                cv.setFocus(false);
-//                cv.setSelected(false);
-//            }
-//
-//            CustomImageCardView cardView = (CustomImageCardView) itemViewHolder.view;
-//            cardView.setFocus(true);
-//            cardView.setSelected(true);
-
-
             if (item instanceof Channel) {
                 Channel channel = (Channel) item;
 
