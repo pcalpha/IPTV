@@ -31,7 +31,10 @@ public class UploadService extends NanoHTTPD {
     public static final String TAG = UploadService.class.getSimpleName();
 
     private static final String PATH_ROOT = "/";
+    private static final String PATH_WEB = "/web";
     private static final String PATH_UPLOAD = "/upload";
+    private static final String PATH_CSS = "/css";
+    private static final String PATH_JS = "/js";
     private static String[] headers = new String[]{"频道号", "频道名称", "频道类别", "图标地址", "源地址"};
 
 
@@ -45,27 +48,40 @@ public class UploadService extends NanoHTTPD {
     }
 
     //当接受到连接时会调用此方法
+    @Override
     public Response serve(IHTTPSession session) {
         if (PATH_ROOT.equals(session.getUri())) {
             return responseHtml(session, "web/404.html");
         } else if (PATH_UPLOAD.equals(session.getUri())) {
-            if(Method.GET==session.getMethod()){
+            if (Method.GET == session.getMethod()) {
                 return responseHtml(session, "web/upload.html");
-            }else if(Method.POST==session.getMethod()){
+            } else if (Method.POST == session.getMethod()) {
                 return responseUpload(session);
             }
-        } else if("/channel.csv".equals(session.getUri())){
+        } else if (session.getUri().contains(PATH_CSS) ) {
+            return responseCSS(session, "web"+session.getUri());
+        } else if(session.getUri().contains(PATH_JS)){
+            return responseJS(session, "web"+session.getUri());
+        }else if ("/channel.csv".equals(session.getUri())) {
             return responseFile(session, "web/channel.csv");
         }
         return responseHtml(session, "web/404.html");
     }
 
+    public Response responseCSS(IHTTPSession session, String fileName) {
+        return response(session, fileName, "text/css");
+    }
+
+    public Response responseJS(IHTTPSession session, String fileName) {
+        return response(session, fileName, "text/javascript");
+    }
+
     public Response responseFile(IHTTPSession session, String fileName) {
-        return response(session,fileName,"application/octet-stream");
+        return response(session, fileName, "application/octet-stream");
     }
 
     public Response responseHtml(IHTTPSession session, String fileName) {
-        return response(session,fileName,"text/html");
+        return response(session, fileName, "text/html");
     }
 
     public Response response(IHTTPSession session, String fileName, String mimeType) {
@@ -99,7 +115,7 @@ public class UploadService extends NanoHTTPD {
                                     Integer.parseInt(line.get("频道类别")),
                                     line.get("图标地址"),
                                     line.get("源地址"));
-                            channelService.insert(channel);
+                            channelService.save(channel);
                         }
                     }
                 } catch (Exception e) {

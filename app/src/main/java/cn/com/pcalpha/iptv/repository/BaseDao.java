@@ -1,29 +1,27 @@
-package cn.com.pcalpha.iptv.service;
+package cn.com.pcalpha.iptv.repository;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-/**
- * Created by caiyida on 2018/2/7.
- */
+import cn.com.pcalpha.iptv.model.ChannelCategory;
 
-public class BaseService {
-    protected Context mAppContext;
+public class BaseDao {
+    protected Context context;
     protected SQLiteDatabase readDb;
     protected SQLiteDatabase writeDb;
 
-    BaseService(Context context){
-        mAppContext = context.getApplicationContext();
+    BaseDao(Context context){
+        context = context.getApplicationContext();
         //初始化数据库工具
-        OpenHelper openHelper = new OpenHelper(mAppContext);
+        OpenHelper openHelper = new OpenHelper(context);
         readDb = openHelper.getReadableDatabase();
         writeDb = openHelper.getWritableDatabase();
     }
 
     public static class OpenHelper extends SQLiteOpenHelper {
         private static final int DATABASE_VERSION = 1;
-        private static final String DATABASE_NAME = "IPTV.db";
+        private static final String DATABASE_NAME = "IPTV1.db";
 
 
         public OpenHelper(Context context) {
@@ -31,7 +29,12 @@ public class BaseService {
         }
 
         @Override
-        public void onCreate(SQLiteDatabase db) {}
+        public void onCreate(SQLiteDatabase db) {
+            db.execSQL(ChannelDao.SQL_CREATE);
+            db.execSQL(ChannelCategoryDao.SQL_CREATE);
+
+
+        }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {}

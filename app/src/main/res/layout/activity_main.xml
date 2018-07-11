@@ -1,31 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:background="@android:color/white"
     android:layout_height="match_parent"
-    tools:context="cn.com.pcalpha.iptv.activities.MainActivity"
-    tools:deviceIds="tv"
-    tools:ignore="MergeRootFrame"
+    android:layout_width="match_parent"
     >
-    <fragment
-        android:id="@+id/main_browse_fragment"
-        android:name="cn.com.pcalpha.iptv.activities.MainFragment"
+    <tv.danmaku.ijk.example.widget.media.IjkVideoView
+        android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-         />
+        android:background="@color/black_overlay"
+        />
+    <!--<RelativeLayout-->
+        <!--android:gravity="center"-->
+        <!--android:id="@+id/relative_video_player_container"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_width="match_parent">-->
+    <!--</RelativeLayout>-->
+    <FrameLayout
+        android:id="@+id/fragement_main_menu_container"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
 
-    <TextView
-        android:id="@+id/channelNo"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginRight="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:background="#55ffffff"
-        android:gravity="center"
-        android:text=""
-        android:textSize="150dp"/>
-</RelativeLayout>
+    </FrameLayout>
+
+
+
+
+</FrameLayout>
 

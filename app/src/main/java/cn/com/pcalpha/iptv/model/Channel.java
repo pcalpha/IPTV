@@ -14,8 +14,15 @@ public class Channel implements Serializable {
     private Integer type;//1.央视;2.卫视;9.其他
     private String iconUrl;//图标Url
     private String src;
+
     private Integer srcIndex;//当前源的索引
-    private Integer lastAccess;//当前源的索引
+    private Integer lastAccess;//最新查看
+
+    private Channel pre;//上一个频道
+    private Channel next;//下一个频道
+
+    public Channel() {
+    }
 
     public Channel(Integer no, String name, Integer type, String iconUrl, String src) {
         this.no = no;
@@ -121,6 +128,22 @@ public class Channel implements Serializable {
 
     public void setLastAccess(Integer lastAccess) {
         this.lastAccess = lastAccess;
+    }
+
+    public Channel getPre() {
+        return pre;
+    }
+
+    public void setPre(Channel pre) {
+        this.pre = pre;
+    }
+
+    public Channel getNext() {
+        return next;
+    }
+
+    public void setNext(Channel next) {
+        this.next = next;
     }
 }
 

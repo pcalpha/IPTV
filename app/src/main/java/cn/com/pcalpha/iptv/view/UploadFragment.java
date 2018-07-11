@@ -1,14 +1,13 @@
-package cn.com.pcalpha.iptv.activities;
+package cn.com.pcalpha.iptv.view;
 
-import android.app.Activity;
-import android.content.Context;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
+import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -18,53 +17,49 @@ import java.util.Enumeration;
 import java.util.List;
 
 import cn.com.pcalpha.iptv.R;
-import cn.com.pcalpha.iptv.service.UploadService;
 
 /**
  * Created by caiyida on 2018/2/8.
  */
 
-public class UploadActivity extends Activity {
+public class UploadFragment extends Fragment {
     private static final String TAG = "UploadFragment";
 
-    private TextView textView;
-    private UploadService uploadService;
+    private TextView uploadInfo;
+    //private UploadService uploadService;
 
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_upload, container,false);
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.fragment_upload);
-        textView = findViewById(R.id.upload_info);
+        uploadInfo = view.findViewById(R.id.upload_info);
         List<String> ipList = getLocalIp();
 
         StringBuilder sb = new StringBuilder();
         sb.append("用浏览器打开\n");
         if(null!=ipList){
             for(String ip:ipList){
-                sb.append("http://"+ip+":"+UploadService.DEFAULT_SERVER_PORT+"/upload.html\n");
+                sb.append("http://"+ip+":"+"/upload.html\n");
             }
         }
         sb.append("上传源文件");
 
         //String url="http://"+ip+":"+UploadService.DEFAULT_SERVER_PORT+"/upload.html";
         //String text = "用浏览器打开\n"+url+"上传源文件";
-        textView.setText(sb.toString());
+        uploadInfo.setText(sb.toString());
 
-        uploadService = new UploadService(this.getApplicationContext());
-        try {
-            uploadService.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        uploadService = new UploadService(getActivity());
+//        try {
+//            uploadService.start();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        return view;
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        uploadService.stop();
-    }
 
     /**
      * 得到有限网关的IP地址
@@ -80,7 +75,7 @@ public class UploadActivity extends Activity {
             while (enumerationNi.hasMoreElements()) {
                 NetworkInterface networkInterface = enumerationNi.nextElement();
                 String interfaceName = networkInterface.getDisplayName();
-                Log.i("tag", "网络名字" + interfaceName);
+                //Log.i("tag", "网络名字" + interfaceName);
 
                 // 如果是有限网卡
                 //if (interfaceName.equals("eth0")) {
@@ -93,7 +88,7 @@ public class UploadActivity extends Activity {
                         // 不是回环地址，并且是ipv4的地址
                         if (!inetAddress.isLoopbackAddress()
                                 && inetAddress instanceof Inet4Address) {
-                            Log.i("tag", inetAddress.getHostAddress() + "   ");
+                            //Log.i("tag", inetAddress.getHostAddress() + "   ");
 
                             ipList.add(inetAddress.getHostAddress());
                         }
@@ -107,11 +102,11 @@ public class UploadActivity extends Activity {
 
     }
 
-    public static String getWlanIp(Context context){
-        WifiManager wifiManager=(WifiManager)context.getSystemService(Context.WIFI_SERVICE);
-        WifiInfo wifiInfo=wifiManager.getConnectionInfo();
-        return  intToIpAddr(wifiInfo.getIpAddress());
-    }
+//    public static String getWlanIp(Context context){
+//        WifiManager wifiManager=(WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+//        WifiInfo wifiInfo=wifiManager.getConnectionInfo();
+//        return  intToIpAddr(wifiInfo.getIpAddress());
+//    }
 
     private static String intToIpAddr(int ip){
         return (ip & 0xFF)+"."

@@ -3,7 +3,7 @@
 
     <style name="AppTheme" parent="@style/Theme.Leanback"></style>
 
-    <style name="VideoActivityTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="MainActivityTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowContentOverlay">@null</item>
