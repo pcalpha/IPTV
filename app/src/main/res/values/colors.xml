@@ -1,10 +1,33 @@
 <resources>
+
     <color name="background_gradient_start">#000000</color>
     <color name="background_gradient_end">#DDDDDD</color>
     <color name="fastlane_background">#0096a6</color>
     <color name="search_opaque">#ffaa3f</color>
     <color name="selected_background">#ffaa3f</color>
-    <color name="default_background">#3d3d3d</color>
     <color name="playing_background">#0096a6</color>
-    <color name="main_background">#bb000000</color>
+    <color name="default_background">#3d3d3d</color>
+
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="drawer_background_color">#FFFAFAFA</color>
+    <color name="window_background">#FFF5F5F5</color>
+    <color name="hint_text_color">#FF010101</color>
+
+
+    <color name="color_white">#FFFFFF</color>
+    <color name="color_red">#FF0000</color>
+    <color name="color_green">#00FF00</color>
+    <color name="color_blue">#0000FF</color>
+    <color name="color_blank">#00000000</color>
+
+    <!--32777777-->
+    <color name="main_background">#dd000000</color>
+    <color name="menu_channel_category_background">#dd000000</color>
+    <color name="menu_channel_background">#dd000000</color>
+
+    <color name="color_menu_selected">#32777777</color>
+    <color name="color_menu_focused">#994274C2</color>
 </resources>

@@ -4,8 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import cn.com.pcalpha.iptv.model.ChannelCategory;
-
 public class BaseDao {
     protected Context context;
     protected SQLiteDatabase readDb;
@@ -20,8 +18,8 @@ public class BaseDao {
     }
 
     public static class OpenHelper extends SQLiteOpenHelper {
-        private static final int DATABASE_VERSION = 1;
-        private static final String DATABASE_NAME = "IPTV1.db";
+        private static final int DATABASE_VERSION = 3;
+        private static final String DATABASE_NAME = "IPTV.db";
 
 
         public OpenHelper(Context context) {
@@ -32,8 +30,6 @@ public class BaseDao {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(ChannelDao.SQL_CREATE);
             db.execSQL(ChannelCategoryDao.SQL_CREATE);
-
-
         }
 
         @Override

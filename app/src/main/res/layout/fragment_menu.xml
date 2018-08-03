@@ -4,17 +4,23 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-
-    <android.support.v7.widget.RecyclerView
+    <cn.com.pcalpha.iptv.widget.MenuListView
         android:id="@+id/menu_list_view"
         android:layout_width="100dp"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:background="@color/main_background"
+        android:divider="@color/color_blank"
+        android:dividerHeight="0px"
+        android:focusable="true"
         android:gravity="center_horizontal"
+        android:listSelector="@drawable/selector_menu"
+        android:choiceMode="singleChoice"
+        android:scrollbars="none"
+        android:smoothScrollbar="true"
+    />
 
-        />
 
     <FrameLayout
         android:id="@+id/frame_menu_content_container"

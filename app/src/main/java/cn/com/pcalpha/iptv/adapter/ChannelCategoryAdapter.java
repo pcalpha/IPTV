@@ -1,92 +1,119 @@
 package cn.com.pcalpha.iptv.adapter;
 
-import android.app.Fragment;
-import android.graphics.Color;
-import android.support.v7.widget.RecyclerView;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.List;
 
 import cn.com.pcalpha.iptv.R;
-import cn.com.pcalpha.iptv.model.ChannelCategory;
-import cn.com.pcalpha.iptv.view.ChannelMenuFragment;
+import cn.com.pcalpha.iptv.model.domain.Channel;
+import cn.com.pcalpha.iptv.model.domain.ChannelCategory;
 
 /**
- * Created by caiyida on 2018/4/7.
+ * Created by caiyida on 2018/6/28.
  */
 
-public class ChannelCategoryAdapter extends RecyclerView.Adapter<ChannelCategoryAdapter.AppRecycleHolder> {
-    private Fragment fragment;
+public class ChannelCategoryAdapter extends BaseAdapter {
+    private Context mContext;
+    private LayoutInflater mLayoutInflater;
+    private View.OnFocusChangeListener onItemFocusChangeListener;
+
     private List<ChannelCategory> channelCategoryList;
 
-    public ChannelCategoryAdapter(List<ChannelCategory> channelCategoryList, Fragment fragment) {
+    public ChannelCategoryAdapter(Context mContext, List<ChannelCategory> channelCategoryList) {
+        mLayoutInflater = LayoutInflater.from(mContext);
+        this.mContext = mContext;
         this.channelCategoryList = channelCategoryList;
-        this.fragment = fragment;
     }
 
     @Override
-    public AppRecycleHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        //找到item的布局
-        View view = LayoutInflater.from(fragment.getActivity()).inflate(R.layout.item_channel_category, parent, false);
-
-        return new AppRecycleHolder(view);//将布局设置给holder
+    public int getCount() {
+        return channelCategoryList == null ? 0 : channelCategoryList.size();
     }
 
     @Override
-    public void onBindViewHolder(AppRecycleHolder holder, final int position) {
-        final ChannelCategory channelCategory = channelCategoryList.get(position);
-        holder.channelCategoryName.setText(channelCategory.getName());
-        holder.itemView.setFocusable(true);
-        holder.itemView.setFocusableInTouchMode(true);
-        holder.itemView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                RecyclerView parent = (RecyclerView) v.getParent();
-                if (hasFocus) {
-                    v.setBackgroundColor(Color.argb(255, 255, 0, 0));
-                    v.requestFocus();
-
-                    showChannelFragment();
-                } else {
-                    v.setBackgroundColor(Color.argb(0, 0, 0, 0));
-                    v.clearFocus();
-                }
-
-            }
-        });
-
-
+    public Object getItem(int position) {
+        return channelCategoryList.get(position);
     }
-
-    private void showChannelFragment() {
-        fragment.getChildFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frame_channel_list_container, new ChannelMenuFragment())
-                //.addToBackStack(FragmentTag.CHANNEL_FRAGMENT)
-                .commit();
-
-    }
-
 
     @Override
-    public boolean onFailedToRecycleView(ChannelCategoryAdapter.AppRecycleHolder holder) {
-        return super.onFailedToRecycleView(holder);
+    public long getItemId(int position) {
+        return position;
     }
-
 
     @Override
-    public int getItemCount() {
-        return channelCategoryList.size();
-    }
-
-    class AppRecycleHolder extends RecyclerView.ViewHolder {
-        TextView channelCategoryName;
-
-        public AppRecycleHolder(View itemView) {
-            super(itemView);
-            channelCategoryName = (TextView) itemView.findViewById(R.id.channel_category_name);
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ChannelCategoryAdapter.ViewHolder holder;
+        ChannelCategory channelCategory = channelCategoryList.get(position);
+        if (convertView == null) {
+            convertView = mLayoutInflater.inflate(R.layout.item_channel_category, parent, false);
+            holder = new ChannelCategoryAdapter.ViewHolder();
+            holder.channelCategoryName = (TextView) convertView.findViewById(R.id.channel_category_name);
+            holder.playing = (ViewStub) convertView.findViewById(R.id.category_playing);
+            holder.channelCategory = channelCategory;
+            convertView.setTag(holder);
+        } else {
+            holder = (ChannelCategoryAdapter.ViewHolder) convertView.getTag();
         }
+
+        if (1==channelCategory.getLastPlay()) {
+            convertView.setSelected(true);
+            convertView.requestFocus();
+            holder.playing.setVisibility(View.VISIBLE);
+        } else {
+            holder.playing.setVisibility(View.GONE);
+        }
+
+        holder.channelCategoryName.setText(channelCategory.getName());
+        return convertView;
+    }
+
+    public int getPosition(ChannelCategory channel){
+        int position = channelCategoryList.indexOf(channel);
+        return position;
+    }
+
+    public static class ViewHolder {
+        private TextView channelCategoryName;
+        private ViewStub playing;
+
+        private ChannelCategory channelCategory;
+
+        public TextView getChannelCategoryName() {
+            return channelCategoryName;
+        }
+
+        public void setChannelCategoryName(TextView channelCategoryName) {
+            this.channelCategoryName = channelCategoryName;
+        }
+
+        public ViewStub getPlaying() {
+            return playing;
+        }
+
+        public void setPlaying(ViewStub playing) {
+            this.playing = playing;
+        }
+
+        public ChannelCategory getChannelCategory() {
+            return channelCategory;
+        }
+
+        public void setChannelCategory(ChannelCategory channelCategory) {
+            this.channelCategory = channelCategory;
+        }
+    }
+
+    public View.OnFocusChangeListener getOnItemFocusChangeListener() {
+        return onItemFocusChangeListener;
+    }
+
+    public void setOnItemFocusChangeListener(View.OnFocusChangeListener onItemFocusChangeListener) {
+        this.onItemFocusChangeListener = onItemFocusChangeListener;
     }
 }

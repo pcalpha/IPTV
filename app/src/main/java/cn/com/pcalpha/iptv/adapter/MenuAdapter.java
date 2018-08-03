@@ -1,104 +1,88 @@
 package cn.com.pcalpha.iptv.adapter;
 
-import android.app.Fragment;
-import android.graphics.Color;
-import android.support.v7.widget.RecyclerView;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.List;
 
 import cn.com.pcalpha.iptv.R;
-import cn.com.pcalpha.iptv.constants.MenuCode;
-import cn.com.pcalpha.iptv.model.Menu;
-import cn.com.pcalpha.iptv.view.ChannelCategoryMenuFragment;
-import cn.com.pcalpha.iptv.view.UploadFragment;
+import cn.com.pcalpha.iptv.model.domain.Menu;
 
 /**
- * Created by caiyida on 2018/4/7.
+ * Created by caiyida on 2018/6/28.
  */
 
-public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.AppRecycleHolder> {
-    private Fragment fragment;
+public class MenuAdapter extends BaseAdapter {
+
+    private LayoutInflater mLayoutInflater;
+    private Context mContext;
     private List<Menu> menuList;
 
-    public MenuAdapter(List<Menu> menuList, Fragment fragment) {
+    private Integer selectPosition;
+
+    public MenuAdapter(Context mContext, List<Menu> menuList) {
+        mLayoutInflater = LayoutInflater.from(mContext);
+        this.mContext = mContext;
         this.menuList = menuList;
-        this.fragment = fragment;
     }
 
     @Override
-    public AppRecycleHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        //找到item的布局
-        View view = LayoutInflater.from(fragment.getActivity()).inflate(R.layout.item_main_menu, parent, false);
-
-        return new AppRecycleHolder(view);//将布局设置给holder
+    public int getCount() {
+        return menuList == null ? 0 : menuList.size();
     }
 
     @Override
-    public void onBindViewHolder(AppRecycleHolder holder, final int position) {
-        final Menu menu = menuList.get(position);
+    public Object getItem(int position) {
+        return menuList.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder holder;
+        selectPosition = position;
+        Menu menu = menuList.get(position);
+        if (convertView == null) {
+            convertView = mLayoutInflater.inflate(R.layout.item_main_menu, parent, false);
+            holder = new ViewHolder();
+            holder.menuName = (TextView) convertView.findViewById(R.id.menu_name);
+            holder.menu = menu;
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
         holder.menuName.setText(menu.getName());
-        holder.itemView.setFocusable(true);
-        holder.itemView.setFocusableInTouchMode(true);
-        holder.itemView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    v.setBackgroundColor(Color.argb(255, 255, 0, 0));
-                    v.requestFocus();
+        holder.menu = menu;
 
-                    if (MenuCode.CHANNEL == menu.getCode()) {
-                        showChannelCategoryFragment();
-                    } else if (MenuCode.UPLOAD == menu.getCode()) {
-                        showUploadFragment();
-                    } else if (MenuCode.SETTINGS == menu.getCode()) {
-
-                    }
-                } else {
-                    v.setBackgroundColor(Color.argb(0, 0, 0, 0));
-                    v.clearFocus();
-                }
-
-
-            }
-        });
+        return convertView;
     }
 
+    public static class ViewHolder {
+        private TextView menuName;
+        private Menu menu;
 
-    @Override
-    public boolean onFailedToRecycleView(MenuAdapter.AppRecycleHolder holder) {
-        return super.onFailedToRecycleView(holder);
-    }
+        public TextView getMenuName() {
+            return menuName;
+        }
 
-    private void showChannelCategoryFragment() {
-        fragment.getChildFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frame_menu_content_container, new ChannelCategoryMenuFragment())
-                .commit();
-    }
+        public void setMenuName(TextView menuName) {
+            this.menuName = menuName;
+        }
 
-    private void showUploadFragment() {
-        fragment.getChildFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frame_menu_content_container, new UploadFragment())
-                .commit();
-    }
+        public Menu getMenu() {
+            return menu;
+        }
 
-    @Override
-    public int getItemCount() {
-        return menuList.size();
-    }
-
-    class AppRecycleHolder extends RecyclerView.ViewHolder {
-        TextView menuName;
-
-        public AppRecycleHolder(View itemView) {
-            super(itemView);
-            itemView = itemView;
-            menuName = (TextView) itemView.findViewById(R.id.menu_name);
+        public void setMenu(Menu menu) {
+            this.menu = menu;
         }
     }
 }

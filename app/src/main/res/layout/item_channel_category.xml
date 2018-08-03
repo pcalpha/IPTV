@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-
-    android:orientation="vertical"
-    android:gravity="center_horizontal">
+    android:orientation="horizontal"
+    android:focusable="false"
+    >
     <TextView
         android:id="@+id/channel_category_name"
         android:layout_width="wrap_content"
@@ -13,10 +14,21 @@
         android:layout_gravity="center"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="10dp"
         android:gravity="center_horizontal"
         android:text="文字"
         android:textSize="20sp"
-        android:textColor="@android:color/white"
+        android:textColor="@color/color_white"
+        android:focusable="false"
+        />
+    <ViewStub
+        android:id="@+id/category_playing"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center"
+        android:gravity="center_vertical"
+        android:layout="@layout/view_rhythm"
         />
 
 </LinearLayout>

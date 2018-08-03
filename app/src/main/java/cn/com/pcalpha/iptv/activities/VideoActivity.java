@@ -24,7 +24,7 @@
 //import android.widget.Toast;
 //
 //import cn.com.pcalpha.iptv.R;
-//import cn.com.pcalpha.iptv.model.Channel;
+//import cn.com.pcalpha.iptv.model.domain.Channel;
 //import cn.com.pcalpha.iptv.service.ChannelService;
 //import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 //import tv.danmaku.ijk.example.widget.media.AndroidMediaController;
@@ -91,10 +91,10 @@
 //        }
 //    }
 //
-//    private void showChannelNoView(int channelNo) {
+//    private void showChannelNoView(String channelNo) {
 //        inputChannelNoTextView.setVisibility(View.INVISIBLE);
 //
-//        showChannelNoTextView.setText(String.valueOf(channelNo));
+//        showChannelNoTextView.setText(channelNo);
 //        showChannelNoTextView.setVisibility(View.VISIBLE);
 //
 //        showChannelNoHandler.postDelayed(new Runnable() {
@@ -105,18 +105,18 @@
 //        }, 3000);
 //    }
 //
-//    private void inputChannelNoView(int channelNo) {
+//    private void inputChannelNoView(String channelNo) {
 //        showChannelNoTextView.setVisibility(View.INVISIBLE);
 //
 //        Integer lastChannelNo = inputChannelNoTextView.getText().toString().isEmpty() ? 0 : Integer.parseInt(inputChannelNoTextView.getText().toString());
-//        final Integer newChannelNo = lastChannelNo * 10 + channelNo;
+//        final String newChannelNo = lastChannelNo + channelNo;
 //        inputChannelNoTextView.setText(String.valueOf(newChannelNo));
 //        inputChannelNoTextView.setVisibility(View.VISIBLE);
 //
 //        inputChannelNoHandler.postDelayed(new Runnable() {
 //            @Override
 //            public void run() {
-//                final Integer currentChannelNo = inputChannelNoTextView.getText().toString().isEmpty() ? 0 : Integer.parseInt(inputChannelNoTextView.getText().toString());
+//                final String currentChannelNo = inputChannelNoTextView.getText().toString().isEmpty() ? "0" : inputChannelNoTextView.getText().toString();
 //
 //                if (newChannelNo == currentChannelNo) {
 //                    inputChannelNoTextView.setVisibility(View.INVISIBLE);

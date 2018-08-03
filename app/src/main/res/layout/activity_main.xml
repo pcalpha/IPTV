@@ -5,24 +5,22 @@
     android:background="@android:color/white"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:focusable="false"
     >
-    <tv.danmaku.ijk.example.widget.media.IjkVideoView
-        android:id="@+id/video_view"
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:gravity="center"
+        android:id="@+id/video_player_container"
         android:layout_height="match_parent"
-        android:background="@color/black_overlay"
-        />
-    <!--<RelativeLayout-->
-        <!--android:gravity="center"-->
-        <!--android:id="@+id/relative_video_player_container"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_width="match_parent">-->
-    <!--</RelativeLayout>-->
+        android:layout_width="match_parent"
+        android:focusable="false"
+        >
+    </RelativeLayout>
     <FrameLayout
         android:id="@+id/fragement_main_menu_container"
         android:layout_height="match_parent"
-        android:layout_width="match_parent">
-
+        android:layout_width="match_parent"
+        android:focusable="false"
+        >
     </FrameLayout>
 
 

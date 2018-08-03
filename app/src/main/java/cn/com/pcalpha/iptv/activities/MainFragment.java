@@ -53,8 +53,8 @@
 //import com.bumptech.glide.request.target.SimpleTarget;
 //
 //import cn.com.pcalpha.iptv.R;
-//import cn.com.pcalpha.iptv.model.ChannelCategory;
-//import cn.com.pcalpha.iptv.model.Channel;
+//import cn.com.pcalpha.iptv.model.domain.ChannelCategory;
+//import cn.com.pcalpha.iptv.model.domain.Channel;
 //import cn.com.pcalpha.iptv.service.ChannelService;
 //
 //public class MainFragment extends BrowseFragment {

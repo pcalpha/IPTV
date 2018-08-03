@@ -1,8 +1,6 @@
-package cn.com.pcalpha.iptv.model;
+package cn.com.pcalpha.iptv.model.domain;
 
 import java.io.Serializable;
-
-import cn.com.pcalpha.iptv.constants.MenuCode;
 
 /**
  * Created by caiyida on 2018/6/25.
@@ -32,5 +30,9 @@ public class Menu implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public enum MenuCode {
+        CHANNEL,UPLOAD,SETTINGS
     }
 }

@@ -10,7 +10,6 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,13 +18,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cn.com.pcalpha.iptv.model.Channel;
+import cn.com.pcalpha.iptv.model.domain.Channel;
+import cn.com.pcalpha.iptv.model.domain.ChannelCategory;
 import fi.iki.elonen.NanoHTTPD;
 
 public class UploadService extends NanoHTTPD {
     private Context context;
 
     private ChannelService channelService;
+    private ChannelCategoryService channelCategoryService;
 
     public static final int DEFAULT_SERVER_PORT = 10080;
     public static final String TAG = UploadService.class.getSimpleName();
@@ -35,34 +36,34 @@ public class UploadService extends NanoHTTPD {
     private static final String PATH_UPLOAD = "/upload";
     private static final String PATH_CSS = "/css";
     private static final String PATH_JS = "/js";
-    private static String[] headers = new String[]{"频道号", "频道名称", "频道类别", "图标地址", "源地址"};
+    private static String[] headers = new String[]{"频道类别", "频道号", "频道名称", "源地址"};
 
 
     //private List<SharedFile> fileList;//用于分享的文件列表
-
 
     public UploadService(Context context) {
         super(DEFAULT_SERVER_PORT);
         this.context = context;
         channelService = new ChannelService(context);
+        channelCategoryService = new ChannelCategoryService(context);
     }
 
     //当接受到连接时会调用此方法
     @Override
     public Response serve(IHTTPSession session) {
         if (PATH_ROOT.equals(session.getUri())) {
-            return responseHtml(session, "web/404.html");
+            return responseHtml(session, "web/upload.html");
         } else if (PATH_UPLOAD.equals(session.getUri())) {
             if (Method.GET == session.getMethod()) {
                 return responseHtml(session, "web/upload.html");
             } else if (Method.POST == session.getMethod()) {
                 return responseUpload(session);
             }
-        } else if (session.getUri().contains(PATH_CSS) ) {
-            return responseCSS(session, "web"+session.getUri());
-        } else if(session.getUri().contains(PATH_JS)){
-            return responseJS(session, "web"+session.getUri());
-        }else if ("/channel.csv".equals(session.getUri())) {
+        } else if (session.getUri().contains(PATH_CSS)) {
+            return responseCSS(session, "web" + session.getUri());
+        } else if (session.getUri().contains(PATH_JS)) {
+            return responseJS(session, "web" + session.getUri());
+        } else if (session.getUri().equals("/channel.csv")) {
             return responseFile(session, "web/channel.csv");
         }
         return responseHtml(session, "web/404.html");
@@ -85,15 +86,24 @@ public class UploadService extends NanoHTTPD {
     }
 
     public Response response(IHTTPSession session, String fileName, String mimeType) {
+        InputStream is = null;
         try {
             AssetManager assetMgr = context.getAssets();
-            InputStream is = assetMgr.open(fileName, AssetManager.ACCESS_BUFFER);
+            is = assetMgr.open(fileName, AssetManager.ACCESS_BUFFER);
 
             // 返回OK，同时传送文件，为了安全这里应该再加一个处理，即判断这个文件是否是我们所分享的文件，避免客户端访问了其他个人文件
             return newFixedLengthResponse(Response.Status.OK, mimeType, is, is.available());
         } catch (Exception e) {
             e.printStackTrace();
             return response404(session, e.getMessage());
+        } finally {
+            try {
+                if (null != is) {
+                    is.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -106,15 +116,42 @@ public class UploadService extends NanoHTTPD {
                 List<CSVRecord> lines = readCsvFile(file, headers, 1);
 
                 channelService.clear();
+                channelCategoryService.clear();
                 try {
                     if (null != lines) {
+                        int i = 1;
+                        int j = 1;
+
+                        Map<String, ChannelCategory> channelCategoryMap = new HashMap<>();
+                        List<Channel> channelList = new ArrayList<>();
                         for (CSVRecord line : lines) {
+                            String channelNo = line.get("频道号");
+                            String channelName = line.get("频道名称");
+                            String channelSrc = line.get("源地址");
+                            String channelCategoryName = line.get("频道类别");
+
+                            ChannelCategory channelCategory = channelCategoryMap.get(channelCategoryName);
+                            if (null == channelCategory) {
+                                channelCategory = new ChannelCategory(j, channelCategoryName);
+                                channelCategoryMap.put(channelCategoryName, channelCategory);
+                                j++;
+                            }
+
                             Channel channel = new Channel(
-                                    Integer.parseInt(line.get("频道号")),
-                                    line.get("频道名称"),
-                                    Integer.parseInt(line.get("频道类别")),
-                                    line.get("图标地址"),
-                                    line.get("源地址"));
+                                    i,
+                                    channelNo,
+                                    channelName,
+                                    channelSrc,
+                                    channelCategoryName);
+                            channelList.add(channel);
+                            i++;
+                        }
+
+                        for (Map.Entry<String, ChannelCategory> entry : channelCategoryMap.entrySet()) {
+                            channelCategoryService.save(entry.getValue());
+                        }
+
+                        for(Channel channel:channelList){
                             channelService.save(channel);
                         }
                     }

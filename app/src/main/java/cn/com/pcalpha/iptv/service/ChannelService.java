@@ -21,34 +21,50 @@ import android.content.Context;
 
 import java.util.List;
 
-import cn.com.pcalpha.iptv.model.Channel;
+import cn.com.pcalpha.iptv.model.bo.Param4Channel;
+import cn.com.pcalpha.iptv.model.domain.Channel;
 import cn.com.pcalpha.iptv.repository.ChannelDao;
 
 public class ChannelService {
+
     private ChannelDao channelDao;
+    private ChannelCategoryService channelCategoryService;
 
     public ChannelService(Context context) {
         this.channelDao = new ChannelDao(context);
+        this.channelCategoryService = new ChannelCategoryService(context);
     }
 
-    public void clear(){
+    public void clear() {
         channelDao.clear();
     }
 
-    public void save(Channel channel){
+    public void save(Channel channel) {
         channelDao.insert(channel);
     }
 
-    public Channel get(int channelNo){
+    public void delete(String no) {
+        channelDao.delete(no);
+    }
+
+    public void update(Channel channel) {
+        channelDao.update(channel);
+    }
+
+    public Channel get(String channelNo) {
         return channelDao.get(channelNo);
     }
 
-    public void setLastAccess(int channelNo){
-        channelDao.setLastAccess(channelNo);
+    public List<Channel> find(Param4Channel param) {
+        return channelDao.find(param);
     }
 
-    public Channel getLastAccess(){
-        return channelDao.getLastAccess();
+    public void setLastPlay(Channel channel){
+        channelDao.setLastPlay(channel.getNo());
+        channelCategoryService.setLastPlay(channel.getCategoryName());
     }
 
+    public Channel getLastPlay(){
+        return channelDao.getLastPlay();
+    }
 }

@@ -3,6 +3,7 @@ package cn.com.pcalpha.iptv.view;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,8 +33,8 @@ public class UploadFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_upload, container,false);
         super.onCreate(savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_upload, container,false);
 
         uploadInfo = view.findViewById(R.id.upload_info);
         List<String> ipList = getLocalIp();
@@ -42,7 +43,7 @@ public class UploadFragment extends Fragment {
         sb.append("用浏览器打开\n");
         if(null!=ipList){
             for(String ip:ipList){
-                sb.append("http://"+ip+":"+"/upload.html\n");
+                sb.append("http://"+ip+":"+"10080/upload.html\n");
             }
         }
         sb.append("上传源文件");
@@ -75,7 +76,7 @@ public class UploadFragment extends Fragment {
             while (enumerationNi.hasMoreElements()) {
                 NetworkInterface networkInterface = enumerationNi.nextElement();
                 String interfaceName = networkInterface.getDisplayName();
-                //Log.i("tag", "网络名字" + interfaceName);
+                Log.i("tag", "网络名字" + interfaceName);
 
                 // 如果是有限网卡
                 //if (interfaceName.equals("eth0")) {
@@ -88,7 +89,7 @@ public class UploadFragment extends Fragment {
                         // 不是回环地址，并且是ipv4的地址
                         if (!inetAddress.isLoopbackAddress()
                                 && inetAddress instanceof Inet4Address) {
-                            //Log.i("tag", inetAddress.getHostAddress() + "   ");
+                            Log.i("tag", inetAddress.getHostAddress() + "   ");
 
                             ipList.add(inetAddress.getHostAddress());
                         }

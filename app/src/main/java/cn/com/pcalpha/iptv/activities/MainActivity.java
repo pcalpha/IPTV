@@ -24,7 +24,7 @@
 //import android.widget.Toast;
 //
 //import cn.com.pcalpha.iptv.R;
-//import cn.com.pcalpha.iptv.model.Channel;
+//import cn.com.pcalpha.iptv.model.domain.Channel;
 //import cn.com.pcalpha.iptv.service.ChannelService;
 //
 ///*

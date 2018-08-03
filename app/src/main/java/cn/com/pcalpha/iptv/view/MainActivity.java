@@ -15,62 +15,45 @@
 package cn.com.pcalpha.iptv.view;
 
 import android.app.Fragment;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import cn.com.pcalpha.iptv.R;
 import cn.com.pcalpha.iptv.constants.FragmentTag;
-import cn.com.pcalpha.iptv.model.Channel;
-import cn.com.pcalpha.iptv.service.ChannelService;
-import tv.danmaku.ijk.example.widget.media.IjkVideoView;
 
 /*
  * MainActivity class that loads {@link MainFragment}.
  */
 public class MainActivity extends AppCompatActivity {
 
-    private RelativeLayout relativeVideoPlayerContainer;
-    private FrameLayout fragementMainMenuContainer;
-    private IjkVideoView videoView;
-
-    private ChannelService channelService;
+    private RelativeLayout videoPlayerContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        channelService = new ChannelService(this);
-
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         findViews(savedInstanceState);
     }
 
     private void findViews(Bundle savedInstanceState) {
-        //relativeVideoPlayerContainer = findViewById(R.id.relative_video_player_container);
-        videoView = findViewById(R.id.video_view);
-        videoView.setFocusable(false);
+        videoPlayerContainer = findViewById(R.id.video_player_container);
     }
 
-    private void showMainMenuFragment() {
+    private MenuFragment showMainMenuFragment() {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.fragement_main_menu_container);
+        MenuFragment mainFragment = new MenuFragment();
         if (null == fragment) {
             getFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragement_main_menu_container, new MainMenuFragment(), FragmentTag.MAIN_MENU_FRAGMENT)
+                    .add(R.id.fragement_main_menu_container, new MenuFragment(), FragmentTag.MAIN_MENU_FRAGMENT)
                     .addToBackStack(FragmentTag.MAIN_MENU_FRAGMENT)
                     .commit();
         }
+        return mainFragment;
     }
 
     @Override
@@ -89,65 +72,12 @@ public class MainActivity extends AppCompatActivity {
 //            Channel channel = channelService.getLastAccess();
 //            channel.nextSrcIndex();
 //            play(channel);
-
-
         if (KeyEvent.KEYCODE_MENU == keyCode||KeyEvent.KEYCODE_ENTER==keyCode) {
             showMainMenuFragment();
         } else if (KeyEvent.KEYCODE_BACK == keyCode) {
             getFragmentManager().popBackStackImmediate();
         }
-
         return false;
-    }
-
-    private void play(Channel channel) {
-        if (null != channel) {
-            videoView.release(true);
-            videoView.setVideoURI(Uri.parse(channel.getSrc()));
-            videoView.start();
-
-            //showChannelNoView(channel.getNo());
-            Toast.makeText(this, channel.getName(), Toast.LENGTH_LONG).show();
-
-            channelService.setLastAccess(channel.getNo());
-        }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        //videoView.stopPlayback();
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //videoView.release(true);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //videoView.resume();
-        //play(currentChannel);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        //currentChannel = (Channel) intent.getSerializableExtra("CHANNEL");
     }
 
 
