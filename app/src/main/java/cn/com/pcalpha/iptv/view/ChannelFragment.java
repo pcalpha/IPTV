@@ -2,8 +2,10 @@ package cn.com.pcalpha.iptv.view;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +27,7 @@ import cn.com.pcalpha.iptv.widget.MenuListView;
 public class ChannelFragment extends Fragment {
 
     private Activity mainActivity;
-    private MenuListView channelView ;
+    private MenuListView channelView;
     private ChannelService channelService;
 
     @Override
@@ -38,13 +40,13 @@ public class ChannelFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_channel_list,container,false);
+        View view = inflater.inflate(R.layout.fragment_channel_list, container, false);
 
         String channelCategoryName = getArguments().getString("categoryName");
         Param4Channel param4Channel = Param4Channel.build().setCategoryName(channelCategoryName);
         List<Channel> channelList = channelService.find(param4Channel);
 
-        ChannelAdapter channelAdapter = new ChannelAdapter(this.getActivity(),channelList);
+        ChannelAdapter channelAdapter = new ChannelAdapter(this.getActivity(), channelList);
         channelView = (MenuListView) view.findViewById(R.id.channel_list_view);
         channelView.setAdapter(channelAdapter);
         channelView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -64,6 +66,9 @@ public class ChannelFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ChannelAdapter channelAdapter = (ChannelAdapter) parent.getAdapter();
                 Channel channel = channelAdapter.getItem(position);
+
+                changeChannel(channel);
+
                 channelService.setLastPlay(channel);
 
                 getFragmentManager().popBackStackImmediate();
@@ -74,18 +79,30 @@ public class ChannelFragment extends Fragment {
         return view;
     }
 
+    private void changeChannel(Channel channel) {
+        Intent intent = new Intent("cn.com.pcalpha.iptv.broadcasereceiver.action.channelbroadcase");
+        intent.putExtra("channel", channel);//向广播接收器传递数据
+        getActivity().sendBroadcast(intent);
+    }
+
     @Override
     public void onStart() {
         super.onStart();
         String channelCategoryName = getArguments().getString("categoryName");
         Channel channel = channelService.getLastPlay();
-        if(null!=channelCategoryName&&!"".equals(channelCategoryName)&&null!=channel){
-            if(channelCategoryName.equals(channel.getCategoryName())){
-                ChannelAdapter adapter =(ChannelAdapter) channelView.getAdapter();
-                int position = adapter.getPosition(channel);
-                channelView.setSelection(position);
-                channelView.requestFocus();
+        if (null != channel) {
+            if (null != channelCategoryName && !"".equals(channelCategoryName)) {
+                if (channelCategoryName.equals(channel.getCategoryName())) {
+                    ChannelAdapter adapter = (ChannelAdapter) channelView.getAdapter();
+                    int position = adapter.getPosition(channel);
+                    channelView.setSelection(position);
+                    channelView.requestFocus();
+                }
             }
+        } else {
+            channelView.setSelection(0);
+            channelView.requestFocus();
         }
+
     }
 }

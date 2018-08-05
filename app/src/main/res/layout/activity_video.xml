@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context="cn.com.pcalpha.iptv.activities.VideoActivity">
 
-    <tv.danmaku.ijk.example.widget.media.IjkVideoView
+    <tv.danmaku.ijk.media.example.widget.media.IjkVideoView
         android:id="@+id/ijkPlayer"
         android:layout_width="match_parent"
         android:background="@color/color_white"

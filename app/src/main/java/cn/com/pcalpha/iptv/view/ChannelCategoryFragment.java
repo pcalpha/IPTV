@@ -40,7 +40,7 @@ public class ChannelCategoryFragment extends Fragment {
 
         mainActivity = getActivity();
         channelCategoryService = new ChannelCategoryService(this.getActivity());
-        fragmentSwitcher = new FragmentSwitcher(R.id.frame_channel_list_container,getFragmentManager());
+        fragmentSwitcher = new FragmentSwitcher(R.id.frame_channel_list_container, getFragmentManager());
     }
 
     @Nullable
@@ -50,15 +50,15 @@ public class ChannelCategoryFragment extends Fragment {
 
         List<ChannelCategory> channelCategoryList = channelCategoryService.findAll();
 
-        for(ChannelCategory channelCategory:channelCategoryList){
+        for (ChannelCategory channelCategory : channelCategoryList) {
             String categoryName = channelCategory.getName();
 
-            Bundle bundle=new Bundle();
-            bundle.putString("categoryName",categoryName);
+            Bundle bundle = new Bundle();
+            bundle.putString("categoryName", categoryName);
             ChannelFragment channelFragment = new ChannelFragment();
             channelFragment.setArguments(bundle);
 
-            fragmentSwitcher.addFragment(channelFragment,categoryName);
+            fragmentSwitcher.addFragment(channelFragment, categoryName);
         }
 //        List<ChannelCategory> channelCategoryList = new ArrayList<>();
 //        for(int i=0;i<20;i++){
@@ -76,7 +76,7 @@ public class ChannelCategoryFragment extends Fragment {
                 //view.requestFocus();
                 ChannelCategoryAdapter.ViewHolder viewHolder = (ChannelCategoryAdapter.ViewHolder) view.getTag();
                 ChannelCategory channelCategory = viewHolder.getChannelCategory();
-                if(null!=channelCategory){
+                if (null != channelCategory) {
                     showChannelFragment(channelCategory.getName());
                 }
             }
@@ -84,6 +84,18 @@ public class ChannelCategoryFragment extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 //parent.getSelectedView().setBackgroundColor(Color.argb(0, 0, 0, 0));
+            }
+        });
+
+        channelCategoryView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //view.requestFocus();
+                ChannelCategoryAdapter.ViewHolder viewHolder = (ChannelCategoryAdapter.ViewHolder) view.getTag();
+                ChannelCategory channelCategory = viewHolder.getChannelCategory();
+                if (null != channelCategory) {
+                    showChannelFragment(channelCategory.getName());
+                }
             }
         });
 
@@ -95,23 +107,25 @@ public class ChannelCategoryFragment extends Fragment {
     public void onStart() {
         super.onStart();
         ChannelCategory channelCategory = channelCategoryService.getLastPlay();
-        if(null!=channelCategory){
-                ChannelCategoryAdapter adapter =(ChannelCategoryAdapter) channelCategoryView.getAdapter();
-                int position = adapter.getPosition(channelCategory);
-                channelCategoryView.setSelection(position);
-                //channelCategoryView.requestFocus();
+        if (null != channelCategory) {
+            ChannelCategoryAdapter adapter = (ChannelCategoryAdapter) channelCategoryView.getAdapter();
+            int position = adapter.getPosition(channelCategory);
+            channelCategoryView.setSelection(position);
+            //channelCategoryView.requestFocus();
+        } else {
+            channelCategoryView.setSelection(0);
         }
     }
 
 
     public void showChannelFragment(String categoryName) {
-        ChannelFragment channelFragment =(ChannelFragment) fragmentSwitcher.getFragment(categoryName);
+        ChannelFragment channelFragment = (ChannelFragment) fragmentSwitcher.getFragment(categoryName);
         if (null == channelFragment) {
-            Bundle bundle=new Bundle();
-            bundle.putString("categoryName",categoryName);
+            Bundle bundle = new Bundle();
+            bundle.putString("categoryName", categoryName);
             channelFragment = new ChannelFragment();
             channelFragment.setArguments(bundle);
-            fragmentSwitcher.addFragment(channelFragment,categoryName);
+            fragmentSwitcher.addFragment(channelFragment, categoryName);
         }
         fragmentSwitcher.showFragment(channelFragment);
     }

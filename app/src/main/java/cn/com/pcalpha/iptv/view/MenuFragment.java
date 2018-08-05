@@ -56,6 +56,7 @@ public class MenuFragment extends Fragment {
         menuList.add(new Menu(Menu.MenuCode.UPLOAD, "上传"));
         //menuList.add(new Menu(MenuCode.SETTINGS,"设置"));
 
+        menuListView.setSelected(true);
         menuListView.setVerticalScrollBarEnabled(false);
         menuListView.setAdapter(new MenuAdapter(this.getActivity(), menuList));
         menuListView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -76,6 +77,20 @@ public class MenuFragment extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 parent.getChildCount();
+            }
+        });
+
+        menuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MenuAdapter.ViewHolder holder = (MenuAdapter.ViewHolder) view.getTag();
+                if (Menu.MenuCode.CHANNEL == holder.getMenu().getCode()) {
+                    showChannelCategoryFragment();
+                } else if (Menu.MenuCode.SETTINGS == holder.getMenu().getCode()) {
+                    showSettingsFragment();
+                } else if (Menu.MenuCode.UPLOAD == holder.getMenu().getCode()) {
+                    showUploadFragment();
+                }
             }
         });
 
