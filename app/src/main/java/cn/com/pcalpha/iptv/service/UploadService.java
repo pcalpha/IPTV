@@ -3,9 +3,12 @@ package cn.com.pcalpha.iptv.service;
 import android.content.Context;
 import android.content.res.AssetManager;
 
+import com.alibaba.fastjson.JSON;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.json.JSONArray;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,6 +23,7 @@ import java.util.Map;
 
 import cn.com.pcalpha.iptv.model.domain.Channel;
 import cn.com.pcalpha.iptv.model.domain.ChannelCategory;
+import cn.com.pcalpha.iptv.model.domain.ChannelStream;
 import fi.iki.elonen.NanoHTTPD;
 
 public class UploadService extends NanoHTTPD {
@@ -27,6 +31,7 @@ public class UploadService extends NanoHTTPD {
 
     private ChannelService channelService;
     private ChannelCategoryService channelCategoryService;
+    private ChannelStreamService channelStreamService;
 
     public static final int DEFAULT_SERVER_PORT = 10080;
     public static final String TAG = UploadService.class.getSimpleName();
@@ -44,8 +49,9 @@ public class UploadService extends NanoHTTPD {
     public UploadService(Context context) {
         super(DEFAULT_SERVER_PORT);
         this.context = context;
-        channelService = new ChannelService(context);
-        channelCategoryService = new ChannelCategoryService(context);
+        channelService = ChannelService.getInstance(context);
+        channelCategoryService = ChannelCategoryService.getInstance(context);
+        channelStreamService = ChannelStreamService.getInstance(context);
     }
 
     //当接受到连接时会调用此方法
@@ -57,7 +63,7 @@ public class UploadService extends NanoHTTPD {
             if (Method.GET == session.getMethod()) {
                 return responseHtml(session, "web/upload.html");
             } else if (Method.POST == session.getMethod()) {
-                return responseUpload(session);
+                return responseJson(session);
             }
         } else if (session.getUri().contains(PATH_CSS)) {
             return responseCSS(session, "web" + session.getUri());
@@ -86,80 +92,69 @@ public class UploadService extends NanoHTTPD {
     }
 
     public Response response(IHTTPSession session, String fileName, String mimeType) {
+        AssetManager assetMgr = context.getAssets();
         InputStream is = null;
         try {
-            AssetManager assetMgr = context.getAssets();
-            is = assetMgr.open(fileName, AssetManager.ACCESS_BUFFER);
+            is = assetMgr.open(fileName, AssetManager.ACCESS_STREAMING);
 
-            // 返回OK，同时传送文件，为了安全这里应该再加一个处理，即判断这个文件是否是我们所分享的文件，避免客户端访问了其他个人文件
             return newFixedLengthResponse(Response.Status.OK, mimeType, is, is.available());
         } catch (Exception e) {
             e.printStackTrace();
             return response404(session, e.getMessage());
-        } finally {
-            try {
-                if (null != is) {
-                    is.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
-    public Response responseUpload(IHTTPSession session) {
+    public Response responseJson(IHTTPSession session) {
+        channelService.clear();
+        channelStreamService.clear();
+        channelCategoryService.clear();
+
+        BufferedReader br = null;
+        StringBuffer sb = new StringBuffer();
+        List<Channel> channelList = null;
         try {
             Map<String, String> files = new HashMap<>();
             session.parseBody(files);
             if (null != files) {
                 File file = new File(files.get("file"));
-                List<CSVRecord> lines = readCsvFile(file, headers, 1);
-
-                channelService.clear();
-                channelCategoryService.clear();
-                try {
-                    if (null != lines) {
-                        int i = 1;
-                        int j = 1;
-
-                        Map<String, ChannelCategory> channelCategoryMap = new HashMap<>();
-                        List<Channel> channelList = new ArrayList<>();
-                        for (CSVRecord line : lines) {
-                            String channelNo = line.get("频道号");
-                            String channelName = line.get("频道名称");
-                            String channelSrc = line.get("源地址");
-                            String channelCategoryName = line.get("频道类别");
-
-                            ChannelCategory channelCategory = channelCategoryMap.get(channelCategoryName);
-                            if (null == channelCategory) {
-                                channelCategory = new ChannelCategory(j, channelCategoryName);
-                                channelCategoryMap.put(channelCategoryName, channelCategory);
-                                j++;
-                            }
-
-                            Channel channel = new Channel(
-                                    i,
-                                    channelNo,
-                                    channelName,
-                                    channelSrc,
-                                    channelCategoryName);
-                            channelList.add(channel);
-                            i++;
-                        }
-
-                        for (Map.Entry<String, ChannelCategory> entry : channelCategoryMap.entrySet()) {
-                            channelCategoryService.save(entry.getValue());
-                        }
-
-                        for(Channel channel:channelList){
-                            channelService.save(channel);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.out.println("请检查格式");
-                    return responseFile(session, "web/error.html");
+                br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+                String line = "";
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
                 }
+                String json = sb.toString();
+                channelList = JSON.parseArray(json, Channel.class);
+
+                List<String> categoryList = new ArrayList<>();
+                for (Channel channel : channelList) {
+                    String categoryName = channel.getCategoryName();
+                    if (!categoryList.contains(categoryName)) {
+                        categoryList.add(categoryName);
+                    }
+
+                    channelService.save(channel);
+
+                    int x = 0;
+                    for (ChannelStream stream : channel.getStreams()) {
+                        stream.setChannelName(channel.getName());
+                        if(null==stream.getName()||"".equals(stream.getName())){
+                            stream.setName("源"+x);
+                            x++;
+                        }
+                        if(null==stream.getCarrier()||"".equals(stream.getCarrier())){
+                            stream.setCarrier("CMCC");
+                        }
+                        channelStreamService.save(stream);
+                    }
+                }
+
+                for(String categoryName : categoryList){
+                    ChannelCategory category = new ChannelCategory();
+                    category.setName(categoryName);
+
+                    channelCategoryService.save(category);
+                }
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -167,6 +162,65 @@ public class UploadService extends NanoHTTPD {
         }
         return responseFile(session, "web/success.html");
     }
+
+//    public Response responseUpload(IHTTPSession session) {
+//        try {
+//            Map<String, String> files = new HashMap<>();
+//            session.parseBody(files);
+//            if (null != files) {
+//                File file = new File(files.get("file"));
+//                List<CSVRecord> lines = readCsvFile(file, headers, 1);
+//
+//                //清空表
+//                channelService.clear();
+//                channelCategoryService.clear();
+//                try {
+//                    if (null != lines) {
+//                        List<String> channelCategoryList = new ArrayList<>();
+//                        List<Channel> channelList = new ArrayList<>();
+//                        for (CSVRecord line : lines) {
+//                            String channelCategoryName = line.get("频道类别");
+//                            String channelNo = line.get("频道号");
+//                            String channelName = line.get("频道名称");
+//                            String channelSrc = line.get("源地址");
+//
+//
+//                            if (!channelCategoryList.contains(channelCategoryName)) {
+//                                channelCategoryList.add(channelCategoryName);
+//                            }
+//
+//                            Channel channel = new Channel(
+//                                    channelNo,
+//                                    channelName,
+//                                    channelSrc,
+//                                    channelCategoryName);
+//                            channelList.add(channel);
+//                        }
+//
+//                        for (int x = 0; x < channelCategoryList.size(); x++) {
+//                            String categoryName = channelCategoryList.get(x);
+//                            ChannelCategory channelCategory = new ChannelCategory(x, categoryName);
+//                            channelCategoryService.save(channelCategory);
+//                        }
+//
+//                        for (int y = 0; y < channelList.size(); y++) {
+//                            Channel channel = channelList.get(y);
+//                            channel.setId(y);
+//                            channelService.save(channel);
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    System.out.println("请检查格式");
+//                    return responseFile(session, "web/error.html");
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return responseFile(session, "web/error.html");
+//        }
+//        return responseFile(session, "web/success.html");
+//    }
 
     //页面不存在，或者文件不存在时
     public Response response404(IHTTPSession session, String url) {

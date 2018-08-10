@@ -39,7 +39,7 @@ public class ChannelCategoryFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mainActivity = getActivity();
-        channelCategoryService = new ChannelCategoryService(this.getActivity());
+        channelCategoryService = ChannelCategoryService.getInstance(this.getActivity());
         fragmentSwitcher = new FragmentSwitcher(R.id.frame_channel_list_container, getFragmentManager());
     }
 

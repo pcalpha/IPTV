@@ -34,7 +34,7 @@ public class ChannelFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainActivity = getActivity();
-        channelService = new ChannelService(this.getActivity());
+        channelService = ChannelService.getInstance(this.getActivity());
     }
 
     @Nullable
@@ -88,11 +88,11 @@ public class ChannelFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        String channelCategoryName = getArguments().getString("categoryName");
+        String categoryName = getArguments().getString("categoryName");
         Channel channel = channelService.getLastPlay();
         if (null != channel) {
-            if (null != channelCategoryName && !"".equals(channelCategoryName)) {
-                if (channelCategoryName.equals(channel.getCategoryName())) {
+            if (null != categoryName && !"".equals(categoryName)) {
+                if (categoryName.equals(channel.getCategoryName())) {
                     ChannelAdapter adapter = (ChannelAdapter) channelView.getAdapter();
                     int position = adapter.getPosition(channel);
                     channelView.setSelection(position);

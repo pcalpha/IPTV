@@ -26,4 +26,5 @@ dependencies {
 
     compile 'org.nanohttpd:nanohttpd:2.3.1'
     compile 'org.apache.commons:commons-csv:1.5'
+    compile 'com.alibaba:fastjson:1.2.49'
 }

@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.com.pcalpha.iptv.model.bo.Param4Channel;
+import cn.com.pcalpha.iptv.model.domain.Channel;
 import cn.com.pcalpha.iptv.model.domain.ChannelCategory;
 
 /**
@@ -17,8 +19,6 @@ import cn.com.pcalpha.iptv.model.domain.ChannelCategory;
  */
 
 public class ChannelCategoryDao extends BaseDao {
-
-
     public static final String TABLE_NAME = "CHANNEL_CATEGORY";
 
     public static final String COLUMN_ID = "ID";
@@ -34,13 +34,25 @@ public class ChannelCategoryDao extends BaseDao {
     public static final String SQL_CREATE =
             " CREATE TABLE IF NOT EXISTS " +
                     TABLE_NAME + " (" +
-                    COLUMN_ID + " INTEGER PRIMARY KEY, " +
+                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_NAME + " VARCHAR, " +
                     COLUMN_LAST_PLAY + " INTEGER " +
                     ") ";
     public static final String SQL_DROP = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-    public ChannelCategoryDao(Context context) {
+    private static ChannelCategoryDao singleton;
+    public static ChannelCategoryDao getInstance(Context context) {
+        if(null==singleton){
+            synchronized (ChannelCategoryDao.class){
+                if(null==singleton){
+                    singleton = new ChannelCategoryDao(context);
+                }
+            }
+        }
+        return singleton;
+    }
+
+    private ChannelCategoryDao(Context context) {
         super(context);
     }
 
@@ -81,20 +93,37 @@ public class ChannelCategoryDao extends BaseDao {
     }
 
     public ChannelCategory get(Integer id) {
-        return channelCategoryMap.get(id);
+        String selection = COLUMN_ID + " = ? ";
+        String[] selectionArgs = new String[]{String.valueOf(id)};
+        Cursor cursor = readDb.query(TABLE_NAME, ALL_COLUMNS, selection, selectionArgs, null, null,
+                COLUMN_ID + " ASC", null);
+        if (0 == cursor.getCount()) {
+            return null;
+        }
+
+        List<ChannelCategory> resultList = buildResult(cursor);
+        if(null==resultList||resultList.size()<1){
+            return null;
+        }
+        return resultList.get(0);
     }
 
-    private List<ChannelCategory> channelCategoryList;//缓存列表
-    private Map<Integer, ChannelCategory> channelCategoryMap;//缓存列表
-
-    public List<ChannelCategory> findAll() {
+    //private List<ChannelCategory> channelCategoryList;//缓存列表
+    public List<ChannelCategory>  findAll() {
         //init();
-        if (null != channelCategoryList) {
-            return channelCategoryList;
-        }
+//        if (null != channelCategoryList) {
+//            return channelCategoryList;
+//        }
+
         Cursor cursor = readDb.query(TABLE_NAME, ALL_COLUMNS, null, null, null, null,
                 COLUMN_ID + " ASC", null);
 
+        List<ChannelCategory> result = buildResult(cursor);
+//        channelCategoryList = result;
+        return result;
+    }
+
+    private List<ChannelCategory> buildResult(Cursor cursor) {
         if (0 == cursor.getCount()) {
             return new ArrayList<>();
         }
@@ -103,9 +132,7 @@ public class ChannelCategoryDao extends BaseDao {
         Integer mIndex_name = cursor.getColumnIndex(COLUMN_NAME);
         Integer mIndex_last_play = cursor.getColumnIndex(COLUMN_LAST_PLAY);
 
-
-        channelCategoryList = new ArrayList<>();
-        channelCategoryMap = new HashMap<>();
+        List<ChannelCategory> channelCategoryList = new ArrayList<>();
         while (cursor.moveToNext()) {
             ChannelCategory channelCategory = new ChannelCategory();
 
@@ -113,7 +140,6 @@ public class ChannelCategoryDao extends BaseDao {
             channelCategory.setName(cursor.getString(mIndex_name));
             channelCategory.setLastPlay(cursor.getInt(mIndex_last_play));
             channelCategoryList.add(channelCategory);
-            channelCategoryMap.put(channelCategory.getId(), channelCategory);
         }
 
         return channelCategoryList;
@@ -134,18 +160,11 @@ public class ChannelCategoryDao extends BaseDao {
             return null;
         }
 
-        Integer mIndex_id = cursor.getColumnIndex(COLUMN_ID);
-        Integer mIndex_name = cursor.getColumnIndex(COLUMN_NAME);
-        Integer mIndex_last_play = cursor.getColumnIndex(COLUMN_LAST_PLAY);
-
-        cursor.moveToNext();
-
-        ChannelCategory channelCategory = new ChannelCategory();
-        channelCategory.setId(cursor.getInt(mIndex_id));
-        channelCategory.setName(cursor.getString(mIndex_name));
-        channelCategory.setLastPlay(cursor.getInt(mIndex_last_play));
-
-        return channelCategory;
+        List<ChannelCategory> resultList = buildResult(cursor);
+        if(null==resultList||resultList.size()<1){
+            return null;
+        }
+        return resultList.get(0);
     }
 
     public void init() {

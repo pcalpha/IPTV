@@ -6,6 +6,7 @@ import java.util.List;
 
 import cn.com.pcalpha.iptv.model.domain.ChannelCategory;
 import cn.com.pcalpha.iptv.repository.ChannelCategoryDao;
+import cn.com.pcalpha.iptv.repository.ChannelDao;
 
 /**
  * Created by caiyida on 2018/6/23.
@@ -15,8 +16,20 @@ public class ChannelCategoryService {
 
     private ChannelCategoryDao channelCategoryDao;
 
-    public ChannelCategoryService(Context context) {
-        this.channelCategoryDao = new ChannelCategoryDao(context);
+    private ChannelCategoryService(Context context) {
+        this.channelCategoryDao = ChannelCategoryDao.getInstance(context);
+    }
+
+    private static ChannelCategoryService singleton;
+    public static ChannelCategoryService getInstance(Context context){
+        if (null == singleton) {
+            synchronized (ChannelCategoryService.class) {
+                if (null == singleton) {
+                    singleton = new ChannelCategoryService(context);
+                }
+            }
+        }
+        return singleton;
     }
 
     public void clear() {

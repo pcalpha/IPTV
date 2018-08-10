@@ -18,7 +18,7 @@ public class BaseDao {
     }
 
     public static class OpenHelper extends SQLiteOpenHelper {
-        private static final int DATABASE_VERSION = 4;
+        private static final int DATABASE_VERSION = 5;
         private static final String DATABASE_NAME = "IPTV.db";
 
 
@@ -30,6 +30,7 @@ public class BaseDao {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(ChannelDao.SQL_CREATE);
             db.execSQL(ChannelCategoryDao.SQL_CREATE);
+            db.execSQL(ChannelStreamDao.SQL_CREATE);
         }
 
         @Override

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -18,6 +19,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 import cn.com.pcalpha.iptv.R;
+import cn.com.pcalpha.iptv.service.UploadService;
 
 /**
  * Created by caiyida on 2018/2/8.
@@ -27,7 +29,7 @@ public class UploadFragment extends Fragment {
     private static final String TAG = "UploadFragment";
 
     private TextView uploadInfo;
-    //private UploadService uploadService;
+    private UploadService uploadService;
 
 
     @Nullable
@@ -35,8 +37,15 @@ public class UploadFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_upload, container,false);
-
         uploadInfo = view.findViewById(R.id.upload_info);
+
+        uploadService = new UploadService(this.getActivity());
+        try {
+            uploadService.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         List<String> ipList = getLocalIp();
 
         StringBuilder sb = new StringBuilder();
@@ -76,7 +85,7 @@ public class UploadFragment extends Fragment {
             while (enumerationNi.hasMoreElements()) {
                 NetworkInterface networkInterface = enumerationNi.nextElement();
                 String interfaceName = networkInterface.getDisplayName();
-                Log.i("tag", "网络名字" + interfaceName);
+                Log.d("tag", "网络名字" + interfaceName);
 
                 // 如果是有限网卡
                 //if (interfaceName.equals("eth0")) {

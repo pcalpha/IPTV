@@ -22,17 +22,34 @@ import android.content.Context;
 import java.util.List;
 
 import cn.com.pcalpha.iptv.model.bo.Param4Channel;
+import cn.com.pcalpha.iptv.model.bo.Param4ChannelStream;
 import cn.com.pcalpha.iptv.model.domain.Channel;
+import cn.com.pcalpha.iptv.model.domain.ChannelStream;
 import cn.com.pcalpha.iptv.repository.ChannelDao;
+import cn.com.pcalpha.iptv.repository.ChannelStreamDao;
 
 public class ChannelService {
 
     private ChannelDao channelDao;
+    private ChannelStreamService channelStreamService;
     private ChannelCategoryService channelCategoryService;
 
-    public ChannelService(Context context) {
-        this.channelDao = new ChannelDao(context);
-        this.channelCategoryService = new ChannelCategoryService(context);
+    private ChannelService(Context context) {
+        this.channelDao = ChannelDao.getInstance(context);
+        this.channelStreamService = ChannelStreamService.getInstance(context);
+        this.channelCategoryService = ChannelCategoryService.getInstance(context);
+    }
+
+    private static ChannelService singleton;
+    public static ChannelService getInstance(Context context){
+        if (null == singleton) {
+            synchronized (ChannelService.class) {
+                if (null == singleton) {
+                    singleton = new ChannelService(context);
+                }
+            }
+        }
+        return singleton;
     }
 
     public void clear() {
@@ -43,28 +60,41 @@ public class ChannelService {
         channelDao.insert(channel);
     }
 
-    public void delete(String no) {
-        channelDao.delete(no);
+    public void delete(String name) {
+        channelDao.delete(name);
     }
 
     public void update(Channel channel) {
         channelDao.update(channel);
     }
 
-    public Channel get(String channelNo) {
-        return channelDao.get(channelNo);
+    public Channel get(String channelName) {
+        return channelDao.get(channelName);
     }
 
     public List<Channel> find(Param4Channel param) {
+//        List<Channel> channelList = channelDao.find(param);
+//        if (null != channelList) {
+//            for (Channel channel : channelList) {
+//                Param4ChannelStream param4ChannelStream = Param4ChannelStream.build()
+//                        .setChannelName(channel.getName());
+//                List<ChannelStream> streamList = channelStreamDao.find(param4ChannelStream);
+//                channel.setStreams(streamList);
+//            }
+//        }
         return channelDao.find(param);
     }
 
-    public void setLastPlay(Channel channel){
-        channelDao.setLastPlay(channel.getNo());
+    public void setLastPlay(Channel channel) {
+        channelDao.setLastPlay(channel.getName());
         channelCategoryService.setLastPlay(channel.getCategoryName());
     }
 
-    public Channel getLastPlay(){
+    public Channel getLastPlay() {
         return channelDao.getLastPlay();
+    }
+
+    public void setLastPlayStream(String channelName, int stream) {
+        channelDao.setLastPlayStream(channelName, stream);
     }
 }
