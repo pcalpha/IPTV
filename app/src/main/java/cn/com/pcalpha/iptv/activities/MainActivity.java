@@ -12,19 +12,16 @@
  * the License.
  */
 
-package cn.com.pcalpha.iptv.view;
+package cn.com.pcalpha.iptv.activities;
 
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Toast;
 
 import java.util.List;
@@ -37,8 +34,7 @@ import cn.com.pcalpha.iptv.model.domain.ChannelStream;
 import cn.com.pcalpha.iptv.service.ChannelCategoryService;
 import cn.com.pcalpha.iptv.service.ChannelService;
 import cn.com.pcalpha.iptv.service.ChannelStreamService;
-import tv.danmaku.ijk.media.example.widget.media.AndroidMediaController;
-import tv.danmaku.ijk.media.example.widget.media.IjkVideoView;
+import cn.com.pcalpha.iptv.fragment.MenuFragment;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /*
@@ -46,7 +42,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  */
 public class MainActivity extends AppCompatActivity {
 
-    private IjkVideoView videoView;
+    //private IjkVideoView videoView;
     private ChannelReceiver channelReceiver;
 
     private ChannelService channelService;
@@ -72,22 +68,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViews(Bundle savedInstanceState) {
-        videoView = findViewById(R.id.video_view);
+        //videoView = findViewById(R.id.video_view);
         //AndroidMediaController controller = new AndroidMediaController(this, false);
-        videoView.setMediaController(null);
-        videoView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                showMainMenuFragment();
-                return false;
-            }
-        });
-        videoView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showMainMenuFragment();
-            }
-        });
+//        videoView.setMediaController(null);
+//        videoView.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                showMainMenuFragment();
+//                return false;
+//            }
+//        });
+//        videoView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showMainMenuFragment();
+//            }
+//        });
     }
 
     private void initService(){
@@ -121,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        videoView.release(true);
+        //videoView.release(true);
     }
 
     @Override
@@ -145,22 +141,22 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (KeyEvent.KEYCODE_DPAD_UP == keyCode) {
-            Channel channel = preChannel();
-            play(channel);
-        } else if (KeyEvent.KEYCODE_DPAD_DOWN == keyCode) {
-            Channel channel = nextChannel();
-            play(channel);
-        } else if (KeyEvent.KEYCODE_DPAD_RIGHT == keyCode) {
-            ChannelStream stream = currentChannel.nextStream();
-            play(stream);
-        } else if (KeyEvent.KEYCODE_DPAD_LEFT == keyCode) {
-            ChannelStream stream = currentChannel.preStream();
-            play(stream);
-        }else if (KeyEvent.KEYCODE_MENU == keyCode||KeyEvent.KEYCODE_ENTER==keyCode) {
+//        if (KeyEvent.KEYCODE_DPAD_UP == keyCode) {
+//            Channel channel = preChannel();
+//            play(channel);
+//        } else if (KeyEvent.KEYCODE_DPAD_DOWN == keyCode) {
+//            Channel channel = nextChannel();
+//            play(channel);
+//        } else if (KeyEvent.KEYCODE_DPAD_RIGHT == keyCode) {
+//            ChannelStream stream = currentChannel.nextStream();
+//            play(stream);
+//        } else if (KeyEvent.KEYCODE_DPAD_LEFT == keyCode) {
+//            ChannelStream stream = currentChannel.preStream();
+//            play(stream);
+        if (KeyEvent.KEYCODE_MENU == keyCode||KeyEvent.KEYCODE_ENTER==keyCode) {
             showMainMenuFragment();
         } else if (KeyEvent.KEYCODE_BACK == keyCode) {
-            getFragmentManager().popBackStackImmediate();
+            getFragmentManager().popBackStack();
         }
         return false;
     }
@@ -205,9 +201,9 @@ public class MainActivity extends AppCompatActivity {
     private void play(ChannelStream stream){
         if (null != stream) {
 
-            videoView.release(true);
-            videoView.setVideoURI(Uri.parse(stream.getUrl()));
-            videoView.start();
+//            videoView.release(true);
+//            videoView.setVideoURI(Uri.parse(stream.getUrl()));
+//            videoView.start();
         }
     }
 

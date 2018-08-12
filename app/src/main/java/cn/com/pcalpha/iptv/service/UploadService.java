@@ -69,8 +69,8 @@ public class UploadService extends NanoHTTPD {
             return responseCSS(session, "web" + session.getUri());
         } else if (session.getUri().contains(PATH_JS)) {
             return responseJS(session, "web" + session.getUri());
-        } else if (session.getUri().equals("/channel.csv")) {
-            return responseFile(session, "web/channel.csv");
+        } else if (session.getUri().equals("/channel.json")) {
+            return responseFile(session, "web/channel.json");
         }
         return responseHtml(session, "web/404.html");
     }

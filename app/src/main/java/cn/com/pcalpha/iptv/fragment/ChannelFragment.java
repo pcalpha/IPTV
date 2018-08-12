@@ -1,11 +1,10 @@
-package cn.com.pcalpha.iptv.view;
+package cn.com.pcalpha.iptv.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,7 @@ import cn.com.pcalpha.iptv.adapter.ChannelAdapter;
 import cn.com.pcalpha.iptv.model.bo.Param4Channel;
 import cn.com.pcalpha.iptv.model.domain.Channel;
 import cn.com.pcalpha.iptv.service.ChannelService;
-import cn.com.pcalpha.iptv.widget.MenuListView;
+import cn.com.pcalpha.iptv.view.MenuListView;
 
 /**
  * Created by caiyida on 2018/5/7.

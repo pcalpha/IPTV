@@ -1,4 +1,4 @@
-package cn.com.pcalpha.iptv.view;
+package cn.com.pcalpha.iptv.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;

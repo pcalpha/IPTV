@@ -1,4 +1,4 @@
-package cn.com.pcalpha.iptv.widget;
+package cn.com.pcalpha.iptv.view;
 
 import android.content.Context;
 import android.graphics.Rect;

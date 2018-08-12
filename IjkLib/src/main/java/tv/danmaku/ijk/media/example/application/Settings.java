@@ -52,9 +52,9 @@ public class Settings {
         }
     }
 
-    public boolean getUsingMediaCodec() {
+    public String getUsingMediaCodec() {
         String key = mAppContext.getString(R.string.pref_key_using_media_codec);
-        return mSharedPreferences.getBoolean(key, false);
+        return mSharedPreferences.getString(key, "true");
     }
 
     public boolean getUsingMediaCodecAutoRotate() {

@@ -1,9 +1,10 @@
-package cn.com.pcalpha.iptv.view;
+package cn.com.pcalpha.iptv.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +17,9 @@ import java.util.List;
 import cn.com.pcalpha.iptv.R;
 import cn.com.pcalpha.iptv.adapter.MenuAdapter;
 import cn.com.pcalpha.iptv.model.domain.Menu;
-import cn.com.pcalpha.iptv.widget.FragmentSwitcher;
-import cn.com.pcalpha.iptv.widget.MenuListView;
+import cn.com.pcalpha.iptv.model.domain.Setting;
+import cn.com.pcalpha.iptv.tools.FragmentSwitcher;
+import cn.com.pcalpha.iptv.view.MenuListView;
 
 /**
  * Created by caiyida on 2018/5/6.
@@ -27,19 +29,23 @@ public class MenuFragment extends Fragment {
     private Activity mainActivity;
     private FrameLayout fragementMenuContainer;
     private ChannelCategoryFragment channelCategoryFragment;
-    private SettingsFragment settingsFragment;
+    private SettingFragment settingFragment;
     private UploadFragment uploadFragment;
     private FragmentSwitcher fragmentSwitcher;
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        channelCategoryFragment = new ChannelCategoryFragment();
-        settingsFragment = new SettingsFragment();
-        uploadFragment = new UploadFragment();
         fragmentSwitcher = new FragmentSwitcher(R.id.frame_menu_content_container, getFragmentManager());
+
+        channelCategoryFragment = new ChannelCategoryFragment();
+        settingFragment = new SettingFragment();
+        uploadFragment = new UploadFragment();
+
+        fragmentSwitcher.addFragment(channelCategoryFragment,"channelCategoryFragment",false);
+        fragmentSwitcher.addFragment(settingFragment,"settingFragment",false);
+        fragmentSwitcher.addFragment(uploadFragment,"uploadFragment",false);
         mainActivity = getActivity();
     }
 
@@ -68,7 +74,7 @@ public class MenuFragment extends Fragment {
                 if (Menu.MenuCode.CHANNEL == holder.getMenu().getCode()) {
                     showChannelCategoryFragment();
                 } else if (Menu.MenuCode.SETTINGS == holder.getMenu().getCode()) {
-                    showSettingsFragment();
+                    showSettingFragment();
                 } else if (Menu.MenuCode.UPLOAD == holder.getMenu().getCode()) {
                     showUploadFragment();
                 }
@@ -87,12 +93,22 @@ public class MenuFragment extends Fragment {
                 if (Menu.MenuCode.CHANNEL == holder.getMenu().getCode()) {
                     showChannelCategoryFragment();
                 } else if (Menu.MenuCode.SETTINGS == holder.getMenu().getCode()) {
-                    showSettingsFragment();
+                    showSettingFragment();
                 } else if (Menu.MenuCode.UPLOAD == holder.getMenu().getCode()) {
                     showUploadFragment();
                 }
             }
         });
+
+//        menuListView.setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                if (KeyEvent.KEYCODE_DPAD_RIGHT == keyCode) {
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
 
         return view;
     }
@@ -101,8 +117,8 @@ public class MenuFragment extends Fragment {
         fragmentSwitcher.showFragment(channelCategoryFragment);
     }
 
-    public void showSettingsFragment() {
-        fragmentSwitcher.showFragment(settingsFragment);
+    public void showSettingFragment() {
+        fragmentSwitcher.showFragment(settingFragment);
     }
 
     public void showUploadFragment() {

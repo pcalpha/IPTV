@@ -158,13 +158,13 @@ public class ChannelDao extends BaseDao {
         return resultList.get(0);
     }
 
-    private List<Channel> channelList;//缓存列表
+    //private List<Channel> channelList;//缓存列表
 
     public List<Channel> find(Param4Channel param) {
         //initChannel();
-        if (null != channelList) {
-            return channelList;
-        }
+//        if (null != channelList) {
+//            return channelList;
+//        }
 
         String selection = "";
         List<String> args = new ArrayList<>();
@@ -178,7 +178,7 @@ public class ChannelDao extends BaseDao {
         Cursor cursor = readDb.query(TABLE_NAME, ALL_COLUMNS, selection, selectionArgs, null, null,
                 COLUMN_ID + " ASC", null);
         List<Channel> result = buildResult(cursor);
-        channelList = result;
+        //channelList = result;
         return result;
     }
 

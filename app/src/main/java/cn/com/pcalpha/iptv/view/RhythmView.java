@@ -1,4 +1,4 @@
-package cn.com.pcalpha.iptv.widget;
+package cn.com.pcalpha.iptv.view;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;

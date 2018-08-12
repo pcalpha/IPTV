@@ -7,15 +7,15 @@
     android:layout_width="match_parent"
     android:focusable="false"
     android:keepScreenOn="true"
-    tools:context="cn.com.pcalpha.iptv.view.MainActivity"
+    tools:context="cn.com.pcalpha.iptv.activities.MainActivity"
     >
-    <tv.danmaku.ijk.media.example.widget.media.IjkVideoView
-        android:id="@+id/video_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/color_white"
-        android:focusable="false"
-        />
+    <!--<tv.danmaku.ijk.media.example.widget.media.IjkVideoView-->
+        <!--android:id="@+id/video_view"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="@color/color_white"-->
+        <!--android:focusable="false"-->
+        <!--/>-->
     <FrameLayout
         android:id="@+id/fragement_main_menu_container"
         android:layout_height="match_parent"

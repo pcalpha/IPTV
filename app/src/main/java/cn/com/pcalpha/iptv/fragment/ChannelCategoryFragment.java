@@ -1,4 +1,4 @@
-package cn.com.pcalpha.iptv.view;
+package cn.com.pcalpha.iptv.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -9,18 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import cn.com.pcalpha.iptv.R;
-import cn.com.pcalpha.iptv.adapter.ChannelAdapter;
 import cn.com.pcalpha.iptv.adapter.ChannelCategoryAdapter;
-import cn.com.pcalpha.iptv.model.domain.Channel;
 import cn.com.pcalpha.iptv.model.domain.ChannelCategory;
 import cn.com.pcalpha.iptv.service.ChannelCategoryService;
-import cn.com.pcalpha.iptv.widget.FragmentSwitcher;
-import cn.com.pcalpha.iptv.widget.MenuListView;
+import cn.com.pcalpha.iptv.tools.FragmentSwitcher;
+import cn.com.pcalpha.iptv.view.MenuListView;
 
 /**
  * Created by caiyida on 2018/5/7.
@@ -58,7 +54,7 @@ public class ChannelCategoryFragment extends Fragment {
             ChannelFragment channelFragment = new ChannelFragment();
             channelFragment.setArguments(bundle);
 
-            fragmentSwitcher.addFragment(channelFragment, categoryName);
+            fragmentSwitcher.addFragment(channelFragment, categoryName,false);
         }
 //        List<ChannelCategory> channelCategoryList = new ArrayList<>();
 //        for(int i=0;i<20;i++){
@@ -73,9 +69,8 @@ public class ChannelCategoryFragment extends Fragment {
         channelCategoryView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //view.requestFocus();
-                ChannelCategoryAdapter.ViewHolder viewHolder = (ChannelCategoryAdapter.ViewHolder) view.getTag();
-                ChannelCategory channelCategory = viewHolder.getChannelCategory();
+                ChannelCategoryAdapter adapter = (ChannelCategoryAdapter)parent.getAdapter();
+                ChannelCategory channelCategory = (ChannelCategory)adapter.getItem(position);
                 if (null != channelCategory) {
                     showChannelFragment(channelCategory.getName());
                 }
@@ -90,9 +85,8 @@ public class ChannelCategoryFragment extends Fragment {
         channelCategoryView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //view.requestFocus();
-                ChannelCategoryAdapter.ViewHolder viewHolder = (ChannelCategoryAdapter.ViewHolder) view.getTag();
-                ChannelCategory channelCategory = viewHolder.getChannelCategory();
+                ChannelCategoryAdapter adapter = (ChannelCategoryAdapter)parent.getAdapter();
+                ChannelCategory channelCategory = (ChannelCategory)adapter.getItem(position);
                 if (null != channelCategory) {
                     showChannelFragment(channelCategory.getName());
                 }
@@ -120,13 +114,6 @@ public class ChannelCategoryFragment extends Fragment {
 
     public void showChannelFragment(String categoryName) {
         ChannelFragment channelFragment = (ChannelFragment) fragmentSwitcher.getFragment(categoryName);
-        if (null == channelFragment) {
-            Bundle bundle = new Bundle();
-            bundle.putString("categoryName", categoryName);
-            channelFragment = new ChannelFragment();
-            channelFragment.setArguments(bundle);
-            fragmentSwitcher.addFragment(channelFragment, categoryName);
-        }
         fragmentSwitcher.showFragment(channelFragment);
     }
 }

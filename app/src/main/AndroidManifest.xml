@@ -10,7 +10,7 @@
 
     <uses-feature
         android:name="android.hardware.touchscreen"
-        android:required="true" />
+        android:required="false" />
     <uses-feature
         android:name="android.software.leanback"
         android:required="true" />
@@ -23,7 +23,7 @@
         android:theme="@style/Theme.Leanback"
         >
         <activity
-            android:name=".view.MainActivity"
+            android:name=".activities.MainActivity"
             android:banner="@drawable/ic_launcher"
             android:icon="@drawable/ic_launcher"
             android:label="@string/app_name"

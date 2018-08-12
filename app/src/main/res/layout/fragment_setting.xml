@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+  >
+
+    <cn.com.pcalpha.iptv.view.MenuListView
+        android:id="@+id/setting_list_view"
+        android:background="@color/menu_channel_background"
+        android:layout_width="400dp"
+        android:layout_height="match_parent"
+        android:listSelector="@drawable/selector_menu"
+        android:choiceMode="singleChoice"
+        android:focusable="true"
+        />
+
+    <FrameLayout
+        android:id="@+id/setting_option_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/settings_item1"-->
+        <!--android:layout_height="40dp"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:focusable="true"-->
+        <!--android:background="@drawable/selector_settings"-->
+        <!--&gt;-->
+        <!--<TextView-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_width="80dp"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:gravity="center"-->
+            <!--android:text="设置1"-->
+            <!--android:textSize="20sp"-->
+            <!--android:focusable="false"-->
+            <!--/>-->
+        <!--<Spinner-->
+            <!--android:id="@+id/spinner1"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:gravity="center_horizontal"-->
+            <!--android:entries="@array/carrier"-->
+            <!--android:focusable="false"-->
+            <!--/>-->
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/settings_item2"-->
+        <!--android:layout_height="40dp"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:focusable="true"-->
+        <!--android:background="@drawable/selector_settings"-->
+        <!--&gt;-->
+        <!--<TextView-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_width="80dp"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:gravity="center"-->
+            <!--android:text="设置2"-->
+            <!--android:textSize="20sp"-->
+            <!--android:focusable="false"-->
+            <!--/>-->
+        <!--<Spinner-->
+            <!--android:id="@+id/spinner2"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:gravity="center_horizontal"-->
+            <!--android:entries="@array/carrier"-->
+            <!--android:focusable="false"-->
+            <!--/>-->
+    <!--</LinearLayout>-->
+
+</LinearLayout>
