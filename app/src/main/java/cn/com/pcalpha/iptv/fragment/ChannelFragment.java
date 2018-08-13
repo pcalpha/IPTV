@@ -48,28 +48,18 @@ public class ChannelFragment extends Fragment {
         ChannelAdapter channelAdapter = new ChannelAdapter(this.getActivity(), channelList);
         channelView = (MenuListView) view.findViewById(R.id.channel_list_view);
         channelView.setAdapter(channelAdapter);
-        channelView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                parent.setSelection(1);
-            }
-        });
 
         channelView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Channel lastPlay= channelService.getLastPlay();
+
                 ChannelAdapter channelAdapter = (ChannelAdapter) parent.getAdapter();
                 Channel channel = channelAdapter.getItem(position);
-
+                if (channel.equals(lastPlay)) {
+                    return;
+                }
                 changeChannel(channel);
-
-                channelService.setLastPlay(channel);
-
                 getFragmentManager().popBackStackImmediate();
             }
         });

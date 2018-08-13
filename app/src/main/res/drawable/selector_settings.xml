@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true" android:drawable="@color/color_menu_focused" /> <!-- pressed -->
-    <item android:state_focused="true" android:drawable="@color/color_menu_focused" /> <!-- focused -->
-    <item android:state_hovered="true" android:drawable="@color/color_menu_focused" /> <!-- hovered -->
-    <item android:state_selected="true" android:drawable="@color/color_menu_focused" /> <!-- hovered -->
-    <item android:drawable="@color/color_menu_selected" /> <!-- default -->
+    <!--<item android:state_pressed="true" android:drawable="@color/menu_item_focused" /> -->
+    <!--<item android:state_hovered="true" android:drawable="@color/menu_item_focused" /> -->
+    <!--<item android:state_selected="true" android:drawable="@color/menu_item_focused" />-->
+    <item android:state_focused="true" android:drawable="@color/menu_item_focused" /> <!-- focused -->
+    <item android:drawable="@color/menu_item_selected" /> <!-- default -->
 </selector>

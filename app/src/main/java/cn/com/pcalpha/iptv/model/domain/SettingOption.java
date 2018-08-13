@@ -24,9 +24,12 @@ public class SettingOption implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof SettingOption){
-            SettingOption o = (SettingOption)obj;
-            if(o.getLabel().equals(this.getLabel())){
+        if (null == obj) {
+            return false;
+        }
+        if (obj instanceof SettingOption) {
+            SettingOption o = (SettingOption) obj;
+            if (o.getLabel().equals(this.getLabel())) {
                 return true;
             }
         }

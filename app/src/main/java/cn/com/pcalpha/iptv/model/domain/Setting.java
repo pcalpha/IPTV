@@ -48,9 +48,12 @@ public class Setting implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof Setting){
-            Setting o = (Setting)obj;
-            if(o.getLabel().equals(this.getLabel())){
+        if (null == obj) {
+            return false;
+        }
+        if (obj instanceof Setting) {
+            Setting o = (Setting) obj;
+            if (o.getLabel().equals(this.getLabel())) {
                 return true;
             }
         }

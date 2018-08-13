@@ -2,20 +2,18 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@android:color/white"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:focusable="false"
     android:keepScreenOn="true"
-    tools:context="cn.com.pcalpha.iptv.activities.MainActivity"
     >
-    <!--<tv.danmaku.ijk.media.example.widget.media.IjkVideoView-->
-        <!--android:id="@+id/video_view"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:background="@color/color_white"-->
-        <!--android:focusable="false"-->
-        <!--/>-->
+    <tv.danmaku.ijk.media.example.widget.media.IjkVideoView
+        android:id="@+id/video_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:focusable="false"
+        />
     <FrameLayout
         android:id="@+id/fragement_main_menu_container"
         android:layout_height="match_parent"

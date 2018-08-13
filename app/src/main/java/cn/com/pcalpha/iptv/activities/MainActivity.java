@@ -19,9 +19,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Toast;
 
 import java.util.List;
@@ -35,6 +38,8 @@ import cn.com.pcalpha.iptv.service.ChannelCategoryService;
 import cn.com.pcalpha.iptv.service.ChannelService;
 import cn.com.pcalpha.iptv.service.ChannelStreamService;
 import cn.com.pcalpha.iptv.fragment.MenuFragment;
+import tv.danmaku.ijk.media.example.widget.media.AndroidMediaController;
+import tv.danmaku.ijk.media.example.widget.media.IjkVideoView;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /*
@@ -42,7 +47,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  */
 public class MainActivity extends AppCompatActivity {
 
-    //private IjkVideoView videoView;
+    private IjkVideoView videoView;
     private ChannelReceiver channelReceiver;
 
     private ChannelService channelService;
@@ -60,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         IjkMediaPlayer.native_profileBegin("libijkplayer.so");
     }
 
-    private void initReceiver(){
+    private void initReceiver() {
         channelReceiver = new ChannelReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(receiverAction);
@@ -68,36 +73,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViews(Bundle savedInstanceState) {
-        //videoView = findViewById(R.id.video_view);
+        videoView = findViewById(R.id.video_view);
         //AndroidMediaController controller = new AndroidMediaController(this, false);
-//        videoView.setMediaController(null);
-//        videoView.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                showMainMenuFragment();
-//                return false;
-//            }
-//        });
-//        videoView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                showMainMenuFragment();
-//            }
-//        });
+        videoView.setMediaController(null);
+        videoView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                showMainMenuFragment();
+                return false;
+            }
+        });
+        videoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showMainMenuFragment();
+            }
+        });
     }
 
-    private void initService(){
+    private void initService() {
         channelService = ChannelService.getInstance(this);
         channelStreamService = ChannelStreamService.getInstance(this);
         channelCategoryService = ChannelCategoryService.getInstance(this);
     }
 
-    private void initData(){
+    private void initData() {
         Param4Channel param = Param4Channel.build();
         channelList = channelService.find(param);
         currentChannel = channelService.getLastPlay();
-        if(null==currentChannel){
-            if(null!=channelList&&channelList.size()>0){
+        if (null == currentChannel) {
+            if (null != channelList && channelList.size() > 0) {
                 currentChannel = channelList.get(0);
             }
         }
@@ -112,12 +117,13 @@ public class MainActivity extends AppCompatActivity {
         initReceiver();
         initService();
         initData();
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        //videoView.release(true);
+        videoView.release(true);
     }
 
     @Override
@@ -141,19 +147,22 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if (KeyEvent.KEYCODE_DPAD_UP == keyCode) {
-//            Channel channel = preChannel();
-//            play(channel);
-//        } else if (KeyEvent.KEYCODE_DPAD_DOWN == keyCode) {
-//            Channel channel = nextChannel();
-//            play(channel);
-//        } else if (KeyEvent.KEYCODE_DPAD_RIGHT == keyCode) {
-//            ChannelStream stream = currentChannel.nextStream();
-//            play(stream);
-//        } else if (KeyEvent.KEYCODE_DPAD_LEFT == keyCode) {
-//            ChannelStream stream = currentChannel.preStream();
-//            play(stream);
-        if (KeyEvent.KEYCODE_MENU == keyCode||KeyEvent.KEYCODE_ENTER==keyCode) {
+        if (event.getAction() != KeyEvent.ACTION_DOWN) {
+            return false;
+        }
+        if (KeyEvent.KEYCODE_DPAD_UP == keyCode) {
+            Channel channel = preChannel();
+            play(channel);
+        } else if (KeyEvent.KEYCODE_DPAD_DOWN == keyCode) {
+            Channel channel = nextChannel();
+            play(channel);
+        } else if (KeyEvent.KEYCODE_DPAD_RIGHT == keyCode) {
+            ChannelStream stream = currentChannel.nextStream();
+            play(stream);
+        } else if (KeyEvent.KEYCODE_DPAD_LEFT == keyCode) {
+            ChannelStream stream = currentChannel.preStream();
+            play(stream);
+        } else if (KeyEvent.KEYCODE_MENU == keyCode || KeyEvent.KEYCODE_ENTER == keyCode) {
             showMainMenuFragment();
         } else if (KeyEvent.KEYCODE_BACK == keyCode) {
             getFragmentManager().popBackStack();
@@ -161,58 +170,59 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    public Channel preChannel(){
-        if(null!=currentChannel&&null!=channelList){
-            int prePosition = channelList.indexOf(currentChannel)-1;
+    public Channel preChannel() {
+        if (null != currentChannel && null != channelList) {
+            int prePosition = channelList.indexOf(currentChannel) - 1;
 
-            if(prePosition>=0&&prePosition<channelList.size()){
+            if (prePosition >= 0 && prePosition < channelList.size()) {
                 currentChannel = channelList.get(prePosition);
-            }else{
+            } else {
                 currentChannel = channelList.get(0);
             }
         }
         return currentChannel;
     }
 
-    public Channel nextChannel(){
-        if(null!=currentChannel&&null!=channelList){
-            int nextPosition = channelList.indexOf(currentChannel)+1;
+    public Channel nextChannel() {
+        if (null != currentChannel && null != channelList) {
+            int nextPosition = channelList.indexOf(currentChannel) + 1;
 
-            if(nextPosition>=0&&nextPosition<channelList.size()){
+            if (nextPosition >= 0 && nextPosition < channelList.size()) {
                 currentChannel = channelList.get(nextPosition);
-            }else{
-                currentChannel = channelList.get(channelList.size()-1);
+            } else {
+                currentChannel = channelList.get(channelList.size() - 1);
             }
         }
         return currentChannel;
     }
 
     private ChannelStream currentStream;
+
     private void play(Channel channel) {
         if (null != channel) {
+
             currentChannel = channel;
             loadStream(currentChannel);//加载源
             play(currentChannel.getLastPlayStream());
-
+            channelService.setLastPlay(channel);
             Toast.makeText(this, channel.getName(), Toast.LENGTH_LONG).show();
         }
     }
 
-    private void play(ChannelStream stream){
+    private void play(ChannelStream stream) {
         if (null != stream) {
-
-//            videoView.release(true);
-//            videoView.setVideoURI(Uri.parse(stream.getUrl()));
-//            videoView.start();
+            videoView.release(true);
+            videoView.setVideoURI(Uri.parse(stream.getUrl()));
+            videoView.start();
         }
     }
 
-    private void loadStream(Channel channel){
-        if(null==channel.getStreams()){
+    private void loadStream(Channel channel) {
+        if (null == channel.getStreams()) {
             List<ChannelStream> streamList = channelStreamService.getChannelStreams(channel.getName());
             ChannelStream lastPlayStream = channelStreamService.get(channel.getStreamId());
             channel.setStreams(streamList);
-            if(null==lastPlayStream){
+            if (null == lastPlayStream) {
                 lastPlayStream = streamList.get(0);
             }
             channel.setLastPlayStream(lastPlayStream);

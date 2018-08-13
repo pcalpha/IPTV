@@ -7,7 +7,7 @@
 
     <cn.com.pcalpha.iptv.view.MenuListView
         android:id="@+id/setting_list_view"
-        android:background="@color/menu_channel_background"
+        android:background="@color/menu_background"
         android:layout_width="400dp"
         android:layout_height="match_parent"
         android:listSelector="@drawable/selector_menu"

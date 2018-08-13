@@ -7,15 +7,15 @@
 
     <cn.com.pcalpha.iptv.view.MenuListView
         android:id="@+id/channel_list_view"
-        android:background="@color/menu_channel_background"
+        android:background="@drawable/selector_menu_bg"
         android:layout_width="200dp"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:gravity="center_horizontal"
-        android:listSelector="@drawable/selector_channel"
+        android:listSelector="@drawable/selector_menu"
         android:choiceMode="singleChoice"
-        android:divider="@color/color_blank"
+        android:divider="@color/blank"
         android:dividerHeight="0px"
         android:focusable="true"
         android:scrollbars="none"

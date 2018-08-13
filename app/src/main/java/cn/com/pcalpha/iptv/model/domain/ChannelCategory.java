@@ -46,6 +46,9 @@ public class ChannelCategory implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
+        if (null == obj) {
+            return false;
+        }
         if (obj instanceof ChannelCategory) {
             ChannelCategory o = (ChannelCategory) obj;
             if (o.getName().equals(this.getName())) {

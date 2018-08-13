@@ -65,9 +65,12 @@ public class ChannelStream implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof ChannelStream){
-            ChannelStream o = (ChannelStream)obj;
-            if(o.getId().equals(this.getId())){
+        if (null == obj) {
+            return false;
+        }
+        if (obj instanceof ChannelStream) {
+            ChannelStream o = (ChannelStream) obj;
+            if (o.getId().equals(this.getId())) {
                 return true;
             }
         }
