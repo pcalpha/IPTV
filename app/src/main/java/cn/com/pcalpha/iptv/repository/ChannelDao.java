@@ -25,7 +25,7 @@ public class ChannelDao extends BaseDao {
     public static final String COLUMN_ID = "ID";
     public static final String COLUMN_NO = "NO";
     public static final String COLUMN_NAME = "NAME";
-    public static final String COLUMN_STREAM_ID = "STREAM_ID";
+    public static final String COLUMN_STREAM_ID = "SID";
     public static final String COLUMN_CATEGORY_NAME = "CATEGORY_NAME";
     public static final String COLUMN_LAST_PLAY = "LAST_PLAY";
 
@@ -52,6 +52,7 @@ public class ChannelDao extends BaseDao {
     public static final String SQL_DROP = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
     private static ChannelDao singleton;
+
     public static ChannelDao getInstance(Context context) {
         if (null == singleton) {
             synchronized (ChannelDao.class) {
@@ -68,13 +69,12 @@ public class ChannelDao extends BaseDao {
     }
 
     public void insertAsync(final Channel channel) {
-        new AsyncTask<String, Void, Void>() {
+        new Thread(new Runnable() {
             @Override
-            protected Void doInBackground(String... params) {
+            public void run() {
                 insert(channel);
-                return null;
             }
-        }.execute();
+        }).start();
     }
 
     public void insert(Channel channel) {
@@ -83,7 +83,7 @@ public class ChannelDao extends BaseDao {
         cv.put(COLUMN_NO, channel.getNo());
         cv.put(COLUMN_NAME, channel.getName());
         cv.put(COLUMN_LAST_PLAY, channel.getLastPlay());
-        cv.put(COLUMN_STREAM_ID, channel.getStreamId());
+        cv.put(COLUMN_STREAM_ID, channel.getsId());
         cv.put(COLUMN_CATEGORY_NAME, channel.getCategoryName());
         writeDb.insert(TABLE_NAME, null, cv);
     }
@@ -118,7 +118,7 @@ public class ChannelDao extends BaseDao {
         cv.put(COLUMN_NO, channel.getNo());
         cv.put(COLUMN_NAME, channel.getName());
         cv.put(COLUMN_LAST_PLAY, channel.getLastPlay());
-        cv.put(COLUMN_STREAM_ID, channel.getStreamId());
+        cv.put(COLUMN_STREAM_ID, channel.getsId());
         cv.put(COLUMN_CATEGORY_NAME, channel.getCategoryName());
 
         String[] whereArgs = new String[]{channel.getId().toString()};
@@ -169,7 +169,10 @@ public class ChannelDao extends BaseDao {
         String selection = "";
         List<String> args = new ArrayList<>();
         if (null != param.getCategoryName() && !"".equals(param.getCategoryName())) {
-            selection = COLUMN_CATEGORY_NAME + " = ?";
+            if (null != selection && selection.length() > 0) {
+                selection += " AND ";
+            }
+            selection += COLUMN_CATEGORY_NAME + " = ? ";
             args.add(param.getCategoryName());
         }
 
@@ -200,7 +203,7 @@ public class ChannelDao extends BaseDao {
             channel.setNo(cursor.getString(mIndex_no));
             channel.setName(cursor.getString(mIndex_name));
             channel.setLastPlay(cursor.getInt(mIndex_last_play));
-            channel.setStreamId(cursor.getInt(mIndex_stream_id));
+            channel.setsId(cursor.getInt(mIndex_stream_id));
             channel.setCategoryName(cursor.getString(mIndex_category_name));
 
             channelList.add(channel);
@@ -233,11 +236,27 @@ public class ChannelDao extends BaseDao {
 //        }
 //    }
 
-    public void setLastPlay(String channelName) {
-        String sql = "UPDATE " + TABLE_NAME + " SET " + COLUMN_LAST_PLAY + " = 0 ";
-        readDb.execSQL(sql);
-        String sql2 = "UPDATE " + TABLE_NAME + " SET " + COLUMN_LAST_PLAY + " = 1 WHERE " + COLUMN_NAME + " = " + "'"+channelName+"'";
-        readDb.execSQL(sql2);
+    public void setLastPlay(final String channelName) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String sql = "UPDATE " + TABLE_NAME + " SET " + COLUMN_LAST_PLAY + " = 0 ";
+                readDb.execSQL(sql);
+                String sql2 = "UPDATE " + TABLE_NAME + " SET " + COLUMN_LAST_PLAY + " = 1 " + " WHERE " + COLUMN_NAME + " = " + "'" + channelName + "'";
+                readDb.execSQL(sql2);
+            }
+        }).start();
+    }
+
+
+    public void setLastPlayStream(final String channelName, final int streamId) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String sql = "UPDATE " + TABLE_NAME + " SET " + COLUMN_STREAM_ID + " = " + streamId + "  WHERE " + COLUMN_NAME + " = " + "'" + channelName + "'";
+                readDb.execSQL(sql);
+            }
+        }).start();
     }
 
     public Channel getLastPlay() {
@@ -254,11 +273,6 @@ public class ChannelDao extends BaseDao {
         }
         cursor.close();
         return resultList.get(0);
-    }
-
-    public void setLastPlayStream(String channelName, int stream) {
-        String sql = "UPDATE " + TABLE_NAME + " SET " + COLUMN_STREAM_ID + " = " + stream + "  WHERE " + COLUMN_NAME + " = " + channelName;
-        readDb.execSQL(sql);
     }
 
 

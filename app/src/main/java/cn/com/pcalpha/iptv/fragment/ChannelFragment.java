@@ -57,6 +57,7 @@ public class ChannelFragment extends Fragment {
                 ChannelAdapter channelAdapter = (ChannelAdapter) parent.getAdapter();
                 Channel channel = channelAdapter.getItem(position);
                 if (channel.equals(lastPlay)) {
+                    getFragmentManager().popBackStackImmediate();
                     return;
                 }
                 changeChannel(channel);

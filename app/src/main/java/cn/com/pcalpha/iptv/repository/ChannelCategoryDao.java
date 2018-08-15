@@ -57,13 +57,12 @@ public class ChannelCategoryDao extends BaseDao {
     }
 
     public void insertAsync(final ChannelCategory channelCategory) {
-        new AsyncTask<String, Void, Void>() {
+        new Thread(new Runnable() {
             @Override
-            protected Void doInBackground(String... params) {
+            public void run() {
                 insert(channelCategory);
-                return null;
             }
-        }.execute();
+        }).start();
     }
 
     public void insert(ChannelCategory channelCategory) {
@@ -145,11 +144,16 @@ public class ChannelCategoryDao extends BaseDao {
         return channelCategoryList;
     }
 
-    public void setLastPlay(String categoryName) {
-        String sql = "UPDATE " + TABLE_NAME + " SET " + COLUMN_LAST_PLAY + " = 0 ";
-        readDb.execSQL(sql);
-        String sql2 = "UPDATE " + TABLE_NAME + " SET " + COLUMN_LAST_PLAY + " = 1 WHERE " + COLUMN_NAME + " = " + "'"+categoryName+"'";
-        readDb.execSQL(sql2);
+    public void setLastPlay(final String categoryName) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String sql = "UPDATE " + TABLE_NAME + " SET " + COLUMN_LAST_PLAY + " = 0 ";
+                readDb.execSQL(sql);
+                String sql2 = "UPDATE " + TABLE_NAME + " SET " + COLUMN_LAST_PLAY + " = 1 WHERE " + COLUMN_NAME + " = " + "'"+categoryName+"'";
+                readDb.execSQL(sql2);
+            }
+        }).start();
     }
 
     public ChannelCategory getLastPlay() {

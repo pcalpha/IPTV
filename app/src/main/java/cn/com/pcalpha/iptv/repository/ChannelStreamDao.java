@@ -147,11 +147,17 @@ public class ChannelStreamDao extends BaseDao {
         String selection = "";
         List<String> args = new ArrayList<>();
         if (null != param.getChannelName() && !"".equals(param.getChannelName())) {
-            selection = COLUMN_CHANNEL_NAME + " = ?";
+            if(null!=selection&&selection.length()>0){
+                selection +=" AND ";
+            }
+            selection += COLUMN_CHANNEL_NAME + " = ? ";
             args.add(param.getChannelName());
         }
         if (null != param.getCarrier() && !"".equals(param.getCarrier())) {
-            selection = COLUMN_CARRIER + " = ?";
+            if(null!=selection&&selection.length()>0){
+                selection +=" AND ";
+            }
+            selection += COLUMN_CARRIER + " = ? ";
             args.add(param.getCarrier());
         }
 

@@ -11,9 +11,8 @@ public class Channel implements Serializable {
     private Integer id;
     private String no;
     private String name;//名字 例如:央视一套
-    //private String src;//多个源url逗号分隔
     private Integer lastPlay = 0;//上次播放标记 0，1
-    private Integer streamId;
+    private Integer sId;
     private String categoryName;//1.央视;2.卫视;9.其他
 
     private ChannelStream lastPlayStream;//记录播放源
@@ -54,12 +53,12 @@ public class Channel implements Serializable {
         this.name = name;
     }
 
-    public Integer getStreamId() {
-        return streamId;
+    public Integer getsId() {
+        return sId;
     }
 
-    public void setStreamId(Integer streamId) {
-        this.streamId = streamId;
+    public void setsId(Integer sId) {
+        this.sId = sId;
     }
 
     public String getCategoryName() {
@@ -129,6 +128,7 @@ public class Channel implements Serializable {
                 lastPlayStream = streams.get(0);
             }
         }
+        this.setsId(lastPlayStream.getId());
         return lastPlayStream;
     }
 
@@ -142,6 +142,7 @@ public class Channel implements Serializable {
                 lastPlayStream = streams.get(streams.size()-1);
             }
         }
+        this.setsId(lastPlayStream.getId());
         return lastPlayStream;
     }
 

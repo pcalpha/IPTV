@@ -60,6 +60,10 @@ public class ChannelStreamService {
         return channelStreamDao.find(param);
     }
 
+    public void setLastPlay(int id){
+        //channelStreamDao.setLastPlay(id);
+    }
+
     public List<ChannelStream> getChannelStreams(String channelName){
         Param4ChannelStream param = Param4ChannelStream.build().setChannelName(channelName);
         List<ChannelStream> channelStreamList = find(param);

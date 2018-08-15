@@ -19,8 +19,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -32,6 +34,7 @@ import java.util.List;
 import cn.com.pcalpha.iptv.R;
 import cn.com.pcalpha.iptv.constants.FragmentTag;
 import cn.com.pcalpha.iptv.model.bo.Param4Channel;
+import cn.com.pcalpha.iptv.model.bo.Param4ChannelStream;
 import cn.com.pcalpha.iptv.model.domain.Channel;
 import cn.com.pcalpha.iptv.model.domain.ChannelStream;
 import cn.com.pcalpha.iptv.service.ChannelCategoryService;
@@ -54,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private ChannelStreamService channelStreamService;
     private ChannelCategoryService channelCategoryService;
 
-
+    private SharedPreferences sharedPreferences;
     private Channel currentChannel;
     private List<Channel> channelList;
 
@@ -95,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         channelService = ChannelService.getInstance(this);
         channelStreamService = ChannelStreamService.getInstance(this);
         channelCategoryService = ChannelCategoryService.getInstance(this);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     private void initData() {
@@ -164,8 +168,8 @@ public class MainActivity extends AppCompatActivity {
             play(stream);
         } else if (KeyEvent.KEYCODE_MENU == keyCode || KeyEvent.KEYCODE_ENTER == keyCode) {
             showMainMenuFragment();
-        } else if (KeyEvent.KEYCODE_BACK == keyCode) {
-            getFragmentManager().popBackStack();
+        } else {
+            getFragmentManager().popBackStackImmediate();
         }
         return false;
     }
@@ -196,16 +200,15 @@ public class MainActivity extends AppCompatActivity {
         return currentChannel;
     }
 
-    private ChannelStream currentStream;
-
     private void play(Channel channel) {
         if (null != channel) {
-
             currentChannel = channel;
             loadStream(currentChannel);//加载源
             play(currentChannel.getLastPlayStream());
+
             channelService.setLastPlay(channel);
-            Toast.makeText(this, channel.getName(), Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "未找到合适的节目", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -214,13 +217,20 @@ public class MainActivity extends AppCompatActivity {
             videoView.release(true);
             videoView.setVideoURI(Uri.parse(stream.getUrl()));
             videoView.start();
+
+            channelService.setLastPlayStream(stream.getChannelName(), stream.getId());
+        } else {
+            Toast.makeText(this, "未找到合适的节目源", Toast.LENGTH_LONG).show();
         }
     }
 
     private void loadStream(Channel channel) {
         if (null == channel.getStreams()) {
-            List<ChannelStream> streamList = channelStreamService.getChannelStreams(channel.getName());
-            ChannelStream lastPlayStream = channelStreamService.get(channel.getStreamId());
+            Param4ChannelStream param4ChannelStream = Param4ChannelStream.build()
+                    .setChannelName(channel.getName())
+                    .setCarrier(sharedPreferences.getString("pref_key_carrier", "CMCC"));
+            List<ChannelStream> streamList = channelStreamService.find(param4ChannelStream);
+            ChannelStream lastPlayStream = channelStreamService.get(channel.getsId());
             channel.setStreams(streamList);
             if (null == lastPlayStream) {
                 lastPlayStream = streamList.get(0);

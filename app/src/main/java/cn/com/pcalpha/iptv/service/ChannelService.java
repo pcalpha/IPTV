@@ -73,15 +73,6 @@ public class ChannelService {
     }
 
     public List<Channel> find(Param4Channel param) {
-//        List<Channel> channelList = channelDao.find(param);
-//        if (null != channelList) {
-//            for (Channel channel : channelList) {
-//                Param4ChannelStream param4ChannelStream = Param4ChannelStream.build()
-//                        .setChannelName(channel.getName());
-//                List<ChannelStream> streamList = channelStreamDao.find(param4ChannelStream);
-//                channel.setStreams(streamList);
-//            }
-//        }
         return channelDao.find(param);
     }
 
@@ -90,11 +81,12 @@ public class ChannelService {
         channelCategoryService.setLastPlay(channel.getCategoryName());
     }
 
+    public void setLastPlayStream(String channelName, int stream) {
+        channelDao.setLastPlayStream(channelName, stream);
+    }
+
     public Channel getLastPlay() {
         return channelDao.getLastPlay();
     }
 
-    public void setLastPlayStream(String channelName, int stream) {
-        channelDao.setLastPlayStream(channelName, stream);
-    }
 }
