@@ -119,7 +119,7 @@ public class Channel implements Serializable {
     }
 
     public ChannelStream preStream(){
-        if(null!=streams&&null!=lastPlayStream){
+        if(null!=streams&&streams.size()>0&&null!=lastPlayStream){
             int prePosition = streams.indexOf(lastPlayStream)-1;
 
             if(prePosition>=0&&prePosition<streams.size()){
@@ -133,7 +133,7 @@ public class Channel implements Serializable {
     }
 
     public ChannelStream nextStream(){
-        if(null!=streams&&null!=lastPlayStream){
+        if(null!=streams&&streams.size()>0&&null!=lastPlayStream){
             int nextPosition = streams.indexOf(lastPlayStream)+1;
 
             if(nextPosition>=0&&nextPosition<streams.size()){
