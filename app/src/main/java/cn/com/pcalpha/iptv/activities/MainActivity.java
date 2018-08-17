@@ -231,10 +231,10 @@ public class MainActivity extends AppCompatActivity {
                     .setCarrier(sharedPreferences.getString("pref_key_carrier", "CMCC"));
             List<ChannelStream> streamList = channelStreamService.find(param4ChannelStream);
             ChannelStream lastPlayStream = channelStreamService.get(channel.getsId());
-            channel.setStreams(streamList);
-            if (null == lastPlayStream) {
+            if(null==lastPlayStream){
                 lastPlayStream = streamList.get(0);
             }
+            channel.setStreams(streamList);
             channel.setLastPlayStream(lastPlayStream);
         }
     }

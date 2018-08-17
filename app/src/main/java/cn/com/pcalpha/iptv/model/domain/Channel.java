@@ -12,7 +12,7 @@ public class Channel implements Serializable {
     private String no;
     private String name;//名字 例如:央视一套
     private Integer lastPlay = 0;//上次播放标记 0，1
-    private Integer sId;
+    private Integer sId;//streamId
     private String categoryName;//1.央视;2.卫视;9.其他
 
     private ChannelStream lastPlayStream;//记录播放源
@@ -127,8 +127,8 @@ public class Channel implements Serializable {
             }else{
                 lastPlayStream = streams.get(0);
             }
+            this.setsId(lastPlayStream.getId());
         }
-        this.setsId(lastPlayStream.getId());
         return lastPlayStream;
     }
 
@@ -141,8 +141,8 @@ public class Channel implements Serializable {
             }else{
                 lastPlayStream = streams.get(streams.size()-1);
             }
+            this.setsId(lastPlayStream.getId());
         }
-        this.setsId(lastPlayStream.getId());
         return lastPlayStream;
     }
 

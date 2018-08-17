@@ -11,9 +11,10 @@
     <color name="blank">#00000000</color>
 
     <!--32777777-->
-    <color name="menu_background">#dd000000</color>
-    <color name="menu_background2">#cc000000</color>
-    <color name="menu_background_focus">#bb000000</color>
+    <color name="menu_background">#cc000000</color>
+    <color name="menu_background2">#bb000000</color>
+    <color name="menu_background3">#aa000000</color>
+    <color name="menu_background_focus">#dd000000</color>
 
 
     <color name="menu_item_selected">#32777777</color>

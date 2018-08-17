@@ -5,6 +5,8 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:orientation="vertical"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
     android:gravity="center_horizontal"
     android:focusable="false"
     >
@@ -13,8 +15,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
         android:gravity="center_horizontal"
         android:text="文字"
         android:textSize="20sp"
