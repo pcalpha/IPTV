@@ -109,18 +109,21 @@ public class RhythmView extends FrameLayout {
         return this.onVisibilityChangedListener;
     }
 
+    @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         this.attachToWindow = true;
         c();
     }
 
+    @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         this.attachToWindow = false;
         d();
     }
 
+    @Override
     protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
         int measuredWidth = (int) ((((float) getMeasuredWidth()) * 1.0f) / 5.0f);
         int measuredHeight = getMeasuredHeight();
@@ -132,6 +135,7 @@ public class RhythmView extends FrameLayout {
         }
     }
 
+    @Override
     protected void onVisibilityChanged(@NonNull View view, int i) {
         super.onVisibilityChanged(view, i);
         if (i == 0) {

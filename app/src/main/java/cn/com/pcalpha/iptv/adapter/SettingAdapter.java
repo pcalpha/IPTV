@@ -54,24 +54,28 @@ public class SettingAdapter extends BaseAdapter {
             convertView = mLayoutInflater.inflate(R.layout.item_setting, parent, false);
             holder = new ViewHolder();
             holder.label = (TextView) convertView.findViewById(R.id.setting_label);
-            holder.option = (TextView)convertView.findViewById(R.id.setting_option);
+            holder.option = (TextView) convertView.findViewById(R.id.setting_option);
+            holder.arrow = (TextView) convertView.findViewById(R.id.setting_arrow);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
         holder.label.setText(settings.getLabel());
-        if(null!=settings.getOptions()){
-            for(SettingOption option:settings.getOptions()){
-                if(settings.getValue().equals(option.getValue())){
+        if (null != settings.getOptions()) {
+            for (SettingOption option : settings.getOptions()) {
+                if (settings.getValue().equals(option.getValue())) {
                     holder.option.setText(option.getLabel());
                 }
             }
+            holder.arrow.setVisibility(View.VISIBLE);
+        } else {
+            holder.option.setText(settings.getValue());
+            holder.arrow.setVisibility(View.GONE);
         }
-
         return convertView;
     }
 
-    public int getPosition(Setting setting){
+    public int getPosition(Setting setting) {
         int position = settingsList.indexOf(setting);
         return position;
     }
@@ -79,6 +83,6 @@ public class SettingAdapter extends BaseAdapter {
     public static class ViewHolder {
         private TextView label;
         private TextView option;
-        private TextView value;
+        private TextView arrow;
     }
 }

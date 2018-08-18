@@ -56,10 +56,10 @@ public class SettingFragment extends Fragment implements SettingOptionFragment.O
 
         List<Setting> settingList = new ArrayList<>();
 
+        //setting1
         Setting setting1 = new Setting();
         setting1.setLabel("网络运营商");
         setting1.setValue("CTCC");
-        settingList.add(setting1);
 
         SettingOption option11 = new SettingOption();
         option11.setLabel("移动");
@@ -80,10 +80,10 @@ public class SettingFragment extends Fragment implements SettingOptionFragment.O
         setting1.setKey("pref_key_carrier");
         setting1.setValue(settingCarrier);
 
+        //setting2
         Setting setting2 = new Setting();
         setting2.setLabel("解码方式");
         setting2.setValue("1");
-        settingList.add(setting2);
 
         SettingOption option21 = new SettingOption();
         option21.setLabel("软解码");
@@ -101,6 +101,15 @@ public class SettingFragment extends Fragment implements SettingOptionFragment.O
         setting2.setKey("pref_key_using_media_codec");
         setting2.setValue(usingMedisCodec);
 
+        //settting3
+        Setting setting3 = new Setting();
+        setting3.setLabel("恢复默认设置");
+        setting3.setValue("清空所有设置和缓存");
+
+        settingList.add(setting1);
+        settingList.add(setting2);
+        settingList.add(setting3);
+
 
         final SettingAdapter adapter = new SettingAdapter(this.getActivity(), settingList);
         settingListView.setAdapter(adapter);
@@ -110,7 +119,11 @@ public class SettingFragment extends Fragment implements SettingOptionFragment.O
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SettingAdapter adapter = (SettingAdapter) parent.getAdapter();
                 Setting setting = (Setting) adapter.getItem(position);
-                showSettingOptionFragment(setting);
+                if ("pref_key_carrier".equals(setting.getKey()) ||
+                        "pref_key_using_media_codec".equals(setting.getKey())) {
+                    showSettingOptionFragment(setting);
+                }
+
             }
         });
 
