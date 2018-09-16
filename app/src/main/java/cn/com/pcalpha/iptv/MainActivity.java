@@ -12,7 +12,7 @@
  * the License.
  */
 
-package cn.com.pcalpha.iptv.activities;
+package cn.com.pcalpha.iptv;
 
 import android.app.Fragment;
 import android.content.BroadcastReceiver;

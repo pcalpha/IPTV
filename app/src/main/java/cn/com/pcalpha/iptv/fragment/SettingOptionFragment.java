@@ -9,14 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import cn.com.pcalpha.iptv.R;
-import cn.com.pcalpha.iptv.adapter.ChannelAdapter;
-import cn.com.pcalpha.iptv.adapter.SettingAdapter;
 import cn.com.pcalpha.iptv.adapter.SettingOptionAdapter;
-import cn.com.pcalpha.iptv.model.domain.Channel;
 import cn.com.pcalpha.iptv.model.domain.Setting;
 import cn.com.pcalpha.iptv.model.domain.SettingOption;
 import cn.com.pcalpha.iptv.tools.FragmentSwitcher;
@@ -29,6 +23,7 @@ import cn.com.pcalpha.iptv.view.MenuListView;
 public class SettingOptionFragment extends Fragment {
 
     private MenuListView settingOptionListView;
+    private SettingOptionAdapter adapter;
     private FragmentSwitcher fragmentSwitcher;
     private OnOptionSelectedListener onOptionSelectedListener;
 
@@ -46,10 +41,9 @@ public class SettingOptionFragment extends Fragment {
         settingOptionListView = (MenuListView) view.findViewById(R.id.settings_option_list_view);
         final Setting setting = (Setting) getArguments().getSerializable("setting");
 
-        SettingOptionAdapter adapter = new SettingOptionAdapter(this.getActivity(), setting.getOptions());
+        adapter = new SettingOptionAdapter(this.getActivity(), setting.getOptions());
 
         settingOptionListView.setAdapter(adapter);
-
         settingOptionListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
