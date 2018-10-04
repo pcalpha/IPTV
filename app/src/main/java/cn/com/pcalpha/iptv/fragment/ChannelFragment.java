@@ -60,7 +60,7 @@ public class ChannelFragment extends Fragment {
                     getFragmentManager().popBackStackImmediate();
                     return;
                 }
-                changeChannel(channel);
+                playChannel(channel);
                 getFragmentManager().popBackStackImmediate();
             }
         });
@@ -69,8 +69,8 @@ public class ChannelFragment extends Fragment {
         return view;
     }
 
-    private void changeChannel(Channel channel) {
-        Intent intent = new Intent("cn.com.pcalpha.iptv.broadcasereceiver.action.channelbroadcase");
+    private void playChannel(Channel channel) {
+        Intent intent = new Intent("cn.com.pcalpha.iptv.action.PLAY_CHANNEL");
         intent.putExtra("channel", channel);//向广播接收器传递数据
         getActivity().sendBroadcast(intent);
     }

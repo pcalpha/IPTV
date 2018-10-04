@@ -22,11 +22,13 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
@@ -50,18 +52,25 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  */
 public class MainActivity extends AppCompatActivity {
 
-    private IjkVideoView videoView;
-    private ChannelReceiver channelReceiver;
+    private IjkVideoView mVideoView;
+    private TextView mInputChannelView;
+    private View mEpgView;
+    private TextView mEpgChannelNo;
+    private TextView mEpgChannelName;
+
+
+    private ChannelReceiver mChannelReceiver;
 
     private ChannelService channelService;
     private ChannelStreamService channelStreamService;
     private ChannelCategoryService channelCategoryService;
 
-    private SharedPreferences sharedPreferences;
-    private Channel currentChannel;
-    private List<Channel> channelList;
+    private SharedPreferences mSharedPreferences;
+    private Channel mCurrentChannel;
+    private List<Channel> mChannelList;
 
-    private static final String receiverAction = "cn.com.pcalpha.iptv.broadcasereceiver.action.channelbroadcase";
+
+    private static final String CHANNEL_CHANGE_ACTION = "cn.com.pcalpha.iptv.action.PLAY_CHANNEL";
 
     static {
         IjkMediaPlayer.loadLibrariesOnce(null);
@@ -69,45 +78,51 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initReceiver() {
-        channelReceiver = new ChannelReceiver();
+        mChannelReceiver = new ChannelReceiver();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(receiverAction);
-        registerReceiver(channelReceiver, intentFilter);
+        intentFilter.addAction(CHANNEL_CHANGE_ACTION);
+        registerReceiver(mChannelReceiver, intentFilter);
     }
 
     private void initViews(Bundle savedInstanceState) {
-        videoView = findViewById(R.id.video_view);
+        mInputChannelView = findViewById(R.id.input_channel_no_view);
+        mVideoView = findViewById(R.id.video_view);
         //AndroidMediaController controller = new AndroidMediaController(this, false);
-        videoView.setMediaController(null);
-        videoView.setOnTouchListener(new View.OnTouchListener() {
+        mVideoView.setMediaController(null);
+        mVideoView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 showMainMenuFragment();
                 return false;
             }
         });
-        videoView.setOnClickListener(new View.OnClickListener() {
+        mVideoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showMainMenuFragment();
             }
         });
+        mVideoView.requestFocus();
+
+        mEpgView = findViewById(R.id.epg);
+        mEpgChannelNo = findViewById(R.id.epg_channel_no);
+        mEpgChannelName = findViewById(R.id.epg_channel_name);
     }
 
     private void initService() {
         channelService = ChannelService.getInstance(this);
         channelStreamService = ChannelStreamService.getInstance(this);
         channelCategoryService = ChannelCategoryService.getInstance(this);
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     private void initData() {
         Param4Channel param = Param4Channel.build();
-        channelList = channelService.find(param);
-        currentChannel = channelService.getLastPlay();
-        if (null == currentChannel) {
-            if (null != channelList && channelList.size() > 0) {
-                currentChannel = channelList.get(0);
+        mChannelList = channelService.find(param);
+        mCurrentChannel = channelService.getLastPlay();
+        if (null == mCurrentChannel) {
+            if (null != mChannelList && mChannelList.size() > 0) {
+                mCurrentChannel = mChannelList.get(0);
             }
         }
     }
@@ -127,85 +142,142 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        videoView.release(true);
+        mVideoView.release(true);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        play(currentChannel);
+        play(mCurrentChannel);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(channelReceiver);
+        unregisterReceiver(mChannelReceiver);
     }
 
     //
 //    @Override
 //    protected void onNewIntent(Intent intent){
 //        super.onNewIntent(intent);
-//        currentChannel = (Channel) intent.getSerializableExtra("CHANNEL");
+//        mCurrentChannel = (Channel) intent.getSerializableExtra("CHANNEL");
 //    }
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (event.getAction() != KeyEvent.ACTION_DOWN) {
-            return false;
+        if(mVideoView.hasFocus()) {
+            if (KeyEvent.KEYCODE_DPAD_UP == keyCode) {
+                Channel channel = preChannel();
+                play(channel);
+                return true;
+            } else if (KeyEvent.KEYCODE_DPAD_DOWN == keyCode) {
+                Channel channel = nextChannel();
+                play(channel);
+                return true;
+            } else if (KeyEvent.KEYCODE_DPAD_RIGHT == keyCode) {
+                if (null != mCurrentChannel) {
+                    ChannelStream stream = mCurrentChannel.nextStream();
+                    play(stream);
+                }
+                return true;
+            } else if (KeyEvent.KEYCODE_DPAD_LEFT == keyCode) {
+                if (null != mCurrentChannel) {
+                    ChannelStream stream = mCurrentChannel.preStream();
+                    play(stream);
+                }
+                return true;
+            }
         }
-        if (KeyEvent.KEYCODE_DPAD_UP == keyCode) {
-            Channel channel = preChannel();
-            play(channel);
-        } else if (KeyEvent.KEYCODE_DPAD_DOWN == keyCode) {
-            Channel channel = nextChannel();
-            play(channel);
-        } else if (KeyEvent.KEYCODE_DPAD_RIGHT == keyCode) {
-            ChannelStream stream = currentChannel.nextStream();
-            play(stream);
-        } else if (KeyEvent.KEYCODE_DPAD_LEFT == keyCode) {
-            ChannelStream stream = currentChannel.preStream();
-            play(stream);
-        } else if (KeyEvent.KEYCODE_MENU == keyCode || KeyEvent.KEYCODE_ENTER == keyCode) {
+
+        if (KeyEvent.KEYCODE_ENTER == keyCode
+                || KeyEvent.KEYCODE_DPAD_CENTER == keyCode) {
             showMainMenuFragment();
-        } else {
+            return true;
+        } else if (KeyEvent.KEYCODE_BACK == keyCode) {
             getFragmentManager().popBackStackImmediate();
+            return true;
         }
+
+        if (KeyEvent.KEYCODE_NUMPAD_1 == keyCode
+                || KeyEvent.KEYCODE_1 == keyCode) {
+            showInputChannelView(1);
+            return true;
+        } else if (KeyEvent.KEYCODE_NUMPAD_2 == keyCode
+                || KeyEvent.KEYCODE_2 == keyCode) {
+            showInputChannelView(2);
+            return true;
+        } else if (KeyEvent.KEYCODE_NUMPAD_3 == keyCode
+                || KeyEvent.KEYCODE_3 == keyCode) {
+            showInputChannelView(3);
+            return true;
+        } else if (KeyEvent.KEYCODE_NUMPAD_4 == keyCode
+                || KeyEvent.KEYCODE_4 == keyCode) {
+            showInputChannelView(4);
+            return true;
+        } else if (KeyEvent.KEYCODE_NUMPAD_5 == keyCode
+                || KeyEvent.KEYCODE_5 == keyCode) {
+            showInputChannelView(5);
+            return true;
+        } else if (KeyEvent.KEYCODE_NUMPAD_6 == keyCode
+                || KeyEvent.KEYCODE_6 == keyCode) {
+            showInputChannelView(6);
+            return true;
+        } else if (KeyEvent.KEYCODE_NUMPAD_7 == keyCode
+                || KeyEvent.KEYCODE_7 == keyCode) {
+            showInputChannelView(7);
+            return true;
+        } else if (KeyEvent.KEYCODE_NUMPAD_8 == keyCode
+                || KeyEvent.KEYCODE_8 == keyCode) {
+            showInputChannelView(8);
+            return true;
+        } else if (KeyEvent.KEYCODE_NUMPAD_9 == keyCode
+                || KeyEvent.KEYCODE_9 == keyCode) {
+            showInputChannelView(9);
+            return true;
+        } else if (KeyEvent.KEYCODE_NUMPAD_0 == keyCode
+                || KeyEvent.KEYCODE_0 == keyCode) {
+            showInputChannelView(0);
+            return true;
+        }
+
         return false;
     }
 
-    public Channel preChannel() {
-        if (null != currentChannel && null != channelList) {
-            int prePosition = channelList.indexOf(currentChannel) - 1;
 
-            if (prePosition >= 0 && prePosition < channelList.size()) {
-                currentChannel = channelList.get(prePosition);
+    public Channel preChannel() {
+        if (null != mCurrentChannel && null != mChannelList) {
+            int prePosition = mChannelList.indexOf(mCurrentChannel) - 1;
+
+            if (prePosition >= 0 && prePosition < mChannelList.size()) {
+                mCurrentChannel = mChannelList.get(prePosition);
             } else {
-                currentChannel = channelList.get(0);
+                mCurrentChannel = mChannelList.get(0);
             }
         }
-        return currentChannel;
+        return mCurrentChannel;
     }
 
     public Channel nextChannel() {
-        if (null != currentChannel && null != channelList) {
-            int nextPosition = channelList.indexOf(currentChannel) + 1;
+        if (null != mCurrentChannel && null != mChannelList) {
+            int nextPosition = mChannelList.indexOf(mCurrentChannel) + 1;
 
-            if (nextPosition >= 0 && nextPosition < channelList.size()) {
-                currentChannel = channelList.get(nextPosition);
+            if (nextPosition >= 0 && nextPosition < mChannelList.size()) {
+                mCurrentChannel = mChannelList.get(nextPosition);
             } else {
-                currentChannel = channelList.get(channelList.size() - 1);
+                mCurrentChannel = mChannelList.get(mChannelList.size() - 1);
             }
         }
-        return currentChannel;
+        return mCurrentChannel;
     }
 
     private void play(Channel channel) {
         if (null != channel) {
-            currentChannel = channel;
-            loadStream(currentChannel);//加载源
-            play(currentChannel.getLastPlayStream());
-
+            mCurrentChannel = channel;
+            showEpg(channel);
+            loadStream(mCurrentChannel);//加载源
+            play(mCurrentChannel.getLastPlayStream());
             channelService.setLastPlay(channel);
         } else {
             Toast.makeText(this, "未找到合适的节目", Toast.LENGTH_LONG).show();
@@ -214,9 +286,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void play(ChannelStream stream) {
         if (null != stream) {
-            videoView.release(true);
-            videoView.setVideoURI(Uri.parse(stream.getUrl()));
-            videoView.start();
+            mVideoView.release(true);
+            mVideoView.setVideoURI(Uri.parse(stream.getUrl()));
+            mVideoView.start();
 
             channelService.setLastPlayStream(stream.getChannelName(), stream.getId());
         } else {
@@ -227,11 +299,10 @@ public class MainActivity extends AppCompatActivity {
     private void loadStream(Channel channel) {
         if (null == channel.getStreams()) {
             Param4ChannelStream param4ChannelStream = Param4ChannelStream.build()
-                    .setChannelName(channel.getName())
-                    .setCarrier(sharedPreferences.getString("pref_key_carrier", "CMCC"));
+                    .setChannelName(channel.getName());
             List<ChannelStream> streamList = channelStreamService.find(param4ChannelStream);
             ChannelStream lastPlayStream = channelStreamService.get(channel.getsId());
-            if(null==lastPlayStream){
+            if (null == lastPlayStream) {
                 lastPlayStream = streamList.get(0);
             }
             channel.setStreams(streamList);
@@ -239,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private MenuFragment showMainMenuFragment() {
+    private void showMainMenuFragment() {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.fragement_main_menu_container);
         MenuFragment mainFragment = new MenuFragment();
         if (null == fragment) {
@@ -249,7 +320,6 @@ public class MainActivity extends AppCompatActivity {
                     .addToBackStack(FragmentTag.MAIN_MENU_FRAGMENT)
                     .commit();
         }
-        return mainFragment;
     }
 
     class ChannelReceiver extends BroadcastReceiver {
@@ -260,5 +330,49 @@ public class MainActivity extends AppCompatActivity {
             Channel channel = (Channel) bundle.get("channel");
             play(channel);
         }
+    }
+
+    private void showEpg(Channel channel) {
+        mEpgChannelNo.setText(channel.getNo());
+        mEpgChannelName.setText(channel.getName());
+
+        if (View.VISIBLE == mEpgView.getVisibility()) {
+            return;
+        }
+        Runnable run = new Runnable() {
+            @Override
+            public void run() {
+                hideEpg();
+            }
+        };
+        mEpgView.setVisibility(View.VISIBLE);
+        mHandler.postDelayed(run, 3000);
+    }
+
+    private void hideEpg() {
+        mEpgView.setVisibility(View.GONE);
+    }
+
+    final Handler mHandler = new Handler();
+
+    void showInputChannelView(int num) {
+        mInputChannelView.setText(mInputChannelView.getText() + String.valueOf(num));
+        if (View.VISIBLE == mInputChannelView.getVisibility()) {
+            return;
+        }
+        Runnable run = new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MainActivity.this, "频道" + mInputChannelView.getText(), Toast.LENGTH_LONG).show();
+                hideInputChannelView();
+            }
+        };
+        mInputChannelView.setVisibility(View.VISIBLE);
+        mHandler.postDelayed(run, 2000);
+    }
+
+    void hideInputChannelView() {
+        mInputChannelView.setVisibility(View.GONE);
+        mInputChannelView.setText("");
     }
 }

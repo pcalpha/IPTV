@@ -1,24 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:focusable="false"
     android:keepScreenOn="true"
-    >
+    android:background="@drawable/xx">
+
+    <TextView
+        android:id="@+id/input_channel_no_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:background="#55ffffff"
+        android:focusable="false"
+        android:gravity="center"
+        android:text=""
+        android:textSize="150dp"
+        android:translationZ="100dp"
+        android:visibility="gone"
+        />
+
+    <LinearLayout
+        android:id="@+id/epg"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:background="#44dddddd"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:translationZ="50dp"
+        android:visibility="gone"
+        >
+
+            <TextView
+                android:id="@+id/epg_channel_no"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:paddingLeft="50dp"
+                android:gravity="center"
+                android:text=""
+                android:textSize="20dp"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:id="@+id/epg_channel_name"
+                android:layout_width="200dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:paddingRight="50dp"
+                android:gravity="center"
+                android:text=""
+                android:textSize="20dp" />
+
+    </LinearLayout>
+
     <tv.danmaku.ijk.media.example.widget.media.IjkVideoView
         android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
-        android:focusable="false"
-        />
-    <FrameLayout
+        android:focusable="true"
+        android:translationZ="0dp" />
+
+    <RelativeLayout
         android:id="@+id/fragement_main_menu_container"
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:focusable="false"
-        />
+        android:layout_height="match_parent"
+        android:background="@color/blank"
+        android:translationZ="20dp" />
 </RelativeLayout>
 

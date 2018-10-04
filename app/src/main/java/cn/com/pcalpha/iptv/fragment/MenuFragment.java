@@ -109,7 +109,7 @@ public class MenuFragment extends Fragment {
 //                return false;
 //            }
 //        });
-
+        menuListView.requestFocus();
         return view;
     }
 
@@ -124,6 +124,7 @@ public class MenuFragment extends Fragment {
     public void showUploadFragment() {
         fragmentSwitcher.showFragment(uploadFragment);
     }
+
 
 
 }
