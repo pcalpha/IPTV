@@ -33,17 +33,14 @@ import android.widget.Toast;
 
 import java.util.List;
 
-import cn.com.pcalpha.iptv.R;
-import cn.com.pcalpha.iptv.constants.FragmentTag;
-import cn.com.pcalpha.iptv.model.bo.Param4Channel;
-import cn.com.pcalpha.iptv.model.bo.Param4ChannelStream;
-import cn.com.pcalpha.iptv.model.domain.Channel;
-import cn.com.pcalpha.iptv.model.domain.ChannelStream;
-import cn.com.pcalpha.iptv.service.ChannelCategoryService;
-import cn.com.pcalpha.iptv.service.ChannelService;
-import cn.com.pcalpha.iptv.service.ChannelStreamService;
-import cn.com.pcalpha.iptv.fragment.MenuFragment;
-import tv.danmaku.ijk.media.example.widget.media.AndroidMediaController;
+import cn.com.pcalpha.iptv.channel.Param4Channel;
+import cn.com.pcalpha.iptv.channel.Param4ChannelStream;
+import cn.com.pcalpha.iptv.channel.Channel;
+import cn.com.pcalpha.iptv.channel.ChannelStream;
+import cn.com.pcalpha.iptv.category.ChannelCategoryService;
+import cn.com.pcalpha.iptv.channel.ChannelService;
+import cn.com.pcalpha.iptv.channel.ChannelStreamService;
+import cn.com.pcalpha.iptv.menu.MenuFragment;
 import tv.danmaku.ijk.media.example.widget.media.IjkVideoView;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
@@ -118,12 +115,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void initData() {
         Param4Channel param = Param4Channel.build();
-        mChannelList = channelService.find(param);
         mCurrentChannel = channelService.getLastPlay();
         if (null == mCurrentChannel) {
+            mChannelList = channelService.find(param);
             if (null != mChannelList && mChannelList.size() > 0) {
                 mCurrentChannel = mChannelList.get(0);
             }
+        }
+        loadStream(mCurrentChannel);
+        ChannelStream lastPlayStream = mCurrentChannel.getLastPlayStream();
+        if(null!=lastPlayStream){
+            mVideoView.setVideoPath(lastPlayStream.getUrl());
         }
     }
 
@@ -140,20 +142,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        mVideoView.start();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
-        mVideoView.release(true);
+        mVideoView.suspend();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        play(mCurrentChannel);
+        mVideoView.resume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mVideoView.pause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mVideoView.release(true);
         unregisterReceiver(mChannelReceiver);
     }
 
@@ -169,24 +184,16 @@ public class MainActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(mVideoView.hasFocus()) {
             if (KeyEvent.KEYCODE_DPAD_UP == keyCode) {
-                Channel channel = preChannel();
-                play(channel);
+                preChannel();
                 return true;
             } else if (KeyEvent.KEYCODE_DPAD_DOWN == keyCode) {
-                Channel channel = nextChannel();
-                play(channel);
+                nextChannel();
                 return true;
             } else if (KeyEvent.KEYCODE_DPAD_RIGHT == keyCode) {
-                if (null != mCurrentChannel) {
-                    ChannelStream stream = mCurrentChannel.nextStream();
-                    play(stream);
-                }
+                nextStream();
                 return true;
             } else if (KeyEvent.KEYCODE_DPAD_LEFT == keyCode) {
-                if (null != mCurrentChannel) {
-                    ChannelStream stream = mCurrentChannel.preStream();
-                    play(stream);
-                }
+                preStream();
                 return true;
             }
         }
@@ -246,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public Channel preChannel() {
+    public void preChannel() {
         if (null != mCurrentChannel && null != mChannelList) {
             int prePosition = mChannelList.indexOf(mCurrentChannel) - 1;
 
@@ -256,10 +263,10 @@ public class MainActivity extends AppCompatActivity {
                 mCurrentChannel = mChannelList.get(0);
             }
         }
-        return mCurrentChannel;
+        play(mCurrentChannel);
     }
 
-    public Channel nextChannel() {
+    public void nextChannel() {
         if (null != mCurrentChannel && null != mChannelList) {
             int nextPosition = mChannelList.indexOf(mCurrentChannel) + 1;
 
@@ -269,7 +276,21 @@ public class MainActivity extends AppCompatActivity {
                 mCurrentChannel = mChannelList.get(mChannelList.size() - 1);
             }
         }
-        return mCurrentChannel;
+        play(mCurrentChannel);
+    }
+
+    public void preStream(){
+        if (null != mCurrentChannel) {
+            ChannelStream stream = mCurrentChannel.preStream();
+            play(stream);
+        }
+    }
+
+    public void nextStream(){
+        if (null != mCurrentChannel) {
+            ChannelStream stream = mCurrentChannel.nextStream();
+            play(stream);
+        }
     }
 
     private void play(Channel channel) {
@@ -287,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
     private void play(ChannelStream stream) {
         if (null != stream) {
             mVideoView.release(true);
-            mVideoView.setVideoURI(Uri.parse(stream.getUrl()));
+            mVideoView.setVideoPath(stream.getUrl());
             mVideoView.start();
 
             channelService.setLastPlayStream(stream.getChannelName(), stream.getId());
@@ -316,8 +337,8 @@ public class MainActivity extends AppCompatActivity {
         if (null == fragment) {
             getFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragement_main_menu_container, new MenuFragment(), FragmentTag.MAIN_MENU_FRAGMENT)
-                    .addToBackStack(FragmentTag.MAIN_MENU_FRAGMENT)
+                    .add(R.id.fragement_main_menu_container, new MenuFragment(), "main_menu_fragment")
+                    .addToBackStack("main_menu_fragment")
                     .commit();
         }
     }
@@ -329,6 +350,20 @@ public class MainActivity extends AppCompatActivity {
 
             Channel channel = (Channel) bundle.get("channel");
             play(channel);
+        }
+    }
+
+    class ChannelStreamReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+
+            //Channel channel = (Channel) bundle.get("channel");
+            //play(channel);
+            if (null != mCurrentChannel) {
+                ChannelStream stream = mCurrentChannel.nextStream();
+                play(stream);
+            }
         }
     }
 
@@ -346,7 +381,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         mEpgView.setVisibility(View.VISIBLE);
-        mHandler.postDelayed(run, 3000);
+        mHandler.postDelayed(run, 2000);
     }
 
     private void hideEpg() {

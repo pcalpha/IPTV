@@ -5,7 +5,7 @@
     android:orientation="vertical"
     >
 
-    <cn.com.pcalpha.iptv.view.MenuListView
+    <cn.com.pcalpha.iptv.widget.MenuListView
         android:id="@+id/settings_option_list_view"
         android:background="@drawable/selector_menu_bg2"
         android:layout_width="500dp"
