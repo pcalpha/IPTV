@@ -120,13 +120,13 @@ public class Channel implements Serializable {
         this.streams = streams;
     }
 
-    public ChannelStream preStream(){
-        if(null!=streams&&streams.size()>0&&null!=lastPlayStream){
-            int prePosition = streams.indexOf(lastPlayStream)-1;
+    public ChannelStream preStream() {
+        if (null != streams && streams.size() > 0 && null != lastPlayStream) {
+            int prePosition = streams.indexOf(lastPlayStream) - 1;
 
-            if(prePosition>=0&&prePosition<streams.size()){
+            if (prePosition >= 0 && prePosition < streams.size()) {
                 lastPlayStream = streams.get(prePosition);
-            }else{
+            } else {
                 lastPlayStream = streams.get(0);
             }
             this.setsId(lastPlayStream.getId());
@@ -134,14 +134,14 @@ public class Channel implements Serializable {
         return lastPlayStream;
     }
 
-    public ChannelStream nextStream(){
-        if(null!=streams&&streams.size()>0&&null!=lastPlayStream){
-            int nextPosition = streams.indexOf(lastPlayStream)+1;
+    public ChannelStream nextStream() {
+        if (null != streams && streams.size() > 0 && null != lastPlayStream) {
+            int nextPosition = streams.indexOf(lastPlayStream) + 1;
 
-            if(nextPosition>=0&&nextPosition<streams.size()){
+            if (nextPosition >= 0 && nextPosition < streams.size()) {
                 lastPlayStream = streams.get(nextPosition);
-            }else{
-                lastPlayStream = streams.get(streams.size()-1);
+            } else {
+                lastPlayStream = streams.get(streams.size() - 1);
             }
             this.setsId(lastPlayStream.getId());
         }
@@ -153,9 +153,9 @@ public class Channel implements Serializable {
         if (null == obj) {
             return false;
         }
-        if(obj instanceof Channel){
-            Channel o = (Channel)obj;
-            if(o.getName().equals(this.getName())){
+        if (obj instanceof Channel) {
+            Channel o = (Channel) obj;
+            if (o.getName().equals(this.getName())) {
                 return true;
             }
         }

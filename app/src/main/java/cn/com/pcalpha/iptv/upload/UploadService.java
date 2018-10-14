@@ -20,24 +20,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cn.com.pcalpha.iptv.category.ChannelCategoryService;
+import cn.com.pcalpha.iptv.category.ChannelCategoryDao;
 import cn.com.pcalpha.iptv.channel.Channel;
 import cn.com.pcalpha.iptv.category.ChannelCategory;
-import cn.com.pcalpha.iptv.channel.ChannelService;
+import cn.com.pcalpha.iptv.channel.ChannelDao;
 import cn.com.pcalpha.iptv.channel.ChannelStream;
-import cn.com.pcalpha.iptv.channel.ChannelStreamService;
+import cn.com.pcalpha.iptv.channel.ChannelStreamDao;
 import fi.iki.elonen.NanoHTTPD;
 
 public class UploadService extends NanoHTTPD {
-    private Context context;
-
-    private ChannelService channelService;
-    private ChannelCategoryService channelCategoryService;
-    private ChannelStreamService channelStreamService;
-
-    public static final int DEFAULT_SERVER_PORT = 10080;
-    public static final String TAG = UploadService.class.getSimpleName();
-
     private static final String PATH_ROOT = "/";
     private static final String PATH_WEB = "/web";
     private static final String PATH_UPLOAD = "/upload";
@@ -45,15 +36,23 @@ public class UploadService extends NanoHTTPD {
     private static final String PATH_JS = "/js";
     private static String[] headers = new String[]{"频道类别", "频道号", "频道名称", "源地址"};
 
+    private Context mContext;
+
+    private ChannelDao mChannelDao;
+    private ChannelCategoryDao mChannelCategoryDao;
+    private ChannelStreamDao mChannelStreamDao;
+
+    public static final int DEFAULT_SERVER_PORT = 10080;
+    public static final String TAG = "UploadService";
 
     //private List<SharedFile> fileList;//用于分享的文件列表
 
     public UploadService(Context context) {
         super(DEFAULT_SERVER_PORT);
-        this.context = context;
-        channelService = ChannelService.getInstance(context);
-        channelCategoryService = ChannelCategoryService.getInstance(context);
-        channelStreamService = ChannelStreamService.getInstance(context);
+        this.mContext = context;
+        mChannelDao = ChannelDao.getInstance(context);
+        mChannelCategoryDao = ChannelCategoryDao.getInstance(context);
+        mChannelStreamDao = ChannelStreamDao.getInstance(context);
     }
 
     //当接受到连接时会调用此方法
@@ -94,7 +93,7 @@ public class UploadService extends NanoHTTPD {
     }
 
     public Response response(IHTTPSession session, String fileName, String mimeType) {
-        AssetManager assetMgr = context.getAssets();
+        AssetManager assetMgr = mContext.getAssets();
         InputStream is = null;
         try {
             is = assetMgr.open(fileName, AssetManager.ACCESS_STREAMING);
@@ -107,9 +106,9 @@ public class UploadService extends NanoHTTPD {
     }
 
     public Response responseJson(IHTTPSession session) {
-        channelService.clear();
-        channelStreamService.clear();
-        channelCategoryService.clear();
+        mChannelDao.clear();
+        mChannelStreamDao.clear();
+        mChannelCategoryDao.clear();
 
         BufferedReader br = null;
         StringBuffer sb = new StringBuffer();
@@ -134,7 +133,7 @@ public class UploadService extends NanoHTTPD {
                         categoryList.add(categoryName);
                     }
 
-                    channelService.save(channel);
+                    mChannelDao.insert(channel);
 
                     int x = 0;
                     for (ChannelStream stream : channel.getStreams()) {
@@ -146,7 +145,7 @@ public class UploadService extends NanoHTTPD {
                         if(null==stream.getCarrier()||"".equals(stream.getCarrier())){
                             stream.setCarrier("CMCC");
                         }
-                        channelStreamService.save(stream);
+                        mChannelStreamDao.insert(stream);
                     }
                 }
 
@@ -154,7 +153,7 @@ public class UploadService extends NanoHTTPD {
                     ChannelCategory category = new ChannelCategory();
                     category.setName(categoryName);
 
-                    channelCategoryService.save(category);
+                    mChannelCategoryDao.insert(category);
                 }
 
             }

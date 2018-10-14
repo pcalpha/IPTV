@@ -1,7 +1,7 @@
 package cn.com.pcalpha.iptv.channel;
 
-import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,15 +21,15 @@ import cn.com.pcalpha.iptv.widget.MenuListView;
 
 public class ChannelFragment extends Fragment {
 
-    private Activity mainActivity;
-    private MenuListView channelView;
-    private ChannelService channelService;
+    private Context mContext;
+    private MenuListView mChannelView;
+    private ChannelDao mChannelDao;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mainActivity = getActivity();
-        channelService = ChannelService.getInstance(this.getActivity());
+        mContext = getActivity();
+        mChannelDao = ChannelDao.getInstance(this.getActivity());
     }
 
     @Nullable
@@ -39,16 +39,16 @@ public class ChannelFragment extends Fragment {
 
         String channelCategoryName = getArguments().getString("categoryName");
         Param4Channel param4Channel = Param4Channel.build().setCategoryName(channelCategoryName);
-        List<Channel> channelList = channelService.find(param4Channel);
+        List<Channel> channelList = mChannelDao.find(param4Channel);
 
         ChannelAdapter channelAdapter = new ChannelAdapter(this.getActivity(), channelList);
-        channelView = (MenuListView) view.findViewById(R.id.channel_list_view);
-        channelView.setAdapter(channelAdapter);
+        mChannelView = (MenuListView) view.findViewById(R.id.channel_list_view);
+        mChannelView.setAdapter(channelAdapter);
 
-        channelView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mChannelView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Channel lastPlay= channelService.getLastPlay();
+                Channel lastPlay= mChannelDao.getLastPlay();
 
                 ChannelAdapter channelAdapter = (ChannelAdapter) parent.getAdapter();
                 Channel channel = channelAdapter.getItem(position);
@@ -75,19 +75,19 @@ public class ChannelFragment extends Fragment {
     public void onStart() {
         super.onStart();
         String categoryName = getArguments().getString("categoryName");
-        Channel channel = channelService.getLastPlay();
+        Channel channel = mChannelDao.getLastPlay();
         if (null != channel) {
             if (null != categoryName && !"".equals(categoryName)) {
                 if (categoryName.equals(channel.getCategoryName())) {
-                    ChannelAdapter adapter = (ChannelAdapter) channelView.getAdapter();
+                    ChannelAdapter adapter = (ChannelAdapter) mChannelView.getAdapter();
                     int position = adapter.getPosition(channel);
-                    channelView.setSelection(position);
-                    channelView.requestFocus();
+                    mChannelView.setSelection(position);
+                    mChannelView.requestFocus();
                 }
             }
         } else {
-            channelView.setSelection(0);
-            channelView.requestFocus();
+            mChannelView.setSelection(0);
+            mChannelView.requestFocus();
         }
 
     }

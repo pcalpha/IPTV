@@ -19,15 +19,15 @@ import cn.com.pcalpha.iptv.widget.MenuListView;
 
 public class SettingOptionFragment extends Fragment {
 
-    private MenuListView settingOptionListView;
-    private SettingOptionAdapter adapter;
-    private FragmentSwitcher fragmentSwitcher;
+    private MenuListView mSettingOptionListView;
+    private SettingOptionAdapter mAdapter;
+    private FragmentSwitcher mFragmentSwitcher;
     private OnOptionSelectedListener onOptionSelectedListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fragmentSwitcher = new FragmentSwitcher(R.id.frame_menu_content_container, getFragmentManager());
+        mFragmentSwitcher = new FragmentSwitcher(R.id.frame_menu_content_container, getFragmentManager());
     }
 
     @Nullable
@@ -35,13 +35,13 @@ public class SettingOptionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_setting_option, container, false);
 
-        settingOptionListView = (MenuListView) view.findViewById(R.id.settings_option_list_view);
+        mSettingOptionListView = (MenuListView) view.findViewById(R.id.settings_option_list_view);
         final Setting setting = (Setting) getArguments().getSerializable("setting");
 
-        adapter = new SettingOptionAdapter(this.getActivity(), setting.getOptions());
+        mAdapter = new SettingOptionAdapter(this.getActivity(), setting.getOptions());
 
-        settingOptionListView.setAdapter(adapter);
-        settingOptionListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mSettingOptionListView.setAdapter(mAdapter);
+        mSettingOptionListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SettingOptionAdapter adapter = (SettingOptionAdapter) parent.getAdapter();
@@ -54,7 +54,7 @@ public class SettingOptionFragment extends Fragment {
             }
         });
 
-        settingOptionListView.setOnKeyListener(new View.OnKeyListener() {
+        mSettingOptionListView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() != KeyEvent.ACTION_DOWN) {
@@ -65,7 +65,7 @@ public class SettingOptionFragment extends Fragment {
                     if (null != onOptionSelectedListener) {
                         onOptionSelectedListener.OnOptionSelected(setting);
                     }
-                    //fragmentSwitcher.showFragment(settingFragment);
+                    //mFragmentSwitcher.showFragment(settingFragment);
                     return true;
                 }
                 return false;
@@ -87,17 +87,17 @@ public class SettingOptionFragment extends Fragment {
             if (null != setting.getOptions()) {
                 for (SettingOption option : setting.getOptions()) {
                     if (setting.getValue().equals(option.getValue())) {
-                        SettingOptionAdapter adapter = (SettingOptionAdapter) settingOptionListView.getAdapter();
+                        SettingOptionAdapter adapter = (SettingOptionAdapter) mSettingOptionListView.getAdapter();
                         int position = adapter.getPosition(option);
                         adapter.setSelectedPosition(position);
-                        settingOptionListView.setSelection(position);
-                        settingOptionListView.requestFocus();
+                        mSettingOptionListView.setSelection(position);
+                        mSettingOptionListView.requestFocus();
                     }
                 }
             }
         } else {
-            settingOptionListView.setSelection(0);
-            settingOptionListView.requestFocus();
+            mSettingOptionListView.setSelection(0);
+            mSettingOptionListView.requestFocus();
         }
 
 

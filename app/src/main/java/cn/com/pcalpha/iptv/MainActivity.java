@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -33,13 +32,13 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import cn.com.pcalpha.iptv.category.ChannelCategoryDao;
+import cn.com.pcalpha.iptv.channel.ChannelDao;
+import cn.com.pcalpha.iptv.channel.ChannelStreamDao;
 import cn.com.pcalpha.iptv.channel.Param4Channel;
 import cn.com.pcalpha.iptv.channel.Param4ChannelStream;
 import cn.com.pcalpha.iptv.channel.Channel;
 import cn.com.pcalpha.iptv.channel.ChannelStream;
-import cn.com.pcalpha.iptv.category.ChannelCategoryService;
-import cn.com.pcalpha.iptv.channel.ChannelService;
-import cn.com.pcalpha.iptv.channel.ChannelStreamService;
 import cn.com.pcalpha.iptv.menu.MenuFragment;
 import tv.danmaku.ijk.media.example.widget.media.IjkVideoView;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -48,6 +47,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * MainActivity class that loads {@link MainFragment}.
  */
 public class MainActivity extends AppCompatActivity {
+    private static final String CHANNEL_CHANGE_ACTION = "cn.com.pcalpha.iptv.action.PLAY_CHANNEL";
 
     private IjkVideoView mVideoView;
     private TextView mInputChannelView;
@@ -55,19 +55,14 @@ public class MainActivity extends AppCompatActivity {
     private TextView mEpgChannelNo;
     private TextView mEpgChannelName;
 
-
     private ChannelReceiver mChannelReceiver;
-
-    private ChannelService channelService;
-    private ChannelStreamService channelStreamService;
-    private ChannelCategoryService channelCategoryService;
+    private ChannelDao mChannelDao;
+    private ChannelCategoryDao mChannelCategoryDao;
+    private ChannelStreamDao mChannelStreamDao;
 
     private SharedPreferences mSharedPreferences;
     private Channel mCurrentChannel;
     private List<Channel> mChannelList;
-
-
-    private static final String CHANNEL_CHANGE_ACTION = "cn.com.pcalpha.iptv.action.PLAY_CHANNEL";
 
     static {
         IjkMediaPlayer.loadLibrariesOnce(null);
@@ -107,20 +102,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initService() {
-        channelService = ChannelService.getInstance(this);
-        channelStreamService = ChannelStreamService.getInstance(this);
-        channelCategoryService = ChannelCategoryService.getInstance(this);
+        mChannelDao = ChannelDao.getInstance(this);
+        mChannelCategoryDao = ChannelCategoryDao.getInstance(this);
+        mChannelStreamDao = ChannelStreamDao.getInstance(this);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     private void initData() {
         Param4Channel param = Param4Channel.build();
-        mCurrentChannel = channelService.getLastPlay();
+        mCurrentChannel = mChannelDao.getLastPlay();
         if (null == mCurrentChannel) {
-            mChannelList = channelService.find(param);
+            mChannelList = mChannelDao.find(param);
             if (null != mChannelList && mChannelList.size() > 0) {
                 mCurrentChannel = mChannelList.get(0);
             }
+        }
+        if (null == mCurrentChannel) {
+            return;
         }
         loadStream(mCurrentChannel);
         ChannelStream lastPlayStream = mCurrentChannel.getLastPlayStream();
@@ -299,10 +297,15 @@ public class MainActivity extends AppCompatActivity {
             showEpg(channel);
             loadStream(mCurrentChannel);//加载源
             play(mCurrentChannel.getLastPlayStream());
-            channelService.setLastPlay(channel);
+            setLastPlay(channel);
         } else {
             Toast.makeText(this, "未找到合适的节目", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void setLastPlay(Channel channel) {
+        mChannelDao.setLastPlay(channel.getName());
+        mChannelCategoryDao.setLastPlay(channel.getCategoryName());
     }
 
     private void play(ChannelStream stream) {
@@ -311,18 +314,21 @@ public class MainActivity extends AppCompatActivity {
             mVideoView.setVideoPath(stream.getUrl());
             mVideoView.start();
 
-            channelService.setLastPlayStream(stream.getChannelName(), stream.getId());
+            mChannelDao.setLastPlayStream(stream.getChannelName(), stream.getId());
         } else {
             Toast.makeText(this, "未找到合适的节目源", Toast.LENGTH_LONG).show();
         }
     }
 
     private void loadStream(Channel channel) {
+        if(null==channel){
+            return;
+        }
         if (null == channel.getStreams()) {
             Param4ChannelStream param4ChannelStream = Param4ChannelStream.build()
                     .setChannelName(channel.getName());
-            List<ChannelStream> streamList = channelStreamService.find(param4ChannelStream);
-            ChannelStream lastPlayStream = channelStreamService.get(channel.getsId());
+            List<ChannelStream> streamList = mChannelStreamDao.find(param4ChannelStream);
+            ChannelStream lastPlayStream = mChannelStreamDao.get(channel.getsId());
             if (null == lastPlayStream) {
                 lastPlayStream = streamList.get(0);
             }

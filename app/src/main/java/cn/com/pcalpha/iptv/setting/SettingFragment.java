@@ -24,18 +24,18 @@ import cn.com.pcalpha.iptv.widget.MenuListView;
 
 public class SettingFragment extends Fragment implements SettingOptionFragment.OnOptionSelectedListener {
 
-    private MenuListView settingListView;
+    private MenuListView mSettingListView;
 
-    private FragmentSwitcher fragmentSwitcher;
-    private SettingOptionFragment settingOptionFragment;
-    private SharedPreferences sharedPreferences;
+    private FragmentSwitcher mFragmentSwitcher;
+    private SettingOptionFragment mSettingOptionFragment;
+    private SharedPreferences mSharedPreferences;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        settingOptionFragment = new SettingOptionFragment();
-        fragmentSwitcher = new FragmentSwitcher(R.id.frame_menu_content_container, getFragmentManager());
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+        mSettingOptionFragment = new SettingOptionFragment();
+        mFragmentSwitcher = new FragmentSwitcher(R.id.frame_menu_content_container, getFragmentManager());
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
     }
 
     @Nullable
@@ -43,7 +43,7 @@ public class SettingFragment extends Fragment implements SettingOptionFragment.O
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_setting, container, false);
 
-        settingListView = (MenuListView) view.findViewById(R.id.setting_list_view);
+        mSettingListView = (MenuListView) view.findViewById(R.id.setting_list_view);
 
 
         List<Setting> settingList = new ArrayList<>();
@@ -68,7 +68,7 @@ public class SettingFragment extends Fragment implements SettingOptionFragment.O
 //        options.add(option13);
 //        setting1.setOptions(options);
 //
-//        String settingCarrier = sharedPreferences.getString("pref_key_carrier", "CMCC");
+//        String settingCarrier = mSharedPreferences.getString("pref_key_carrier", "CMCC");
 //        setting1.setKey("pref_key_carrier");
 //        setting1.setValue(settingCarrier);
 
@@ -89,7 +89,7 @@ public class SettingFragment extends Fragment implements SettingOptionFragment.O
         setting2.setOptions(options2);
 
 
-        String usingMedisCodec = sharedPreferences.getString("pref_key_using_media_codec", "true");
+        String usingMedisCodec = mSharedPreferences.getString("pref_key_using_media_codec", "true");
         setting2.setKey("pref_key_using_media_codec");
         setting2.setValue(usingMedisCodec);
 
@@ -104,9 +104,9 @@ public class SettingFragment extends Fragment implements SettingOptionFragment.O
 
 
         final SettingAdapter adapter = new SettingAdapter(this.getActivity(), settingList);
-        settingListView.setAdapter(adapter);
+        mSettingListView.setAdapter(adapter);
 
-        settingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mSettingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SettingAdapter adapter = (SettingAdapter) parent.getAdapter();
@@ -119,16 +119,16 @@ public class SettingFragment extends Fragment implements SettingOptionFragment.O
             }
         });
 
-        settingListView.setOnKeyListener(new View.OnKeyListener() {
+        mSettingListView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() != KeyEvent.ACTION_DOWN) {
                     return false;
                 }
                 if (KeyEvent.KEYCODE_DPAD_RIGHT == keyCode) {
-                    if (settingListView.isFocused()) {
-                        int position = settingListView.getSelectedItemPosition();
-                        Setting setting = (Setting) settingListView.getAdapter().getItem(position);
+                    if (mSettingListView.isFocused()) {
+                        int position = mSettingListView.getSelectedItemPosition();
+                        Setting setting = (Setting) mSettingListView.getAdapter().getItem(position);
                         showSettingOptionFragment(setting);
                         return true;
                     }
@@ -161,7 +161,7 @@ public class SettingFragment extends Fragment implements SettingOptionFragment.O
 //        if (hidden) {   // 不在最前端显示 相当于调用了onPause();
 //
 //        }else{  // 在最前端显示 相当于调用了onResume();
-//            settingListView.requestFocus();
+//            mSettingListView.requestFocus();
 //        }
 //    }
 
@@ -174,9 +174,9 @@ public class SettingFragment extends Fragment implements SettingOptionFragment.O
 //            @Override
 //            public boolean onKey(View v, int keyCode, KeyEvent event) {
 //                if (KeyEvent.KEYCODE_DPAD_RIGHT == keyCode) {
-//                    if(settingListView.isFocused()){
-//                        int position = settingListView.getSelectedItemPosition();
-//                        Setting setting = (Setting) settingListView.getAdapter().getItem(position);
+//                    if(mSettingListView.isFocused()){
+//                        int position = mSettingListView.getSelectedItemPosition();
+//                        Setting setting = (Setting) mSettingListView.getAdapter().getItem(position);
 //                        showSettingOptionFragment(setting);
 //                        return true;
 //                    }
@@ -193,29 +193,29 @@ public class SettingFragment extends Fragment implements SettingOptionFragment.O
         SettingOptionFragment settingOptionFragment = new SettingOptionFragment();
         settingOptionFragment.setArguments(bundle);
         settingOptionFragment.setOnOptionSelectedListener(this);
-        //fragmentSwitcher.addFragment(settingOptionFragment, "setting", false);
-        fragmentSwitcher.showFragment(settingOptionFragment);
+        //mFragmentSwitcher.addFragment(mSettingOptionFragment, "setting", false);
+        mFragmentSwitcher.showFragment(settingOptionFragment);
     }
 
 //    public void showSettingFragment() {
-//        fragmentSwitcher.showFragment(this);
-//        settingListView.requestFocus();
+//        mFragmentSwitcher.showFragment(this);
+//        mSettingListView.requestFocus();
 //    }
 
     @Override
     public void OnOptionSelected(Setting setting) {
         if (null != setting) {
-            SettingAdapter adapter = (SettingAdapter) settingListView.getAdapter();
+            SettingAdapter adapter = (SettingAdapter) mSettingListView.getAdapter();
             int position = adapter.getPosition(setting);
 
-            settingListView.setSelection(position);
+            mSettingListView.setSelection(position);
             adapter.notifyDataSetChanged();
 
-            SharedPreferences.Editor editor = sharedPreferences.edit();
+            SharedPreferences.Editor editor = mSharedPreferences.edit();
             editor.putString(setting.getKey(), setting.getValue());
             editor.commit();
         }
-        fragmentSwitcher.showFragment(this);
-        settingListView.requestFocus();
+        mFragmentSwitcher.showFragment(this);
+        mSettingListView.requestFocus();
     }
 }

@@ -9,16 +9,17 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.com.pcalpha.iptv.R;
+import cn.com.pcalpha.iptv.category.ChannelCategoryDao;
+import cn.com.pcalpha.iptv.tools.DbHelper;
+
 /**
  * Created by caiyida on 2018/6/24.
  */
-
-public class ChannelDao extends SQLiteOpenHelper {
-    private SQLiteDatabase mWriteDb;
-    private SQLiteDatabase mReadDb;
+public class ChannelDao {
+    private DbHelper mDbHelper;
 
     public static final String TABLE_NAME = "CHANNEL";
-
     public static final String COLUMN_ID = "ID";
     public static final String COLUMN_NO = "NO";
     public static final String COLUMN_NAME = "NAME";
@@ -35,21 +36,7 @@ public class ChannelDao extends SQLiteOpenHelper {
             COLUMN_LAST_PLAY
     };
 
-    public static final String SQL_CREATE =
-            " CREATE TABLE IF NOT EXISTS " + TABLE_NAME +
-                    " (" +
-                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    COLUMN_NO + " VARCHAR, " +
-                    COLUMN_NAME + " VARCHAR, " +
-                    COLUMN_CATEGORY_NAME + " VARCHAR, " +
-                    COLUMN_STREAM_ID + " VARCHAR, " +
-                    COLUMN_LAST_PLAY + " INTEGER " +
-                    ") ";
-
-    public static final String SQL_DROP = "DROP TABLE IF EXISTS " + TABLE_NAME;
-
     private static ChannelDao singleton;
-
     public static ChannelDao getInstance(Context context) {
         if (null == singleton) {
             synchronized (ChannelDao.class) {
@@ -62,9 +49,7 @@ public class ChannelDao extends SQLiteOpenHelper {
     }
 
     private ChannelDao(Context context) {
-        super(context, "IPTV.db", null, 11);
-        mWriteDb = getWritableDatabase();
-        mReadDb = getReadableDatabase();
+        this.mDbHelper = DbHelper.getInstance(context);
     }
 
     public void insertAsync(final Channel channel) {
@@ -77,6 +62,7 @@ public class ChannelDao extends SQLiteOpenHelper {
     }
 
     public void insert(Channel channel) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_ID, channel.getId());
         cv.put(COLUMN_NO, channel.getNo());
@@ -84,34 +70,39 @@ public class ChannelDao extends SQLiteOpenHelper {
         cv.put(COLUMN_LAST_PLAY, channel.getLastPlay());
         cv.put(COLUMN_STREAM_ID, channel.getsId());
         cv.put(COLUMN_CATEGORY_NAME, channel.getCategoryName());
-        mWriteDb.insert(TABLE_NAME, null, cv);
+        db.insert(TABLE_NAME, null, cv);
     }
 
     public void insertBatch(List<Channel> channelList) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
         if (null != channelList) {
-            mWriteDb.beginTransaction();
+            db.beginTransaction();
             for (Channel channel : channelList) {
                 insert(channel);
             }
-            mWriteDb.setTransactionSuccessful();
+            db.setTransactionSuccessful();
         }
     }
 
     public void delete(Integer id) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
         String[] whereArgs = new String[]{id.toString()};
-        mWriteDb.delete(TABLE_NAME, COLUMN_ID + "=?", whereArgs);
+        db.delete(TABLE_NAME, COLUMN_ID + "=?", whereArgs);
     }
 
     public void delete(String name) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
         String[] whereArgs = new String[]{name};
-        mWriteDb.delete(TABLE_NAME, COLUMN_NAME + "=?", whereArgs);
+        db.delete(TABLE_NAME, COLUMN_NAME + "=?", whereArgs);
     }
 
     public void clear() {
-        mWriteDb.delete(TABLE_NAME, null, null);
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        db.delete(TABLE_NAME, null, null);
     }
 
     public void update(Channel channel) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_ID, channel.getId());
         cv.put(COLUMN_NO, channel.getNo());
@@ -121,13 +112,14 @@ public class ChannelDao extends SQLiteOpenHelper {
         cv.put(COLUMN_CATEGORY_NAME, channel.getCategoryName());
 
         String[] whereArgs = new String[]{channel.getId().toString()};
-        mWriteDb.update(TABLE_NAME, cv, COLUMN_ID + "=?", whereArgs);
+        db.update(TABLE_NAME, cv, COLUMN_ID + "=?", whereArgs);
     }
 
     public Channel get(String channelName) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String selection = COLUMN_NAME + " = ? ";
         String[] selectionArgs = new String[]{channelName};
-        Cursor cursor = mReadDb.query(TABLE_NAME, ALL_COLUMNS, selection, selectionArgs, null, null,
+        Cursor cursor = db.query(TABLE_NAME, ALL_COLUMNS, selection, selectionArgs, null, null,
                 COLUMN_NO + " ASC", null);
         if (0 == cursor.getCount()) {
             return null;
@@ -142,9 +134,10 @@ public class ChannelDao extends SQLiteOpenHelper {
     }
 
     public Channel get(Integer id) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String selection = COLUMN_ID + " = ? ";
         String[] selectionArgs = new String[]{String.valueOf(id)};
-        Cursor cursor = mReadDb.query(TABLE_NAME, ALL_COLUMNS, selection, selectionArgs, null, null,
+        Cursor cursor = db.query(TABLE_NAME, ALL_COLUMNS, selection, selectionArgs, null, null,
                 COLUMN_ID + " ASC", null);
         if (0 == cursor.getCount()) {
             return null;
@@ -160,6 +153,7 @@ public class ChannelDao extends SQLiteOpenHelper {
     //private List<Channel> channelList;//缓存列表
 
     public List<Channel> find(Param4Channel param) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
         //initChannel();
 //        if (null != channelList) {
 //            return channelList;
@@ -177,7 +171,7 @@ public class ChannelDao extends SQLiteOpenHelper {
 
         String[] selectionArgs = args.toArray(new String[args.size()]);
 
-        Cursor cursor = mReadDb.query(TABLE_NAME, ALL_COLUMNS, selection, selectionArgs, null, null,
+        Cursor cursor = db.query(TABLE_NAME, ALL_COLUMNS, selection, selectionArgs, null, null,
                 COLUMN_ID + " ASC", null);
         List<Channel> result = buildResult(cursor);
         //channelList = result;
@@ -236,31 +230,34 @@ public class ChannelDao extends SQLiteOpenHelper {
 //    }
 
     public void setLastPlay(final String channelName) {
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String sql = "UPDATE " + TABLE_NAME + " SET " + COLUMN_LAST_PLAY + " = 0 ";
-                mReadDb.execSQL(sql);
+                db.execSQL(sql);
                 String sql2 = "UPDATE " + TABLE_NAME + " SET " + COLUMN_LAST_PLAY + " = 1 " + " WHERE " + COLUMN_NAME + " = " + "'" + channelName + "'";
-                mReadDb.execSQL(sql2);
+                db.execSQL(sql2);
             }
         }).start();
     }
 
 
     public void setLastPlayStream(final String channelName, final int streamId) {
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String sql = "UPDATE " + TABLE_NAME + " SET " + COLUMN_STREAM_ID + " = " + streamId + "  WHERE " + COLUMN_NAME + " = " + "'" + channelName + "'";
-                mReadDb.execSQL(sql);
+                db.execSQL(sql);
             }
         }).start();
     }
 
     public Channel getLastPlay() {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String selection = COLUMN_LAST_PLAY + " = 1 ";
-        Cursor cursor = mReadDb.query(TABLE_NAME, ALL_COLUMNS, selection, null, null, null,
+        Cursor cursor = db.query(TABLE_NAME, ALL_COLUMNS, selection, null, null, null,
                 COLUMN_NO + " ASC", null);
         if (0 == cursor.getCount()) {
             return null;
@@ -286,13 +283,5 @@ public class ChannelDao extends SQLiteOpenHelper {
 
     }
 
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL(ChannelDao.SQL_CREATE);
-    }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-    }
 }

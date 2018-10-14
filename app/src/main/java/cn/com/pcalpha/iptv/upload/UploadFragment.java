@@ -1,6 +1,7 @@
 package cn.com.pcalpha.iptv.upload;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -27,20 +28,25 @@ import cn.com.pcalpha.iptv.R;
 public class UploadFragment extends Fragment {
     private static final String TAG = "UploadFragment";
 
-    private TextView uploadInfo;
-    private UploadService uploadService;
+    private Context mContext;
+    private TextView mUploadInfo;
+    private UploadService mUploadService;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.mContext = this.getActivity();
+        this.mUploadService = new UploadService(mContext);
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_upload, container,false);
-        uploadInfo = view.findViewById(R.id.upload_info);
-
-        uploadService = new UploadService(this.getActivity());
+        mUploadInfo = view.findViewById(R.id.upload_info);
         try {
-            uploadService.start();
+            mUploadService.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -58,11 +64,11 @@ public class UploadFragment extends Fragment {
 
         //String url="http://"+ip+":"+UploadService.DEFAULT_SERVER_PORT+"/upload.html";
         //String text = "用浏览器打开\n"+url+"上传源文件";
-        uploadInfo.setText(sb.toString());
+        mUploadInfo.setText(sb.toString());
 
-//        uploadService = new UploadService(getActivity());
+//        mUploadService = new UploadService(getActivity());
 //        try {
-//            uploadService.start();
+//            mUploadService.start();
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }

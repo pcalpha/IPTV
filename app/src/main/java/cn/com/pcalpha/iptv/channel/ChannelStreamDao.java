@@ -10,16 +10,17 @@ import android.os.AsyncTask;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.com.pcalpha.iptv.category.ChannelCategoryDao;
+import cn.com.pcalpha.iptv.tools.DbHelper;
+
 /**
  * Created by caiyida on 2018/8/8.
  */
 
-public class ChannelStreamDao extends SQLiteOpenHelper {
-    private SQLiteDatabase mWriteDb;
-    private SQLiteDatabase mReadDb;
+public class ChannelStreamDao {
+    private DbHelper mDbHelper;
 
     public static final String TABLE_NAME = "CHANNEL_STREAM";
-
     public static final String COLUMN_ID = "ID";
     public static final String COLUMN_NAME = "NAME";
     public static final String COLUMN_URL = "URL";
@@ -36,20 +37,6 @@ public class ChannelStreamDao extends SQLiteOpenHelper {
             COLUMN_LAST_PLAY
     };
 
-    public static final String SQL_CREATE =
-            " CREATE TABLE IF NOT EXISTS " + TABLE_NAME +
-                    " (" +
-                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    COLUMN_NAME + " VARCHAR, " +
-                    COLUMN_URL + " VARCHAR, " +
-                    COLUMN_CARRIER + " VARCHAR, " +
-                    COLUMN_CHANNEL_NAME + " VARCHAR, " +
-                    COLUMN_LAST_PLAY + " INTEGER " +
-                    ") ";
-
-    public static final String SQL_DROP = "DROP TABLE IF EXISTS " + TABLE_NAME;
-
-
     private static ChannelStreamDao singleton;
     public static ChannelStreamDao getInstance(Context context) {
         if (null == singleton) {
@@ -63,22 +50,11 @@ public class ChannelStreamDao extends SQLiteOpenHelper {
     }
 
     private ChannelStreamDao(Context context) {
-        super(context, "IPTV.db", null, 11);
-        mWriteDb = getWritableDatabase();
-        mReadDb = getReadableDatabase();
-    }
-
-    public void insertAsync(final ChannelStream channelStream) {
-        new AsyncTask<String, Void, Void>() {
-            @Override
-            protected Void doInBackground(String... params) {
-                insert(channelStream);
-                return null;
-            }
-        }.execute();
+        this.mDbHelper = DbHelper.getInstance(context);
     }
 
     public void insert(ChannelStream channelStream) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_ID, channelStream.getId());
         cv.put(COLUMN_NAME, channelStream.getName());
@@ -86,34 +62,39 @@ public class ChannelStreamDao extends SQLiteOpenHelper {
         cv.put(COLUMN_CARRIER, channelStream.getCarrier());
         cv.put(COLUMN_LAST_PLAY, channelStream.getLastPlay());
         cv.put(COLUMN_CHANNEL_NAME, channelStream.getChannelName());
-        mWriteDb.insert(TABLE_NAME, null, cv);
+        db.insert(TABLE_NAME, null, cv);
     }
 
     public void insertBatch(List<ChannelStream> channelStreamList) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
         if (null != channelStreamList) {
-            mWriteDb.beginTransaction();
+            db.beginTransaction();
             for (ChannelStream channelStream : channelStreamList) {
                 insert(channelStream);
             }
-            mWriteDb.setTransactionSuccessful();
+            db.setTransactionSuccessful();
         }
     }
 
     public void delete(Integer id) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
         String[] whereArgs = new String[]{id.toString()};
-        mWriteDb.delete(TABLE_NAME, COLUMN_ID + "=?", whereArgs);
+        db.delete(TABLE_NAME, COLUMN_ID + "=?", whereArgs);
     }
 
     public void delete(String name) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
         String[] whereArgs = new String[]{name};
-        mWriteDb.delete(TABLE_NAME, COLUMN_NAME + "=?", whereArgs);
+        db.delete(TABLE_NAME, COLUMN_NAME + "=?", whereArgs);
     }
 
     public void clear() {
-        mWriteDb.delete(TABLE_NAME, null, null);
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        db.delete(TABLE_NAME, null, null);
     }
 
     public void update(ChannelStream channelStream) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_ID, channelStream.getId());
         cv.put(COLUMN_NAME, channelStream.getName());
@@ -123,13 +104,14 @@ public class ChannelStreamDao extends SQLiteOpenHelper {
         cv.put(COLUMN_CHANNEL_NAME, channelStream.getChannelName());
 
         String[] whereArgs = new String[]{String.valueOf(channelStream.getId())};
-        mWriteDb.update(TABLE_NAME, cv, COLUMN_ID + "=?", whereArgs);
+        db.update(TABLE_NAME, cv, COLUMN_ID + "=?", whereArgs);
     }
 
     public ChannelStream get(Integer id) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String selection = COLUMN_ID + " = ? ";
         String[] selectionArgs = new String[]{String.valueOf(id)};
-        Cursor cursor = mReadDb.query(TABLE_NAME, ALL_COLUMNS, selection, selectionArgs, null, null,
+        Cursor cursor = db.query(TABLE_NAME, ALL_COLUMNS, selection, selectionArgs, null, null,
                 COLUMN_ID + " ASC", null);
         if (0 == cursor.getCount()) {
             return null;
@@ -144,6 +126,7 @@ public class ChannelStreamDao extends SQLiteOpenHelper {
 
 
     public List<ChannelStream> find(Param4ChannelStream param) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String selection = "";
         List<String> args = new ArrayList<>();
         if (null != param.getChannelName() && !"".equals(param.getChannelName())) {
@@ -163,7 +146,7 @@ public class ChannelStreamDao extends SQLiteOpenHelper {
 
         String[] selectionArgs = args.toArray(new String[args.size()]);
 
-        Cursor cursor = mReadDb.query(TABLE_NAME, ALL_COLUMNS, selection, selectionArgs, null, null,
+        Cursor cursor = db.query(TABLE_NAME, ALL_COLUMNS, selection, selectionArgs, null, null,
                 COLUMN_ID + " ASC", null);
         return buildResult(cursor);
     }
@@ -213,15 +196,17 @@ public class ChannelStreamDao extends SQLiteOpenHelper {
 //    }
 
     public void setLastPlay(int id) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
         String sql = "UPDATE " + TABLE_NAME + " SET " + COLUMN_LAST_PLAY + " = 0 ";
-        mReadDb.execSQL(sql);
+        db.execSQL(sql);
         String sql2 = "UPDATE " + TABLE_NAME + " SET " + COLUMN_LAST_PLAY + " = 1 WHERE " + COLUMN_ID + " = " + id;
-        mReadDb.execSQL(sql2);
+        db.execSQL(sql2);
     }
 
     public ChannelStream getLastPlay() {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String selection = COLUMN_LAST_PLAY + " = 1 ";
-        Cursor cursor = mReadDb.query(TABLE_NAME, ALL_COLUMNS, selection, null, null, null,
+        Cursor cursor = db.query(TABLE_NAME, ALL_COLUMNS, selection, null, null, null,
                 COLUMN_ID + " ASC", null);
         List<ChannelStream> resultList = buildResult(cursor);
 
@@ -232,13 +217,5 @@ public class ChannelStreamDao extends SQLiteOpenHelper {
         return resultList.get(0);
     }
 
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL(ChannelStreamDao.SQL_CREATE);
-    }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-    }
 }

@@ -1,7 +1,7 @@
 package cn.com.pcalpha.iptv.category;
 
-import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -23,18 +23,18 @@ import cn.com.pcalpha.iptv.widget.MenuListView;
 public class ChannelCategoryFragment extends Fragment {
     private static final String TAG = "ChannelCategoryFragment";
 
-    private Activity mainActivity;
-    private MenuListView channelCategoryView;
-    private ChannelCategoryService channelCategoryService;
-    private FragmentSwitcher fragmentSwitcher;
+    private Context mContext;
+    private MenuListView mChannelCategoryView;
+    private ChannelCategoryDao mChannelCategoryDao;
+    private FragmentSwitcher mFragmentSwitcher;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mainActivity = getActivity();
-        channelCategoryService = ChannelCategoryService.getInstance(this.getActivity());
-        fragmentSwitcher = new FragmentSwitcher(R.id.frame_channel_list_container, getFragmentManager());
+        mContext = getActivity();
+        mChannelCategoryDao = ChannelCategoryDao.getInstance(this.getActivity());
+        mFragmentSwitcher = new FragmentSwitcher(R.id.frame_channel_list_container, getFragmentManager());
     }
 
     @Nullable
@@ -42,7 +42,7 @@ public class ChannelCategoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_channel_category, container, false);
 
-        List<ChannelCategory> channelCategoryList = channelCategoryService.findAll();
+        List<ChannelCategory> channelCategoryList = mChannelCategoryDao.findAll();
 
         for (ChannelCategory channelCategory : channelCategoryList) {
             String categoryName = channelCategory.getName();
@@ -52,7 +52,7 @@ public class ChannelCategoryFragment extends Fragment {
             ChannelFragment channelFragment = new ChannelFragment();
             channelFragment.setArguments(bundle);
 
-            fragmentSwitcher.addFragment(channelFragment, categoryName,false);
+            mFragmentSwitcher.addFragment(channelFragment, categoryName,false);
         }
 //        List<ChannelCategory> channelCategoryList = new ArrayList<>();
 //        for(int i=0;i<20;i++){
@@ -62,9 +62,9 @@ public class ChannelCategoryFragment extends Fragment {
 //        }
 
         ChannelCategoryAdapter channelCategoryAdapter = new ChannelCategoryAdapter(getActivity(), channelCategoryList);
-        channelCategoryView = (MenuListView) view.findViewById(R.id.channel_category_list_view);
-        channelCategoryView.setAdapter(channelCategoryAdapter);
-        channelCategoryView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mChannelCategoryView = (MenuListView) view.findViewById(R.id.channel_category_list_view);
+        mChannelCategoryView.setAdapter(channelCategoryAdapter);
+        mChannelCategoryView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 ChannelCategoryAdapter adapter = (ChannelCategoryAdapter)parent.getAdapter();
@@ -80,7 +80,7 @@ public class ChannelCategoryFragment extends Fragment {
             }
         });
 
-        channelCategoryView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mChannelCategoryView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ChannelCategoryAdapter adapter = (ChannelCategoryAdapter)parent.getAdapter();
@@ -91,27 +91,27 @@ public class ChannelCategoryFragment extends Fragment {
             }
         });
 
-        //channelCategoryView.setSelection(1);
+        //mChannelCategoryView.setSelection(1);
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        ChannelCategory channelCategory = channelCategoryService.getLastPlay();
+        ChannelCategory channelCategory = mChannelCategoryDao.getLastPlay();
         if (null != channelCategory) {
-            ChannelCategoryAdapter adapter = (ChannelCategoryAdapter) channelCategoryView.getAdapter();
+            ChannelCategoryAdapter adapter = (ChannelCategoryAdapter) mChannelCategoryView.getAdapter();
             int position = adapter.getPosition(channelCategory);
-            channelCategoryView.setSelection(position);
-            //channelCategoryView.requestFocus();
+            mChannelCategoryView.setSelection(position);
+            //mChannelCategoryView.requestFocus();
         } else {
-            channelCategoryView.setSelection(0);
+            mChannelCategoryView.setSelection(0);
         }
     }
 
 
     public void showChannelFragment(String categoryName) {
-        ChannelFragment channelFragment = (ChannelFragment) fragmentSwitcher.getFragment(categoryName);
-        fragmentSwitcher.showFragment(channelFragment);
+        ChannelFragment channelFragment = (ChannelFragment) mFragmentSwitcher.getFragment(categoryName);
+        mFragmentSwitcher.showFragment(channelFragment);
     }
 }

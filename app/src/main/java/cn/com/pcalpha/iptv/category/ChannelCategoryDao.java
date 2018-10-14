@@ -9,16 +9,16 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.com.pcalpha.iptv.tools.DbHelper;
+
 /**
  * Created by caiyida on 2018/6/24.
  */
 
-public class ChannelCategoryDao extends SQLiteOpenHelper {
-    private SQLiteDatabase mWriteDb;
-    private SQLiteDatabase mReadDb;
+public class ChannelCategoryDao {
+    private DbHelper mDbHelper;
 
     public static final String TABLE_NAME = "CHANNEL_CATEGORY";
-
     public static final String COLUMN_ID = "ID";
     public static final String COLUMN_NAME = "NAME";
     public static final String COLUMN_LAST_PLAY = "LAST_PLAY";
@@ -29,20 +29,12 @@ public class ChannelCategoryDao extends SQLiteOpenHelper {
             COLUMN_LAST_PLAY
     };
 
-    public static final String SQL_CREATE =
-            " CREATE TABLE IF NOT EXISTS " +
-                    TABLE_NAME + " (" +
-                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    COLUMN_NAME + " VARCHAR, " +
-                    COLUMN_LAST_PLAY + " INTEGER " +
-                    ") ";
-    public static final String SQL_DROP = "DROP TABLE IF EXISTS " + TABLE_NAME;
-
     private static ChannelCategoryDao singleton;
+
     public static ChannelCategoryDao getInstance(Context context) {
-        if(null==singleton){
-            synchronized (ChannelCategoryDao.class){
-                if(null==singleton){
+        if (null == singleton) {
+            synchronized (ChannelCategoryDao.class) {
+                if (null == singleton) {
                     singleton = new ChannelCategoryDao(context);
                 }
             }
@@ -51,70 +43,65 @@ public class ChannelCategoryDao extends SQLiteOpenHelper {
     }
 
     private ChannelCategoryDao(Context context) {
-        super(context, "IPTV.db", null, 11);
-        mWriteDb = getWritableDatabase();
-        mReadDb = getReadableDatabase();
-    }
-
-    public void insertAsync(final ChannelCategory channelCategory) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                insert(channelCategory);
-            }
-        }).start();
+        this.mDbHelper = DbHelper.getInstance(context);
     }
 
     public void insert(ChannelCategory channelCategory) {
+        SQLiteDatabase db =mDbHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_ID, channelCategory.getId());
         cv.put(COLUMN_NAME, channelCategory.getName());
         cv.put(COLUMN_LAST_PLAY, channelCategory.getLastPlay());
-        mWriteDb.insert(TABLE_NAME, null, cv);
+        db.insert(TABLE_NAME, null, cv);
     }
 
     public void delete(Integer channelNo) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
         String[] whereArgs = new String[]{channelNo.toString()};
-        mWriteDb.delete(TABLE_NAME, "no=?", whereArgs);
+        db.delete(TABLE_NAME, "no=?", whereArgs);
     }
 
     public void clear() {
-        mWriteDb.delete(TABLE_NAME, null, null);
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        db.delete(TABLE_NAME, null, null);
     }
 
     public void update(ChannelCategory channelCategory) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_ID, channelCategory.getId());
         cv.put(COLUMN_NAME, channelCategory.getName());
         cv.put(COLUMN_LAST_PLAY, channelCategory.getLastPlay());
         String[] whereArgs = new String[]{channelCategory.getId().toString()};
-        mWriteDb.update(TABLE_NAME, cv, "no=?", whereArgs);
+        db.update(TABLE_NAME, cv, "no=?", whereArgs);
     }
 
     public ChannelCategory get(Integer id) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String selection = COLUMN_ID + " = ? ";
         String[] selectionArgs = new String[]{String.valueOf(id)};
-        Cursor cursor = mReadDb.query(TABLE_NAME, ALL_COLUMNS, selection, selectionArgs, null, null,
+        Cursor cursor = db.query(TABLE_NAME, ALL_COLUMNS, selection, selectionArgs, null, null,
                 COLUMN_ID + " ASC", null);
         if (0 == cursor.getCount()) {
             return null;
         }
 
         List<ChannelCategory> resultList = buildResult(cursor);
-        if(null==resultList||resultList.size()<1){
+        if (null == resultList || resultList.size() < 1) {
             return null;
         }
         return resultList.get(0);
     }
 
     //private List<ChannelCategory> channelCategoryList;//缓存列表
-    public List<ChannelCategory>  findAll() {
+    public List<ChannelCategory> findAll() {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
         //init();
 //        if (null != channelCategoryList) {
 //            return channelCategoryList;
 //        }
 
-        Cursor cursor = mReadDb.query(TABLE_NAME, ALL_COLUMNS, null, null, null, null,
+        Cursor cursor = db.query(TABLE_NAME, ALL_COLUMNS, null, null, null, null,
                 COLUMN_ID + " ASC", null);
 
         List<ChannelCategory> result = buildResult(cursor);
@@ -145,27 +132,29 @@ public class ChannelCategoryDao extends SQLiteOpenHelper {
     }
 
     public void setLastPlay(final String categoryName) {
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String sql = "UPDATE " + TABLE_NAME + " SET " + COLUMN_LAST_PLAY + " = 0 ";
-                mReadDb.execSQL(sql);
-                String sql2 = "UPDATE " + TABLE_NAME + " SET " + COLUMN_LAST_PLAY + " = 1 WHERE " + COLUMN_NAME + " = " + "'"+categoryName+"'";
-                mReadDb.execSQL(sql2);
+                db.execSQL(sql);
+                String sql2 = "UPDATE " + TABLE_NAME + " SET " + COLUMN_LAST_PLAY + " = 1 WHERE " + COLUMN_NAME + " = " + "'" + categoryName + "'";
+                db.execSQL(sql2);
             }
         }).start();
     }
 
     public ChannelCategory getLastPlay() {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String selection = COLUMN_LAST_PLAY + " = 1 ";
-        Cursor cursor = mReadDb.query(TABLE_NAME, ALL_COLUMNS, selection, null, null, null,
+        Cursor cursor = db.query(TABLE_NAME, ALL_COLUMNS, selection, null, null, null,
                 COLUMN_ID + " ASC", null);
         if (0 == cursor.getCount()) {
             return null;
         }
 
         List<ChannelCategory> resultList = buildResult(cursor);
-        if(null==resultList||resultList.size()<1){
+        if (null == resultList || resultList.size() < 1) {
             return null;
         }
         return resultList.get(0);
@@ -175,16 +164,5 @@ public class ChannelCategoryDao extends SQLiteOpenHelper {
         clear();
         this.insert(new ChannelCategory(1, "央视频道"));
         this.insert(new ChannelCategory(2, "卫视频道"));
-    }
-
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL(ChannelCategoryDao.SQL_CREATE);
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
     }
 }
