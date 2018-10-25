@@ -28,7 +28,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
-        android:background="#44dddddd"
+        android:background="#99000000"
         android:gravity="center"
         android:orientation="horizontal"
         android:translationZ="50dp"
@@ -45,6 +45,7 @@
                 android:text=""
                 android:textSize="20dp"
                 android:textStyle="bold"
+                android:textColor="#FFFFFF"
                 />
 
             <TextView
@@ -55,7 +56,9 @@
                 android:paddingRight="50dp"
                 android:gravity="center"
                 android:text=""
-                android:textSize="20dp" />
+                android:textSize="20dp"
+                android:textColor="#FFFFFF"
+                />
 
     </LinearLayout>
 

@@ -293,6 +293,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void play(Channel channel) {
         if (null != channel) {
+            //如果频道没有变化
+            if(channel.equals(mCurrentChannel)){
+                return;
+            }
             mCurrentChannel = channel;
             showEpg(channel);
             loadStream(mCurrentChannel);//加载源
@@ -301,11 +305,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "未找到合适的节目", Toast.LENGTH_LONG).show();
         }
-    }
-
-    public void setLastPlay(Channel channel) {
-        mChannelDao.setLastPlay(channel.getName());
-        mChannelCategoryDao.setLastPlay(channel.getCategoryName());
     }
 
     private void play(ChannelStream stream) {
@@ -335,6 +334,11 @@ public class MainActivity extends AppCompatActivity {
             channel.setStreams(streamList);
             channel.setLastPlayStream(lastPlayStream);
         }
+    }
+
+    public void setLastPlay(Channel channel) {
+        mChannelDao.setLastPlay(channel.getName());
+        mChannelCategoryDao.setLastPlay(channel.getCategoryName());
     }
 
     private void showMainMenuFragment() {
@@ -387,7 +391,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         mEpgView.setVisibility(View.VISIBLE);
-        mHandler.postDelayed(run, 2000);
+        mHandler.postDelayed(run, 5000);
     }
 
     private void hideEpg() {
