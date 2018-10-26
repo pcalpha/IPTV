@@ -48,14 +48,14 @@ public class ChannelFragment extends Fragment {
         mChannelView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Channel lastPlay= mChannelDao.getLastPlay();
-
+//                Channel lastPlay= mChannelDao.getLastPlay();
+//
                 ChannelAdapter channelAdapter = (ChannelAdapter) parent.getAdapter();
                 Channel channel = channelAdapter.getItem(position);
-                if (channel.equals(lastPlay)) {
-                    getFragmentManager().popBackStackImmediate();
-                    return;
-                }
+//                if (channel.equals(lastPlay)) {
+//                    getFragmentManager().popBackStackImmediate();
+//                    return;
+//                }
                 playChannel(channel);
                 getFragmentManager().popBackStackImmediate();
             }
