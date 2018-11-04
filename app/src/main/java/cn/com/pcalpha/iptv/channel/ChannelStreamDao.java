@@ -8,36 +8,70 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-
-import cn.com.pcalpha.iptv.category.ChannelCategoryDao;
-import cn.com.pcalpha.iptv.tools.DbHelper;
 
 /**
  * Created by caiyida on 2018/8/8.
  */
 
-public class ChannelStreamDao {
-    private DbHelper mDbHelper;
-
-    public static final String TABLE_NAME = "CHANNEL_STREAM";
-    public static final String COLUMN_ID = "ID";
-    public static final String COLUMN_NAME = "NAME";
-    public static final String COLUMN_URL = "URL";
-    public static final String COLUMN_CARRIER = "CARRIER";
-    public static final String COLUMN_CHANNEL_NAME = "CHANNEL_NAME";
-    public static final String COLUMN_LAST_PLAY = "LAST_PLAY";
-
-    public static final String ALL_COLUMNS[] = new String[]{
+public class ChannelStreamDao extends SQLiteOpenHelper {
+    private static final String DB_NAME = "ChannelStream.db";
+    private static final String TABLE_NAME = "CHANNEL_STREAM";
+    private static final String COLUMN_ID = "ID";
+    private static final String COLUMN_NAME = "NAME";
+    private static final String COLUMN_URL = "URL";
+    private static final String COLUMN_CARRIER = "CARRIER";
+    private static final String COLUMN_CHANNEL_NAME = "CHANNEL_NAME";
+    private static final String COLUMN_PLAY_TIME = "PLAY_TIME";
+    private static final String COLUMNS[] = new String[]{
             COLUMN_ID,
             COLUMN_NAME,
             COLUMN_URL,
             COLUMN_CARRIER,
             COLUMN_CHANNEL_NAME,
-            COLUMN_LAST_PLAY
+            COLUMN_PLAY_TIME
     };
 
+    private ChannelStreamDao(Context context) {
+        super(context, DB_NAME, null, 20);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        createChannelStream(db);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        recreateChannelStream(db);
+    }
+
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        recreateChannelStream(db);
+    }
+
+    private void createChannelStream(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + ChannelStreamDao.TABLE_NAME
+                + " ("
+                + "'" + ChannelStreamDao.COLUMN_ID + "' INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "'" + ChannelStreamDao.COLUMN_NAME + "' VARCHAR, "
+                + "'" + ChannelStreamDao.COLUMN_URL + "' VARCHAR, "
+                + "'" + ChannelStreamDao.COLUMN_CARRIER + "' VARCHAR, "
+                + "'" + ChannelStreamDao.COLUMN_CHANNEL_NAME + "' VARCHAR, "
+                + "'" + ChannelStreamDao.COLUMN_PLAY_TIME + "' INTEGER "
+                + ")");
+    }
+
+    private void recreateChannelStream(SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + ChannelStreamDao.TABLE_NAME);
+        createChannelStream(db);
+    }
+
     private static ChannelStreamDao singleton;
+
     public static ChannelStreamDao getInstance(Context context) {
         if (null == singleton) {
             synchronized (ChannelStreamDao.class) {
@@ -49,76 +83,62 @@ public class ChannelStreamDao {
         return singleton;
     }
 
-    private ChannelStreamDao(Context context) {
-        this.mDbHelper = DbHelper.getInstance(context);
-    }
-
     public void insert(ChannelStream channelStream) {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(COLUMN_ID, channelStream.getId());
-        cv.put(COLUMN_NAME, channelStream.getName());
-        cv.put(COLUMN_URL, channelStream.getUrl());
-        cv.put(COLUMN_CARRIER, channelStream.getCarrier());
-        cv.put(COLUMN_LAST_PLAY, channelStream.getLastPlay());
-        cv.put(COLUMN_CHANNEL_NAME, channelStream.getChannelName());
-        db.insert(TABLE_NAME, null, cv);
+        List<ChannelStream> channelStreamList = Arrays.asList(channelStream);
+        new InsertChannelStreamTask(channelStreamList).execute(new Void[0]);
     }
 
-    public void insertBatch(List<ChannelStream> channelStreamList) {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        if (null != channelStreamList) {
-            db.beginTransaction();
-            for (ChannelStream channelStream : channelStreamList) {
-                insert(channelStream);
-            }
-            db.setTransactionSuccessful();
-        }
+    public void insert(List<ChannelStream> channelStreamList) {
+        new InsertChannelStreamTask(channelStreamList).execute(new Void[0]);
+    }
+
+
+    public void update(ChannelStream channelStream) {
+        List<ChannelStream> channelStreamList = Arrays.asList(channelStream);
+        new UpdateChannelStreamTask(channelStreamList).execute(new Void[0]);
+    }
+
+    public void update(List<ChannelStream> channelStreamList) {
+        new UpdateChannelStreamTask(channelStreamList).execute(new Void[0]);
     }
 
     public void delete(Integer id) {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         String[] whereArgs = new String[]{id.toString()};
         db.delete(TABLE_NAME, COLUMN_ID + "=?", whereArgs);
     }
 
     public void delete(String name) {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         String[] whereArgs = new String[]{name};
         db.delete(TABLE_NAME, COLUMN_NAME + "=?", whereArgs);
     }
 
     public void clear() {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         db.delete(TABLE_NAME, null, null);
     }
 
-    public void update(ChannelStream channelStream) {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(COLUMN_ID, channelStream.getId());
-        cv.put(COLUMN_NAME, channelStream.getName());
-        cv.put(COLUMN_URL, channelStream.getUrl());
-        cv.put(COLUMN_CARRIER, channelStream.getCarrier());
-        cv.put(COLUMN_LAST_PLAY, channelStream.getLastPlay());
-        cv.put(COLUMN_CHANNEL_NAME, channelStream.getChannelName());
-
-        String[] whereArgs = new String[]{String.valueOf(channelStream.getId())};
-        db.update(TABLE_NAME, cv, COLUMN_ID + "=?", whereArgs);
-    }
 
     public ChannelStream get(Integer id) {
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         String selection = COLUMN_ID + " = ? ";
         String[] selectionArgs = new String[]{String.valueOf(id)};
-        Cursor cursor = db.query(TABLE_NAME, ALL_COLUMNS, selection, selectionArgs, null, null,
-                COLUMN_ID + " ASC", null);
+        Cursor cursor = db.query(
+                TABLE_NAME,
+                COLUMNS,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                COLUMN_ID + " ASC",
+                null);
         if (0 == cursor.getCount()) {
             return null;
         }
 
         List<ChannelStream> resultList = buildResult(cursor);
-        if (null == resultList || resultList.size() < 1) {
+        if (null == resultList || resultList.size() <= 0) {
             return null;
         }
         return resultList.get(0);
@@ -126,19 +146,19 @@ public class ChannelStreamDao {
 
 
     public List<ChannelStream> find(Param4ChannelStream param) {
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         String selection = "";
         List<String> args = new ArrayList<>();
         if (null != param.getChannelName() && !"".equals(param.getChannelName())) {
-            if(null!=selection&&selection.length()>0){
-                selection +=" AND ";
+            if (null != selection && selection.length() > 0) {
+                selection += " AND ";
             }
             selection += COLUMN_CHANNEL_NAME + " = ? ";
             args.add(param.getChannelName());
         }
         if (null != param.getCarrier() && !"".equals(param.getCarrier())) {
-            if(null!=selection&&selection.length()>0){
-                selection +=" AND ";
+            if (null != selection && selection.length() > 0) {
+                selection += " AND ";
             }
             selection += COLUMN_CARRIER + " = ? ";
             args.add(param.getCarrier());
@@ -146,8 +166,15 @@ public class ChannelStreamDao {
 
         String[] selectionArgs = args.toArray(new String[args.size()]);
 
-        Cursor cursor = db.query(TABLE_NAME, ALL_COLUMNS, selection, selectionArgs, null, null,
-                COLUMN_ID + " ASC", null);
+        Cursor cursor = db.query(
+                TABLE_NAME,
+                COLUMNS,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                COLUMN_ID + " ASC",
+                null);
         return buildResult(cursor);
     }
 
@@ -156,22 +183,22 @@ public class ChannelStreamDao {
             return new ArrayList<>();
         }
 
-        Integer mIndex_id = cursor.getColumnIndex(COLUMN_ID);
-        Integer mIndex_name = cursor.getColumnIndex(COLUMN_NAME);
-        Integer mIndex_url = cursor.getColumnIndex(COLUMN_URL);
-        Integer mIndex_carrier = cursor.getColumnIndex(COLUMN_CARRIER);
-        Integer mIndex_last_play = cursor.getColumnIndex(COLUMN_LAST_PLAY);
-        Integer mIndex_channel_name = cursor.getColumnIndex(COLUMN_CHANNEL_NAME);
+        Integer indexId = cursor.getColumnIndex(COLUMN_ID);
+        Integer indexName = cursor.getColumnIndex(COLUMN_NAME);
+        Integer indexUrl = cursor.getColumnIndex(COLUMN_URL);
+        Integer indexCarrier = cursor.getColumnIndex(COLUMN_CARRIER);
+        Integer indexLastPlay = cursor.getColumnIndex(COLUMN_PLAY_TIME);
+        Integer indexChannelName = cursor.getColumnIndex(COLUMN_CHANNEL_NAME);
 
         List<ChannelStream> channelStreamList = new ArrayList<>();
         while (cursor.moveToNext()) {
             ChannelStream channelStream = new ChannelStream();
-            channelStream.setId(cursor.getInt(mIndex_id));
-            channelStream.setName(cursor.getString(mIndex_name));
-            channelStream.setUrl(cursor.getString(mIndex_url));
-            channelStream.setCarrier(cursor.getString(mIndex_carrier));
-            channelStream.setLastPlay(cursor.getInt(mIndex_last_play));
-            channelStream.setChannelName(cursor.getString(mIndex_channel_name));
+            channelStream.setId(cursor.getInt(indexId));
+            channelStream.setName(cursor.getString(indexName));
+            channelStream.setUrl(cursor.getString(indexUrl));
+            channelStream.setCarrier(cursor.getString(indexCarrier));
+            channelStream.setPlayTime(new Date(cursor.getInt(indexLastPlay)));
+            channelStream.setChannelName(cursor.getString(indexChannelName));
 
             channelStreamList.add(channelStream);
         }
@@ -195,26 +222,109 @@ public class ChannelStreamDao {
 //        return result;
 //    }
 
-    public void setLastPlay(int id) {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        String sql = "UPDATE " + TABLE_NAME + " SET " + COLUMN_LAST_PLAY + " = 0 ";
-        db.execSQL(sql);
-        String sql2 = "UPDATE " + TABLE_NAME + " SET " + COLUMN_LAST_PLAY + " = 1 WHERE " + COLUMN_ID + " = " + id;
-        db.execSQL(sql2);
+    public void setLastPlay(ChannelStream channelStream) {
+        new UpdatePlayTimeTask(channelStream).execute(new Void[0]);
     }
 
-    public ChannelStream getLastPlay() {
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        String selection = COLUMN_LAST_PLAY + " = 1 ";
-        Cursor cursor = db.query(TABLE_NAME, ALL_COLUMNS, selection, null, null, null,
-                COLUMN_ID + " ASC", null);
+    public ChannelStream getLastPlay(String channelName) {
+        SQLiteDatabase db = getReadableDatabase();
+        String selection = COLUMN_CHANNEL_NAME + " = ? ";
+        String[] selectionArgs = new String[]{channelName};
+        Cursor cursor = db.query(
+                TABLE_NAME, COLUMNS,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                COLUMN_PLAY_TIME + " DESC",
+                null);
         List<ChannelStream> resultList = buildResult(cursor);
 
-        if(null==resultList||resultList.size()<1){
+        if (null == resultList || resultList.size() <= 0) {
             return null;
         }
-        cursor.close();
         return resultList.get(0);
+    }
+
+    class InsertChannelStreamTask extends AsyncTask<Void, Void, Void> {
+        private List<ChannelStream> mChannelStreamList;
+
+        public InsertChannelStreamTask(List<ChannelStream> channelStreamList) {
+            this.mChannelStreamList = channelStreamList;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            SQLiteDatabase db = getWritableDatabase();
+            db.beginTransaction();
+            Date date = new Date();
+            for (ChannelStream channelStream : mChannelStreamList) {
+                ContentValues cv = new ContentValues();
+                cv.put(COLUMN_ID, channelStream.getId());
+                cv.put(COLUMN_NAME, channelStream.getName());
+                cv.put(COLUMN_URL, channelStream.getUrl());
+                cv.put(COLUMN_CARRIER, channelStream.getCarrier());
+                cv.put(COLUMN_PLAY_TIME, date.getTime());
+                cv.put(COLUMN_CHANNEL_NAME, channelStream.getChannelName());
+
+                db.insert(TABLE_NAME, null, cv);
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            return null;
+        }
+    }
+
+    class UpdateChannelStreamTask extends AsyncTask<Void, Void, Void> {
+        private List<ChannelStream> mChannelStreamList;
+
+        public UpdateChannelStreamTask(List<ChannelStream> channelStreamList) {
+            this.mChannelStreamList = channelStreamList;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            SQLiteDatabase db = getWritableDatabase();
+            db.beginTransaction();
+            for (ChannelStream channelStream : mChannelStreamList) {
+                ContentValues cv = new ContentValues();
+                cv.put(COLUMN_ID, channelStream.getId());
+                cv.put(COLUMN_NAME, channelStream.getName());
+                cv.put(COLUMN_URL, channelStream.getUrl());
+                cv.put(COLUMN_CARRIER, channelStream.getCarrier());
+                cv.put(COLUMN_PLAY_TIME, channelStream.getPlayTime().getTime());
+                cv.put(COLUMN_CHANNEL_NAME, channelStream.getChannelName());
+                String[] whereArgs = new String[]{
+                        String.valueOf(channelStream.getId())
+                };
+                db.update(TABLE_NAME, cv, COLUMN_ID + "=?", whereArgs);
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            return null;
+        }
+    }
+
+    class UpdatePlayTimeTask extends AsyncTask<Void, Void, Void> {
+        private ChannelStream mChannelStream;
+
+        public UpdatePlayTimeTask(ChannelStream channelStream) {
+            this.mChannelStream = channelStream;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            final SQLiteDatabase db = getWritableDatabase();
+            Date date = new Date();
+            db.beginTransaction();
+            String sql = "UPDATE " + TABLE_NAME
+                    + " SET " + COLUMN_PLAY_TIME + " =  " + date.getTime()
+                    + " WHERE " + COLUMN_ID + " = " + "'" + mChannelStream.getId() + "'";
+            db.execSQL(sql);
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            return null;
+        }
     }
 
 

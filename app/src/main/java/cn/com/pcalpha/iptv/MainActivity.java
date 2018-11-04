@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         }
         loadStream(mCurrentChannel);
         ChannelStream lastPlayStream = mCurrentChannel.getLastPlayStream();
-        if(null!=lastPlayStream){
+        if (null != lastPlayStream) {
             mVideoView.setVideoPath(lastPlayStream.getUrl());
         }
     }
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(mVideoView.hasFocus()) {
+        if (mVideoView.hasFocus()) {
             if (KeyEvent.KEYCODE_DPAD_UP == keyCode) {
                 preChannel();
                 return true;
@@ -252,39 +252,41 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void preChannel() {
+        Channel channel = null;
         if (null != mCurrentChannel && null != mChannelList) {
             int prePosition = mChannelList.indexOf(mCurrentChannel) - 1;
 
             if (prePosition >= 0 && prePosition < mChannelList.size()) {
-                mCurrentChannel = mChannelList.get(prePosition);
+                channel = mChannelList.get(prePosition);
             } else {
-                mCurrentChannel = mChannelList.get(0);
+                channel = mChannelList.get(0);
             }
         }
-        play(mCurrentChannel);
+        play(channel);
     }
 
     public void nextChannel() {
+        Channel channel = null;
         if (null != mCurrentChannel && null != mChannelList) {
             int nextPosition = mChannelList.indexOf(mCurrentChannel) + 1;
 
             if (nextPosition >= 0 && nextPosition < mChannelList.size()) {
-                mCurrentChannel = mChannelList.get(nextPosition);
+                channel = mChannelList.get(nextPosition);
             } else {
-                mCurrentChannel = mChannelList.get(mChannelList.size() - 1);
+                channel = mChannelList.get(mChannelList.size() - 1);
             }
         }
-        play(mCurrentChannel);
+        play(channel);
     }
 
-    public void preStream(){
+    public void preStream() {
         if (null != mCurrentChannel) {
             ChannelStream stream = mCurrentChannel.preStream();
             play(stream);
         }
     }
 
-    public void nextStream(){
+    public void nextStream() {
         if (null != mCurrentChannel) {
             ChannelStream stream = mCurrentChannel.nextStream();
             play(stream);
@@ -294,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
     private void play(Channel channel) {
         if (null != channel) {
             //如果频道没有变化
-            if(channel.equals(mCurrentChannel)){
+            if (channel.equals(mCurrentChannel)) {
                 return;
             }
             mCurrentChannel = channel;
@@ -313,21 +315,21 @@ public class MainActivity extends AppCompatActivity {
             mVideoView.setVideoPath(stream.getUrl());
             mVideoView.start();
 
-            mChannelDao.setLastPlayStream(stream.getChannelName(), stream.getId());
+            mChannelStreamDao.setLastPlay(stream);
         } else {
             Toast.makeText(this, "未找到合适的节目源", Toast.LENGTH_LONG).show();
         }
     }
 
     private void loadStream(Channel channel) {
-        if(null==channel){
+        if (null == channel) {
             return;
         }
         if (null == channel.getStreams()) {
             Param4ChannelStream param4ChannelStream = Param4ChannelStream.build()
                     .setChannelName(channel.getName());
             List<ChannelStream> streamList = mChannelStreamDao.find(param4ChannelStream);
-            ChannelStream lastPlayStream = mChannelStreamDao.get(channel.getsId());
+            ChannelStream lastPlayStream = mChannelStreamDao.getLastPlay(channel.getName());
             if (null == lastPlayStream) {
                 lastPlayStream = streamList.get(0);
             }
@@ -337,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setLastPlay(Channel channel) {
-        mChannelDao.setLastPlay(channel.getName());
+        mChannelDao.setLastPlay(channel);
         mChannelCategoryDao.setLastPlay(channel.getCategoryName());
     }
 

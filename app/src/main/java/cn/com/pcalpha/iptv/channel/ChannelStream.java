@@ -1,6 +1,7 @@
 package cn.com.pcalpha.iptv.channel;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by caiyida on 2018/8/8.
@@ -11,7 +12,7 @@ public class ChannelStream implements Serializable {
     private String name;
     private String url;
     private String carrier;//运营商 CMCC,CUCC,CTCC
-    private Integer lastPlay = 0;//上次播放标记
+    private Date playTime;//上次播放标记
 
     private String channelName;
 
@@ -55,12 +56,12 @@ public class ChannelStream implements Serializable {
         this.channelName = channelName;
     }
 
-    public Integer getLastPlay() {
-        return lastPlay;
+    public Date getPlayTime() {
+        return playTime;
     }
 
-    public void setLastPlay(Integer lastPlay) {
-        this.lastPlay = lastPlay;
+    public void setPlayTime(Date playTime) {
+        this.playTime = playTime;
     }
 
     @Override

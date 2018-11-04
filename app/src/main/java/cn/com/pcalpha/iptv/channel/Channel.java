@@ -1,6 +1,7 @@
 package cn.com.pcalpha.iptv.channel;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import cn.com.pcalpha.iptv.category.ChannelCategory;
@@ -13,7 +14,7 @@ public class Channel implements Serializable {
     private Integer id;
     private String no;
     private String name;//名字 例如:央视一套
-    private Integer lastPlay = 0;//上次播放标记 0，1
+    private Date playTime;//上次播放标记 0，1
     private Integer sId;//streamId
     private String categoryName;//1.央视;2.卫视;9.其他
 
@@ -27,7 +28,6 @@ public class Channel implements Serializable {
     public Channel(String no, String name, String categoryName) {
         this.no = no;
         this.name = name;
-        this.lastPlay = lastPlay;
         this.categoryName = categoryName;
     }
 
@@ -87,12 +87,13 @@ public class Channel implements Serializable {
 //        return srcArr[0];
 //    }
 
-    public Integer getLastPlay() {
-        return lastPlay;
+
+    public Date getPlayTime() {
+        return playTime;
     }
 
-    public void setLastPlay(Integer lastPlay) {
-        this.lastPlay = lastPlay;
+    public void setPlayTime(Date playTime) {
+        this.playTime = playTime;
     }
 
     public ChannelCategory getCategory() {

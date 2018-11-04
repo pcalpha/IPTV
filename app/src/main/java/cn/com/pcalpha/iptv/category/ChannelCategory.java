@@ -1,6 +1,7 @@
 package cn.com.pcalpha.iptv.category;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by caiyida on 2018/6/24.
@@ -9,7 +10,7 @@ import java.io.Serializable;
 public class ChannelCategory implements Serializable {
     private Integer id;
     private String name;
-    private Integer lastPlay = 0;//上次播放标记
+    private Date playTime;//上次播放标记
 
     public ChannelCategory() {
     }
@@ -35,14 +36,13 @@ public class ChannelCategory implements Serializable {
         this.name = name;
     }
 
-    public Integer getLastPlay() {
-        return lastPlay;
+    public Date getPlayTime() {
+        return playTime;
     }
 
-    public void setLastPlay(Integer lastPlay) {
-        this.lastPlay = lastPlay;
+    public void setPlayTime(Date playTime) {
+        this.playTime = playTime;
     }
-
 
     @Override
     public boolean equals(Object obj) {

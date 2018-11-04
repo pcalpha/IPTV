@@ -19,6 +19,7 @@ import cn.com.pcalpha.iptv.R;
 
 public class ChannelAdapter extends BaseAdapter {
     private Context mContext;
+    private ChannelDao mChannelDao;
     private LayoutInflater mLayoutInflater;
 
     private View.OnFocusChangeListener onItemFocusChangeListener;
@@ -28,6 +29,7 @@ public class ChannelAdapter extends BaseAdapter {
     public ChannelAdapter(Context mContext, List<Channel> mChannelList) {
         mLayoutInflater = LayoutInflater.from(mContext);
         this.mContext = mContext;
+        this.mChannelDao = ChannelDao.getInstance(mContext);
         this.mChannelList = mChannelList;
     }
 
@@ -64,7 +66,8 @@ public class ChannelAdapter extends BaseAdapter {
         }
 
 
-        if (1==channel.getLastPlay()) {
+        Channel lastPlay = mChannelDao.getLastPlay();
+        if (channel.equals(lastPlay)) {
             convertView.setSelected(true);
             convertView.requestFocus();
             holder.playing.setVisibility(View.VISIBLE);

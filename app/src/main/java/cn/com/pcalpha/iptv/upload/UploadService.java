@@ -16,9 +16,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import cn.com.pcalpha.iptv.category.ChannelCategoryDao;
 import cn.com.pcalpha.iptv.channel.Channel;
@@ -112,7 +114,6 @@ public class UploadService extends NanoHTTPD {
 
         BufferedReader br = null;
         StringBuffer sb = new StringBuffer();
-        List<Channel> channelList = null;
         try {
             Map<String, String> files = new HashMap<>();
             session.parseBody(files);
@@ -124,16 +125,21 @@ public class UploadService extends NanoHTTPD {
                     sb.append(line);
                 }
                 String json = sb.toString();
-                channelList = JSON.parseArray(json, Channel.class);
 
-                List<String> categoryList = new ArrayList<>();
+                List<Channel> channelList = JSON.parseArray(json, Channel.class);
+                List<ChannelStream> channelStreamList = new ArrayList<>();
+                List<ChannelCategory> channelCategoryList = new ArrayList<>();
+                List<String> categoryNameList = new ArrayList<>();
                 for (Channel channel : channelList) {
                     String categoryName = channel.getCategoryName();
-                    if (!categoryList.contains(categoryName)) {
-                        categoryList.add(categoryName);
+                    if (!categoryNameList.contains(categoryName)) {
+                        ChannelCategory category = new ChannelCategory();
+                        category.setName(categoryName);
+                        categoryNameList.add(categoryName);
+
+                        channelCategoryList.add(category);
                     }
 
-                    mChannelDao.insert(channel);
 
                     int x = 0;
                     for (ChannelStream stream : channel.getStreams()) {
@@ -142,20 +148,16 @@ public class UploadService extends NanoHTTPD {
                             stream.setName("源"+x);
                             x++;
                         }
-                        if(null==stream.getCarrier()||"".equals(stream.getCarrier())){
-                            stream.setCarrier("CMCC");
-                        }
-                        mChannelStreamDao.insert(stream);
+//                        if(null==stream.getCarrier()||"".equals(stream.getCarrier())){
+//                            stream.setCarrier("CMCC");
+//                        }
+                        channelStreamList.add(stream);
                     }
                 }
 
-                for(String categoryName : categoryList){
-                    ChannelCategory category = new ChannelCategory();
-                    category.setName(categoryName);
-
-                    mChannelCategoryDao.insert(category);
-                }
-
+                mChannelDao.insert(channelList);
+                mChannelStreamDao.insert(channelStreamList);
+                mChannelCategoryDao.insert(channelCategoryList);
             }
         } catch (Exception e) {
             e.printStackTrace();
