@@ -49,8 +49,8 @@ public class SettingOptionFragment extends Fragment {
                 setting.setValue(option.getValue());
 
                 SettingFragment settingFragment =
-                        (SettingFragment)getFragmentManager().
-                                findFragmentByTag("settingFragment");
+                        (SettingFragment)getFragmentManager()
+                                .findFragmentByTag("settingFragment");
                 if (null != settingFragment) {
                     settingFragment.setSelectedSetting(setting);
                 }
@@ -67,8 +67,8 @@ public class SettingOptionFragment extends Fragment {
                     //getFragmentManager().popBackStack();
 
                     SettingFragment settingFragment =
-                            (SettingFragment)getFragmentManager().
-                                    findFragmentByTag("settingFragment");
+                            (SettingFragment)getFragmentManager()
+                                    .findFragmentByTag("settingFragment");
                     if (null != settingFragment) {
                         settingFragment.setSelectedSetting(setting);
                     }
@@ -94,7 +94,8 @@ public class SettingOptionFragment extends Fragment {
             if (null != setting.getOptions()) {
                 for (SettingOption option : setting.getOptions()) {
                     if (setting.getValue().equals(option.getValue())) {
-                        SettingOptionAdapter adapter = (SettingOptionAdapter) mSettingOptionListView.getAdapter();
+                        SettingOptionAdapter adapter =
+                                (SettingOptionAdapter) mSettingOptionListView.getAdapter();
                         int position = adapter.getPosition(option);
                         adapter.setSelectedPosition(position);
                         mSettingOptionListView.setSelection(position);

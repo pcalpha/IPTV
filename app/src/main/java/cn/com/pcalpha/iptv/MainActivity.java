@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
             showMainMenuFragment();
             return true;
         } else if (KeyEvent.KEYCODE_BACK == keyCode) {
-            getFragmentManager().popBackStackImmediate();
+            getSupportFragmentManager().popBackStackImmediate();
             return true;
         }
 
@@ -326,8 +326,11 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         if (null == channel.getStreams()) {
-            Param4ChannelStream param4ChannelStream = Param4ChannelStream.build()
-                    .setChannelName(channel.getName());
+            String carrier = mSharedPreferences.getString("pref_key_carrier", "CMCC");
+            Param4ChannelStream param4ChannelStream = Param4ChannelStream
+                    .build()
+                    .setChannelName(channel.getName())
+                    .setCarrier(carrier);
             List<ChannelStream> streamList = mChannelStreamDao.find(param4ChannelStream);
             ChannelStream lastPlayStream = mChannelStreamDao.getLastPlay(channel.getName());
             if (null == lastPlayStream) {

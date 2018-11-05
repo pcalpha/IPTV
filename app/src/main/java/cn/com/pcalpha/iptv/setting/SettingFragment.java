@@ -49,28 +49,28 @@ public class SettingFragment extends Fragment {
         List<Setting> settingList = new ArrayList<>();
 
         //setting1
-//        Setting setting1 = new Setting();
-//        setting1.setLabel("网络运营商");
-//        setting1.setValue("CTCC");
-//
-//        SettingOption option11 = new SettingOption();
-//        option11.setLabel("移动");
-//        option11.setValue("CMCC");
-//        SettingOption option12 = new SettingOption();
-//        option12.setLabel("联通");
-//        option12.setValue("CUCC");
-//        SettingOption option13 = new SettingOption();
-//        option13.setLabel("电信");
-//        option13.setValue("CTCC");
-//        List<SettingOption> options = new ArrayList<>();
-//        options.add(option11);
-//        options.add(option12);
-//        options.add(option13);
-//        setting1.setOptions(options);
-//
-//        String settingCarrier = mSharedPreferences.getString("pref_key_carrier", "CMCC");
-//        setting1.setKey("pref_key_carrier");
-//        setting1.setValue(settingCarrier);
+        Setting setting1 = new Setting();
+        setting1.setLabel("网络运营商");
+        setting1.setValue("CTCC");
+
+        SettingOption option11 = new SettingOption();
+        option11.setLabel("移动");
+        option11.setValue("CMCC");
+        SettingOption option12 = new SettingOption();
+        option12.setLabel("联通");
+        option12.setValue("CUCC");
+        SettingOption option13 = new SettingOption();
+        option13.setLabel("电信");
+        option13.setValue("CTCC");
+        List<SettingOption> options = new ArrayList<>();
+        options.add(option11);
+        options.add(option12);
+        options.add(option13);
+        setting1.setOptions(options);
+
+        String settingCarrier = mSharedPreferences.getString("pref_key_carrier", "CMCC");
+        setting1.setKey("pref_key_carrier");
+        setting1.setValue(settingCarrier);
 
         //setting2
         Setting setting2 = new Setting();
@@ -98,7 +98,7 @@ public class SettingFragment extends Fragment {
         setting3.setLabel("恢复默认设置");
         setting3.setValue("清空所有设置和缓存");
 
-        //settingList.add(setting1);
+        settingList.add(setting1);
         settingList.add(setting2);
         settingList.add(setting3);
 
