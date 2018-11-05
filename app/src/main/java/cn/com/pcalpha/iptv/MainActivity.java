@@ -14,7 +14,6 @@
 
 package cn.com.pcalpha.iptv;
 
-import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +22,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -33,12 +33,12 @@ import android.widget.Toast;
 import java.util.List;
 
 import cn.com.pcalpha.iptv.category.ChannelCategoryDao;
+import cn.com.pcalpha.iptv.channel.Channel;
 import cn.com.pcalpha.iptv.channel.ChannelDao;
+import cn.com.pcalpha.iptv.channel.ChannelStream;
 import cn.com.pcalpha.iptv.channel.ChannelStreamDao;
 import cn.com.pcalpha.iptv.channel.Param4Channel;
 import cn.com.pcalpha.iptv.channel.Param4ChannelStream;
-import cn.com.pcalpha.iptv.channel.Channel;
-import cn.com.pcalpha.iptv.channel.ChannelStream;
 import cn.com.pcalpha.iptv.menu.MenuFragment;
 import tv.danmaku.ijk.media.example.widget.media.IjkVideoView;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -344,10 +344,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showMainMenuFragment() {
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragement_main_menu_container);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragement_main_menu_container);
         MenuFragment mainFragment = new MenuFragment();
         if (null == fragment) {
-            getFragmentManager()
+            getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.fragement_main_menu_container, new MenuFragment(), "main_menu_fragment")
                     .addToBackStack("main_menu_fragment")

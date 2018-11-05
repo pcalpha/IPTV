@@ -1,9 +1,9 @@
 package cn.com.pcalpha.iptv.menu;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,16 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.com.pcalpha.iptv.R;
-import cn.com.pcalpha.iptv.setting.SettingFragment;
-import cn.com.pcalpha.iptv.upload.UploadFragment;
 import cn.com.pcalpha.iptv.category.ChannelCategoryFragment;
+import cn.com.pcalpha.iptv.setting.SettingFragment;
 import cn.com.pcalpha.iptv.tools.FragmentSwitcher;
+import cn.com.pcalpha.iptv.upload.UploadFragment;
 import cn.com.pcalpha.iptv.widget.MenuListView;
 
 /**
  * Created by caiyida on 2018/5/6.
  */
-
 public class MenuFragment extends Fragment {
     private Activity mainActivity;
     private FrameLayout fragementMenuContainer;

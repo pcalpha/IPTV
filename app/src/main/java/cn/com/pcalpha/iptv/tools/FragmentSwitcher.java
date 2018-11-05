@@ -1,15 +1,12 @@
 package cn.com.pcalpha.iptv.tools;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.support.annotation.IdRes;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import cn.com.pcalpha.iptv.R;
 
 /**
  * Created by caiyida on 2018/7/23.
