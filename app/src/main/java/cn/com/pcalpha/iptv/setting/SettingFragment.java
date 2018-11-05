@@ -22,7 +22,7 @@ import cn.com.pcalpha.iptv.widget.MenuListView;
  * Created by caiyida on 2018/7/23.
  */
 
-public class SettingFragment extends Fragment implements SettingOptionFragment.OnOptionSelectedListener {
+public class SettingFragment extends Fragment {
 
     private MenuListView mSettingListView;
 
@@ -192,7 +192,6 @@ public class SettingFragment extends Fragment implements SettingOptionFragment.O
         bundle.putSerializable("setting", setting);
         SettingOptionFragment settingOptionFragment = new SettingOptionFragment();
         settingOptionFragment.setArguments(bundle);
-        settingOptionFragment.setOnOptionSelectedListener(this);
         //mFragmentSwitcher.addFragment(mSettingOptionFragment, "setting", false);
         mFragmentSwitcher.showFragment(settingOptionFragment);
     }
@@ -202,8 +201,7 @@ public class SettingFragment extends Fragment implements SettingOptionFragment.O
 //        mSettingListView.requestFocus();
 //    }
 
-    @Override
-    public void OnOptionSelected(Setting setting) {
+    public void setSelectedSetting(Setting setting) {
         if (null != setting) {
             SettingAdapter adapter = (SettingAdapter) mSettingListView.getAdapter();
             int position = adapter.getPosition(setting);

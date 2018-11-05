@@ -22,7 +22,6 @@ public class SettingOptionFragment extends Fragment {
     private MenuListView mSettingOptionListView;
     private SettingOptionAdapter mAdapter;
     private FragmentSwitcher mFragmentSwitcher;
-    private OnOptionSelectedListener onOptionSelectedListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,8 +47,12 @@ public class SettingOptionFragment extends Fragment {
                 adapter.setSelectedPosition(position);
                 SettingOption option = (SettingOption) adapter.getItem(position);
                 setting.setValue(option.getValue());
-                if (null != onOptionSelectedListener) {
-                    onOptionSelectedListener.OnOptionSelected(setting);
+
+                SettingFragment settingFragment =
+                        (SettingFragment)getFragmentManager().
+                                findFragmentByTag("settingFragment");
+                if (null != settingFragment) {
+                    settingFragment.setSelectedSetting(setting);
                 }
             }
         });
@@ -62,8 +65,12 @@ public class SettingOptionFragment extends Fragment {
                 }
                 if (KeyEvent.KEYCODE_BACK == keyCode || KeyEvent.KEYCODE_DPAD_LEFT == keyCode) {
                     //getFragmentManager().popBackStack();
-                    if (null != onOptionSelectedListener) {
-                        onOptionSelectedListener.OnOptionSelected(setting);
+
+                    SettingFragment settingFragment =
+                            (SettingFragment)getFragmentManager().
+                                    findFragmentByTag("settingFragment");
+                    if (null != settingFragment) {
+                        settingFragment.setSelectedSetting(setting);
                     }
                     //mFragmentSwitcher.showFragment(settingFragment);
                     return true;
@@ -108,18 +115,4 @@ public class SettingOptionFragment extends Fragment {
         super.onResume();
 
     }
-
-
-    public OnOptionSelectedListener getOnOptionSelectedListener() {
-        return onOptionSelectedListener;
-    }
-
-    public void setOnOptionSelectedListener(OnOptionSelectedListener onOptionSelectedListener) {
-        this.onOptionSelectedListener = onOptionSelectedListener;
-    }
-
-    public interface OnOptionSelectedListener {
-        public void OnOptionSelected(Setting setting);
-    }
-
 }
