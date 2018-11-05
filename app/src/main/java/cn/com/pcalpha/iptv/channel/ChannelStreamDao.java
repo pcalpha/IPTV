@@ -226,10 +226,11 @@ public class ChannelStreamDao extends SQLiteOpenHelper {
         new UpdatePlayTimeTask(channelStream).execute(new Void[0]);
     }
 
-    public ChannelStream getLastPlay(String channelName) {
+    public ChannelStream getLastPlay(String channelName, String carrier) {
         SQLiteDatabase db = getReadableDatabase();
-        String selection = COLUMN_CHANNEL_NAME + " = ? ";
-        String[] selectionArgs = new String[]{channelName};
+        String selection = COLUMN_CHANNEL_NAME + " = ? "
+                    +" AND "+COLUMN_CARRIER + " = ? ";
+        String[] selectionArgs = new String[]{channelName,carrier};
         Cursor cursor = db.query(
                 TABLE_NAME, COLUMNS,
                 selection,

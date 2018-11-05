@@ -331,12 +331,15 @@ public class MainActivity extends AppCompatActivity {
                     .build()
                     .setChannelName(channel.getName())
                     .setCarrier(carrier);
-            List<ChannelStream> streamList = mChannelStreamDao.find(param4ChannelStream);
-            ChannelStream lastPlayStream = mChannelStreamDao.getLastPlay(channel.getName());
+            List<ChannelStream> channelStreamList = mChannelStreamDao.find(param4ChannelStream);
+            ChannelStream lastPlayStream = mChannelStreamDao.getLastPlay(channel.getName(), carrier);
             if (null == lastPlayStream) {
-                lastPlayStream = streamList.get(0);
+                if (channelStreamList == null || channelStreamList.size() == 0) {
+                    return;
+                }
+                lastPlayStream = channelStreamList.get(0);
             }
-            channel.setStreams(streamList);
+            channel.setStreams(channelStreamList);
             channel.setLastPlayStream(lastPlayStream);
         }
     }
