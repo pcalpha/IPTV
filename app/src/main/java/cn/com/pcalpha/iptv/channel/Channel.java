@@ -15,12 +15,11 @@ public class Channel implements Serializable {
     private String no;
     private String name;//名字 例如:央视一套
     private Date playTime;//上次播放标记 0，1
-    private Integer sId;//streamId
     private String categoryName;//1.央视;2.卫视;9.其他
 
     private ChannelStream lastPlayStream;//记录播放源
-    private ChannelCategory category;
-    private List<ChannelStream> streams;
+    private ChannelCategory channelCategory;
+    private List<ChannelStream> channelStreamList;
 
     public Channel() {
     }
@@ -53,14 +52,6 @@ public class Channel implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Integer getsId() {
-        return sId;
-    }
-
-    public void setsId(Integer sId) {
-        this.sId = sId;
     }
 
     public String getCategoryName() {
@@ -96,12 +87,12 @@ public class Channel implements Serializable {
         this.playTime = playTime;
     }
 
-    public ChannelCategory getCategory() {
-        return category;
+    public ChannelCategory getChannelCategory() {
+        return channelCategory;
     }
 
-    public void setCategory(ChannelCategory category) {
-        this.category = category;
+    public void setChannelCategory(ChannelCategory channelCategory) {
+        this.channelCategory = channelCategory;
     }
 
 
@@ -113,38 +104,36 @@ public class Channel implements Serializable {
         this.lastPlayStream = lastPlayStream;
     }
 
-    public List<ChannelStream> getStreams() {
-        return streams;
+    public List<ChannelStream> getChannelStreamList() {
+        return channelStreamList;
     }
 
-    public void setStreams(List<ChannelStream> streams) {
-        this.streams = streams;
+    public void setChannelStreamList(List<ChannelStream> channelStreamList) {
+        this.channelStreamList = channelStreamList;
     }
 
     public ChannelStream preStream() {
-        if (null != streams && streams.size() > 0 && null != lastPlayStream) {
-            int prePosition = streams.indexOf(lastPlayStream) - 1;
+        if (null != channelStreamList && channelStreamList.size() > 0 && null != lastPlayStream) {
+            int prePosition = channelStreamList.indexOf(lastPlayStream) - 1;
 
-            if (prePosition >= 0 && prePosition < streams.size()) {
-                lastPlayStream = streams.get(prePosition);
+            if (prePosition >= 0 && prePosition < channelStreamList.size()) {
+                lastPlayStream = channelStreamList.get(prePosition);
             } else {
-                lastPlayStream = streams.get(0);
+                lastPlayStream = channelStreamList.get(0);
             }
-            this.setsId(lastPlayStream.getId());
         }
         return lastPlayStream;
     }
 
     public ChannelStream nextStream() {
-        if (null != streams && streams.size() > 0 && null != lastPlayStream) {
-            int nextPosition = streams.indexOf(lastPlayStream) + 1;
+        if (null != channelStreamList && channelStreamList.size() > 0 && null != lastPlayStream) {
+            int nextPosition = channelStreamList.indexOf(lastPlayStream) + 1;
 
-            if (nextPosition >= 0 && nextPosition < streams.size()) {
-                lastPlayStream = streams.get(nextPosition);
+            if (nextPosition >= 0 && nextPosition < channelStreamList.size()) {
+                lastPlayStream = channelStreamList.get(nextPosition);
             } else {
-                lastPlayStream = streams.get(streams.size() - 1);
+                lastPlayStream = channelStreamList.get(channelStreamList.size() - 1);
             }
-            this.setsId(lastPlayStream.getId());
         }
         return lastPlayStream;
     }

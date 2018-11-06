@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:focusable="false"
     android:keepScreenOn="true"
-    android:background="@drawable/xx">
+    >
 
     <TextView
         android:id="@+id/input_channel_no_view"

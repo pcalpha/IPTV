@@ -15,7 +15,7 @@
         <cn.com.pcalpha.iptv.widget.MenuListView
             android:id="@+id/setting_list_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:divider="@color/blank"
             android:dividerHeight="0px"
             android:choiceMode="singleChoice"

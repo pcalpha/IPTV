@@ -21,14 +21,12 @@ public class ChannelDao extends SQLiteOpenHelper {
     private static final String COLUMN_ID = "ID";
     private static final String COLUMN_NO = "NO";
     private static final String COLUMN_NAME = "NAME";
-    private static final String COLUMN_STREAM_ID = "SID";
     private static final String COLUMN_CATEGORY_NAME = "CATEGORY_NAME";
     private static final String COLUMN_PLAY_TIME = "PLAY_TIME";
     private static final String COLUMNS[] = new String[]{
             COLUMN_ID,
             COLUMN_NO,
             COLUMN_NAME,
-            COLUMN_STREAM_ID,
             COLUMN_CATEGORY_NAME,
             COLUMN_PLAY_TIME
     };
@@ -59,7 +57,6 @@ public class ChannelDao extends SQLiteOpenHelper {
                 + "'" + ChannelDao.COLUMN_NO + "' VARCHAR, "
                 + "'" + ChannelDao.COLUMN_NAME + "' VARCHAR, "
                 + "'" + ChannelDao.COLUMN_CATEGORY_NAME + "' VARCHAR, "
-                + "'" + ChannelDao.COLUMN_STREAM_ID + "' VARCHAR, "
                 + "'" + ChannelDao.COLUMN_PLAY_TIME + "' INTEGER "
                 + ") ");
     }
@@ -188,7 +185,6 @@ public class ChannelDao extends SQLiteOpenHelper {
         Integer indexNo = cursor.getColumnIndex(COLUMN_NO);
         Integer indexName = cursor.getColumnIndex(COLUMN_NAME);
         Integer indexPlayTime = cursor.getColumnIndex(COLUMN_PLAY_TIME);
-        Integer indexStreamId = cursor.getColumnIndex(COLUMN_STREAM_ID);
         Integer indexCategoryName = cursor.getColumnIndex(COLUMN_CATEGORY_NAME);
         List<Channel> channelList = new ArrayList<>();
         while (cursor.moveToNext()) {
@@ -197,7 +193,6 @@ public class ChannelDao extends SQLiteOpenHelper {
             channel.setNo(cursor.getString(indexNo));
             channel.setName(cursor.getString(indexName));
             channel.setPlayTime(new Date(cursor.getInt(indexPlayTime)));
-            channel.setsId(cursor.getInt(indexStreamId));
             channel.setCategoryName(cursor.getString(indexCategoryName));
 
             channelList.add(channel);
@@ -285,7 +280,6 @@ public class ChannelDao extends SQLiteOpenHelper {
                 cv.put(COLUMN_NO, channel.getNo());
                 cv.put(COLUMN_NAME, channel.getName());
                 cv.put(COLUMN_PLAY_TIME, date.getTime());
-                cv.put(COLUMN_STREAM_ID, channel.getsId());
                 cv.put(COLUMN_CATEGORY_NAME, channel.getCategoryName());
                 db.insert(TABLE_NAME, null, cv);
             }
@@ -312,7 +306,6 @@ public class ChannelDao extends SQLiteOpenHelper {
                 cv.put(COLUMN_NO, channel.getNo());
                 cv.put(COLUMN_NAME, channel.getName());
                 cv.put(COLUMN_PLAY_TIME, channel.getPlayTime().getTime());
-                cv.put(COLUMN_STREAM_ID, channel.getsId());
                 cv.put(COLUMN_CATEGORY_NAME, channel.getCategoryName());
 
                 String[] whereArgs = new String[]{

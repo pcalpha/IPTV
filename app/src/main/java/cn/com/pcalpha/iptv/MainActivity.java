@@ -325,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
         if (null == channel) {
             return;
         }
-        if (null == channel.getStreams()) {
+        if (null == channel.getChannelStreamList()) {
             String carrier = mSharedPreferences.getString("pref_key_carrier", "CMCC");
             Param4ChannelStream param4ChannelStream = Param4ChannelStream
                     .build()
@@ -339,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 lastPlayStream = channelStreamList.get(0);
             }
-            channel.setStreams(channelStreamList);
+            channel.setChannelStreamList(channelStreamList);
             channel.setLastPlayStream(lastPlayStream);
         }
     }

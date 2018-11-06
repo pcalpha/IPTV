@@ -16,11 +16,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import cn.com.pcalpha.iptv.category.ChannelCategoryDao;
 import cn.com.pcalpha.iptv.channel.Channel;
@@ -142,7 +140,7 @@ public class UploadService extends NanoHTTPD {
 
 
                     int x = 0;
-                    for (ChannelStream stream : channel.getStreams()) {
+                    for (ChannelStream stream : channel.getChannelStreamList()) {
                         stream.setChannelName(channel.getName());
                         if(null==stream.getName()||"".equals(stream.getName())){
                             stream.setName("源"+x);
