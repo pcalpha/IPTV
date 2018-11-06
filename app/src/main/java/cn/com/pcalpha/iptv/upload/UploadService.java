@@ -140,7 +140,7 @@ public class UploadService extends NanoHTTPD {
 
 
                     int x = 0;
-                    for (ChannelStream stream : channel.getChannelStreamList()) {
+                    for (ChannelStream stream : channel.getChannelStreams()) {
                         stream.setChannelName(channel.getName());
                         if(null==stream.getName()||"".equals(stream.getName())){
                             stream.setName("源"+x);

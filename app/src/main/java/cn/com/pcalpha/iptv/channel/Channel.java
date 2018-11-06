@@ -19,7 +19,7 @@ public class Channel implements Serializable {
 
     private ChannelStream lastPlayStream;//记录播放源
     private ChannelCategory channelCategory;
-    private List<ChannelStream> channelStreamList;
+    private List<ChannelStream> channelStreams;
 
     public Channel() {
     }
@@ -104,35 +104,35 @@ public class Channel implements Serializable {
         this.lastPlayStream = lastPlayStream;
     }
 
-    public List<ChannelStream> getChannelStreamList() {
-        return channelStreamList;
+    public List<ChannelStream> getChannelStreams() {
+        return channelStreams;
     }
 
-    public void setChannelStreamList(List<ChannelStream> channelStreamList) {
-        this.channelStreamList = channelStreamList;
+    public void setChannelStreams(List<ChannelStream> channelStreams) {
+        this.channelStreams = channelStreams;
     }
 
     public ChannelStream preStream() {
-        if (null != channelStreamList && channelStreamList.size() > 0 && null != lastPlayStream) {
-            int prePosition = channelStreamList.indexOf(lastPlayStream) - 1;
+        if (null != channelStreams && channelStreams.size() > 0 && null != lastPlayStream) {
+            int prePosition = channelStreams.indexOf(lastPlayStream) - 1;
 
-            if (prePosition >= 0 && prePosition < channelStreamList.size()) {
-                lastPlayStream = channelStreamList.get(prePosition);
+            if (prePosition >= 0 && prePosition < channelStreams.size()) {
+                lastPlayStream = channelStreams.get(prePosition);
             } else {
-                lastPlayStream = channelStreamList.get(0);
+                lastPlayStream = channelStreams.get(0);
             }
         }
         return lastPlayStream;
     }
 
     public ChannelStream nextStream() {
-        if (null != channelStreamList && channelStreamList.size() > 0 && null != lastPlayStream) {
-            int nextPosition = channelStreamList.indexOf(lastPlayStream) + 1;
+        if (null != channelStreams && channelStreams.size() > 0 && null != lastPlayStream) {
+            int nextPosition = channelStreams.indexOf(lastPlayStream) + 1;
 
-            if (nextPosition >= 0 && nextPosition < channelStreamList.size()) {
-                lastPlayStream = channelStreamList.get(nextPosition);
+            if (nextPosition >= 0 && nextPosition < channelStreams.size()) {
+                lastPlayStream = channelStreams.get(nextPosition);
             } else {
-                lastPlayStream = channelStreamList.get(channelStreamList.size() - 1);
+                lastPlayStream = channelStreams.get(channelStreams.size() - 1);
             }
         }
         return lastPlayStream;
