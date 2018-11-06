@@ -111,8 +111,8 @@ public class MainActivity extends AppCompatActivity {
     private void initData() {
         Param4Channel param = Param4Channel.build();
         mCurrentChannel = mChannelDao.getLastPlay();
+        mChannelList = mChannelDao.find(param);
         if (null == mCurrentChannel) {
-            mChannelList = mChannelDao.find(param);
             if (null != mChannelList && mChannelList.size() > 0) {
                 mCurrentChannel = mChannelList.get(0);
             }
@@ -181,10 +181,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (mVideoView.hasFocus()) {
-            if (KeyEvent.KEYCODE_DPAD_UP == keyCode) {
+            if (KeyEvent.KEYCODE_DPAD_DOWN == keyCode) {
                 preChannel();
                 return true;
-            } else if (KeyEvent.KEYCODE_DPAD_DOWN == keyCode) {
+            } else if (KeyEvent.KEYCODE_DPAD_UP == keyCode) {
                 nextChannel();
                 return true;
             } else if (KeyEvent.KEYCODE_DPAD_RIGHT == keyCode) {
@@ -282,6 +282,9 @@ public class MainActivity extends AppCompatActivity {
     public void preStream() {
         if (null != mCurrentChannel) {
             ChannelStream stream = mCurrentChannel.preStream();
+            if(null==stream){
+                return;
+            }
             play(stream);
         }
     }
@@ -289,6 +292,9 @@ public class MainActivity extends AppCompatActivity {
     public void nextStream() {
         if (null != mCurrentChannel) {
             ChannelStream stream = mCurrentChannel.nextStream();
+            if(null==stream){
+                return;
+            }
             play(stream);
         }
     }

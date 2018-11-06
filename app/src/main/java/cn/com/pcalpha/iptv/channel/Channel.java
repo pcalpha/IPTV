@@ -119,7 +119,8 @@ public class Channel implements Serializable {
             if (prePosition >= 0 && prePosition < channelStreams.size()) {
                 lastPlayStream = channelStreams.get(prePosition);
             } else {
-                lastPlayStream = channelStreams.get(0);
+                //lastPlayStream = channelStreams.get(0);
+                return null;
             }
         }
         return lastPlayStream;
@@ -132,7 +133,8 @@ public class Channel implements Serializable {
             if (nextPosition >= 0 && nextPosition < channelStreams.size()) {
                 lastPlayStream = channelStreams.get(nextPosition);
             } else {
-                lastPlayStream = channelStreams.get(channelStreams.size() - 1);
+                //lastPlayStream = channelStreams.get(channelStreams.size() - 1);
+                return null;
             }
         }
         return lastPlayStream;
