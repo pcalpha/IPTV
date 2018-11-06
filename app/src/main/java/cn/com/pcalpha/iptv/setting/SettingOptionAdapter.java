@@ -25,7 +25,7 @@ public class SettingOptionAdapter extends BaseAdapter {
     private int selectedPosition=0;
 
     public SettingOptionAdapter(Context mContext, List<SettingOption> settingsList) {
-        mLayoutInflater = LayoutInflater.from(mContext);
+        this.mLayoutInflater = LayoutInflater.from(mContext);
         this.mContext = mContext;
         this.mOptionList = settingsList;
     }

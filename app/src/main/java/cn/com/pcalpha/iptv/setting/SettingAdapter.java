@@ -26,7 +26,7 @@ public class SettingAdapter extends BaseAdapter {
 
 
     public SettingAdapter(Context mContext, List<Setting> mSettingsList) {
-        mLayoutInflater = LayoutInflater.from(mContext);
+        this.mLayoutInflater = LayoutInflater.from(mContext);
         this.mContext = mContext;
         this.mSettingsList = mSettingsList;
     }

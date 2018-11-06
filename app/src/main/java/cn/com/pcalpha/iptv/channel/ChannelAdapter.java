@@ -22,15 +22,15 @@ public class ChannelAdapter extends BaseAdapter {
     private ChannelDao mChannelDao;
     private LayoutInflater mLayoutInflater;
 
-    private View.OnFocusChangeListener onItemFocusChangeListener;
-
     private List<Channel> mChannelList;
+    private Channel mLastPlayChannel;
 
     public ChannelAdapter(Context mContext, List<Channel> mChannelList) {
-        mLayoutInflater = LayoutInflater.from(mContext);
+        this.mLayoutInflater = LayoutInflater.from(mContext);
         this.mContext = mContext;
         this.mChannelDao = ChannelDao.getInstance(mContext);
         this.mChannelList = mChannelList;
+        this.mLastPlayChannel = mChannelDao.getLastPlay();
     }
 
     @Override
@@ -66,8 +66,8 @@ public class ChannelAdapter extends BaseAdapter {
         }
 
 
-        Channel lastPlay = mChannelDao.getLastPlay();
-        if (channel.equals(lastPlay)) {
+        //Channel mLastPlayChannel = mChannelDao.getLastPlay();
+        if (channel.equals(mLastPlayChannel)) {
             convertView.setSelected(true);
             convertView.requestFocus();
             holder.playing.setVisibility(View.VISIBLE);
@@ -103,13 +103,5 @@ public class ChannelAdapter extends BaseAdapter {
     public void addAll(List<Channel> mChannelList){
         this.mChannelList.addAll(mChannelList);
         notifyDataSetChanged();
-    }
-
-    public View.OnFocusChangeListener getOnItemFocusChangeListener() {
-        return onItemFocusChangeListener;
-    }
-
-    public void setOnItemFocusChangeListener(View.OnFocusChangeListener onItemFocusChangeListener) {
-        this.onItemFocusChangeListener = onItemFocusChangeListener;
     }
 }

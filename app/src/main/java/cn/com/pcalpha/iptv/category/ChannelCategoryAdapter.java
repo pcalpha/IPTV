@@ -21,14 +21,15 @@ public class ChannelCategoryAdapter extends BaseAdapter {
     private ChannelCategoryDao mChannelCategoryDao;
     private LayoutInflater mLayoutInflater;
 
-    private View.OnFocusChangeListener onItemFocusChangeListener;
     private List<ChannelCategory> mChannelCategoryList;
+    private ChannelCategory mLastPlayChannelCategory;
 
     public ChannelCategoryAdapter(Context mContext, List<ChannelCategory> mChannelCategoryList) {
-        mLayoutInflater = LayoutInflater.from(mContext);
+        this.mLayoutInflater = LayoutInflater.from(mContext);
         this.mContext = mContext;
         this.mChannelCategoryDao = ChannelCategoryDao.getInstance(mContext);
         this.mChannelCategoryList = mChannelCategoryList;
+        this.mLastPlayChannelCategory = mChannelCategoryDao.getLastPlay();
     }
 
     @Override
@@ -61,8 +62,8 @@ public class ChannelCategoryAdapter extends BaseAdapter {
             holder = (ChannelCategoryAdapter.ViewHolder) convertView.getTag();
         }
 
-        ChannelCategory lastPlay = mChannelCategoryDao.getLastPlay();
-        if (channelCategory.equals(lastPlay)) {
+        //ChannelCategory mLastPlayChannelCategory = mChannelCategoryDao.getLastPlay();
+        if (channelCategory.equals(mLastPlayChannelCategory)) {
             convertView.setSelected(true);
             convertView.requestFocus();
             holder.playing.setVisibility(View.VISIBLE);
@@ -108,13 +109,5 @@ public class ChannelCategoryAdapter extends BaseAdapter {
         public void setChannelCategory(ChannelCategory channelCategory) {
             this.channelCategory = channelCategory;
         }
-    }
-
-    public View.OnFocusChangeListener getOnItemFocusChangeListener() {
-        return onItemFocusChangeListener;
-    }
-
-    public void setOnItemFocusChangeListener(View.OnFocusChangeListener onItemFocusChangeListener) {
-        this.onItemFocusChangeListener = onItemFocusChangeListener;
     }
 }

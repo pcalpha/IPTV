@@ -23,7 +23,7 @@ public class MenuAdapter extends BaseAdapter {
     private List<Menu> mMenuList;
 
     public MenuAdapter(Context mContext, List<Menu> mMenuList) {
-        mLayoutInflater = LayoutInflater.from(mContext);
+        this.mLayoutInflater = LayoutInflater.from(mContext);
         this.mContext = mContext;
         this.mMenuList = mMenuList;
     }
