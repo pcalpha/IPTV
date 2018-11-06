@@ -180,7 +180,7 @@ public class ChannelCategoryDao extends SQLiteOpenHelper {
                 null,
                 null,
                 null,
-                COLUMN_ID + " ASC",
+                COLUMN_PLAY_TIME + " DESC",
                 null);
         if (0 == cursor.getCount()) {
             return null;
