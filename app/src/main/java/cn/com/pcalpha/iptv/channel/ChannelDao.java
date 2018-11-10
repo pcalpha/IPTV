@@ -118,8 +118,15 @@ public class ChannelDao extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         String selection = COLUMN_NAME + " = ? ";
         String[] selectionArgs = new String[]{channelName};
-        Cursor cursor = db.query(TABLE_NAME, COLUMNS, selection, selectionArgs, null, null,
-                COLUMN_NO + " ASC", null);
+        Cursor cursor = db.query(
+                TABLE_NAME,
+                COLUMNS,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                COLUMN_NO + " ASC",
+                null);
         if (0 == cursor.getCount()) {
             return null;
         }
@@ -135,8 +142,15 @@ public class ChannelDao extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         String selection = COLUMN_ID + " = ? ";
         String[] selectionArgs = new String[]{String.valueOf(id)};
-        Cursor cursor = db.query(TABLE_NAME, COLUMNS, selection, selectionArgs, null, null,
-                COLUMN_ID + " ASC", null);
+        Cursor cursor = db.query(
+                TABLE_NAME,
+                COLUMNS,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                COLUMN_NO + " ASC",
+                null);
         if (0 == cursor.getCount()) {
             return null;
         }
@@ -169,8 +183,15 @@ public class ChannelDao extends SQLiteOpenHelper {
 
         String[] selectionArgs = args.toArray(new String[args.size()]);
 
-        Cursor cursor = db.query(TABLE_NAME, COLUMNS, selection, selectionArgs, null, null,
-                COLUMN_ID + " ASC", null);
+        Cursor cursor = db.query(
+                TABLE_NAME,
+                COLUMNS,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                COLUMN_NO + " ASC",
+                null);
         List<Channel> result = buildResult(cursor);
         //channelList = result;
         return result;
