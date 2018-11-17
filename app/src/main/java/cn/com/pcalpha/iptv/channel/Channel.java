@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import cn.com.pcalpha.iptv.category.ChannelCategory;
+import cn.com.pcalpha.iptv.channel.category.ChannelCategory;
+import cn.com.pcalpha.iptv.channel.stream.ChannelStream;
 
 /**
  * Created by caiyida on 2018/2/5.

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.com.pcalpha.iptv.R;
-import cn.com.pcalpha.iptv.category.ChannelCategoryFragment;
+import cn.com.pcalpha.iptv.channel.category.ChannelCategoryFragment;
 import cn.com.pcalpha.iptv.setting.SettingFragment;
 import cn.com.pcalpha.iptv.tools.FragmentSwitcher;
 import cn.com.pcalpha.iptv.upload.UploadFragment;

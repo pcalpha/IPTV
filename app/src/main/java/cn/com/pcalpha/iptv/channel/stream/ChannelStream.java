@@ -1,4 +1,4 @@
-package cn.com.pcalpha.iptv.channel;
+package cn.com.pcalpha.iptv.channel.stream;
 
 import java.io.Serializable;
 import java.util.Date;

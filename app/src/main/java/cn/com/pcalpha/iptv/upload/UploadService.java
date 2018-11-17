@@ -2,6 +2,7 @@ package cn.com.pcalpha.iptv.upload;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 
@@ -10,6 +11,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,12 +22,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cn.com.pcalpha.iptv.category.ChannelCategoryDao;
 import cn.com.pcalpha.iptv.channel.Channel;
-import cn.com.pcalpha.iptv.category.ChannelCategory;
 import cn.com.pcalpha.iptv.channel.ChannelDao;
-import cn.com.pcalpha.iptv.channel.ChannelStream;
-import cn.com.pcalpha.iptv.channel.ChannelStreamDao;
+import cn.com.pcalpha.iptv.channel.stream.ChannelStream;
+import cn.com.pcalpha.iptv.channel.stream.ChannelStreamDao;
+import cn.com.pcalpha.iptv.channel.category.ChannelCategory;
+import cn.com.pcalpha.iptv.channel.category.ChannelCategoryDao;
 import fi.iki.elonen.NanoHTTPD;
 
 public class UploadService extends NanoHTTPD {
@@ -106,10 +108,6 @@ public class UploadService extends NanoHTTPD {
     }
 
     public Response responseJson(IHTTPSession session) {
-        mChannelDao.clear();
-        mChannelStreamDao.clear();
-        mChannelCategoryDao.clear();
-
         BufferedReader br = null;
         StringBuffer sb = new StringBuffer();
         try {
@@ -117,14 +115,32 @@ public class UploadService extends NanoHTTPD {
             session.parseBody(files);
             if (null != files) {
                 File file = new File(files.get("file"));
-                br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-                String line = "";
-                while ((line = br.readLine()) != null) {
-                    sb.append(line);
+                FileInputStream fis = new FileInputStream(file);
+//                br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+//                String line = "";
+//                while ((line = br.readLine()) != null) {
+//                    sb.append(line);
+//                }
+//                String json = sb.toString();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                byte[] buffer = new byte[1024];
+                int len = 0;
+                while (-1 != (len = fis.read(buffer))) {
+                    baos.write(buffer, 0, len);
                 }
-                String json = sb.toString();
+                baos.flush();
+                String json = baos.toString("UTF-8");
 
-                List<Channel> channelList = JSON.parseArray(json, Channel.class);
+                List<Channel> channelList = new ArrayList<>();
+                try{
+                    channelList = JSON.parseArray(json, Channel.class);
+                }catch (Exception e){
+                    Log.e(TAG,e.getMessage());
+                }
+                if(null==channelList||channelList.size()==0){
+                    throw new RuntimeException("empty channelList");
+                }
+
                 List<ChannelStream> channelStreamList = new ArrayList<>();
                 List<ChannelCategory> channelCategoryList = new ArrayList<>();
                 List<String> categoryNameList = new ArrayList<>();
@@ -146,12 +162,16 @@ public class UploadService extends NanoHTTPD {
                             stream.setName("源"+x);
                             x++;
                         }
-//                        if(null==stream.getCarrier()||"".equals(stream.getCarrier())){
-//                            stream.setCarrier("CMCC");
-//                        }
+                        if(null==stream.getCarrier()||"".equals(stream.getCarrier())){
+                            stream.setCarrier("CMCC");
+                        }
                         channelStreamList.add(stream);
                     }
                 }
+
+                mChannelDao.clear();
+                mChannelStreamDao.clear();
+                mChannelCategoryDao.clear();
 
                 mChannelDao.insert(channelList);
                 mChannelStreamDao.insert(channelStreamList);

@@ -32,14 +32,15 @@ import android.widget.Toast;
 
 import java.util.List;
 
-import cn.com.pcalpha.iptv.category.ChannelCategoryDao;
+import cn.com.pcalpha.iptv.channel.category.ChannelCategoryDao;
 import cn.com.pcalpha.iptv.channel.Channel;
 import cn.com.pcalpha.iptv.channel.ChannelDao;
-import cn.com.pcalpha.iptv.channel.ChannelStream;
-import cn.com.pcalpha.iptv.channel.ChannelStreamDao;
+import cn.com.pcalpha.iptv.channel.stream.ChannelStream;
+import cn.com.pcalpha.iptv.channel.stream.ChannelStreamDao;
 import cn.com.pcalpha.iptv.channel.Param4Channel;
-import cn.com.pcalpha.iptv.channel.Param4ChannelStream;
+import cn.com.pcalpha.iptv.channel.stream.Param4ChannelStream;
 import cn.com.pcalpha.iptv.menu.MenuFragment;
+import cn.com.pcalpha.iptv.update.AutoUpdateService;
 import tv.danmaku.ijk.media.example.widget.media.IjkVideoView;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
@@ -63,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences mSharedPreferences;
     private Channel mCurrentChannel;
     private List<Channel> mChannelList;
+
+    private AutoUpdateService mAutoUpdateService;
 
     static {
         IjkMediaPlayer.loadLibrariesOnce(null);
@@ -105,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
         mChannelDao = ChannelDao.getInstance(this);
         mChannelCategoryDao = ChannelCategoryDao.getInstance(this);
         mChannelStreamDao = ChannelStreamDao.getInstance(this);
+        mAutoUpdateService = AutoUpdateService.getInstance(this);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
@@ -125,6 +129,8 @@ public class MainActivity extends AppCompatActivity {
         if (null != lastPlayStream) {
             mVideoView.setVideoPath(lastPlayStream.getUrl());
         }
+
+        mAutoUpdateService.execute();
     }
 
     @Override
@@ -437,4 +443,6 @@ public class MainActivity extends AppCompatActivity {
         mInputChannelView.setVisibility(View.GONE);
         mInputChannelView.setText("");
     }
+
+
 }

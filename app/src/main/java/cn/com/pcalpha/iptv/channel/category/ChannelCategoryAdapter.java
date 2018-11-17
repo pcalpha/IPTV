@@ -1,4 +1,4 @@
-package cn.com.pcalpha.iptv.category;
+package cn.com.pcalpha.iptv.channel.category;
 
 import android.content.Context;
 import android.view.LayoutInflater;

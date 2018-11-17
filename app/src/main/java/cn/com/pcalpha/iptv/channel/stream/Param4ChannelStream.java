@@ -1,4 +1,4 @@
-package cn.com.pcalpha.iptv.channel;
+package cn.com.pcalpha.iptv.channel.stream;
 
 /**
  * Created by caiyida on 2018/8/8.
