@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:background="#55ffffff"
+        android:background="#aa000000"
         android:focusable="false"
         android:gravity="center"
         android:text=""
@@ -23,12 +23,14 @@
 
     <LinearLayout
         android:id="@+id/epg"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
+        android:layout_width="400dp"
+        android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
-        android:background="#99000000"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:background="#dd000000"
         android:gravity="center"
         android:orientation="horizontal"
         android:translationZ="50dp"
@@ -37,26 +39,24 @@
 
             <TextView
                 android:id="@+id/epg_channel_no"
-                android:layout_width="100dp"
+                android:layout_width="90dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:paddingLeft="50dp"
                 android:gravity="center"
                 android:text=""
-                android:textSize="20dp"
+                android:textSize="30dp"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
                 />
 
             <TextView
                 android:id="@+id/epg_channel_name"
-                android:layout_width="200dp"
+                android:layout_width="fill_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:paddingRight="50dp"
                 android:gravity="center"
                 android:text=""
-                android:textSize="20dp"
+                android:textSize="30dp"
                 android:textColor="#FFFFFF"
                 />
 

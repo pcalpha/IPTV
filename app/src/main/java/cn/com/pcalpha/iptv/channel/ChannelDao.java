@@ -54,7 +54,7 @@ public class ChannelDao extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + ChannelDao.TABLE_NAME
                 + " ("
                 + "'" + ChannelDao.COLUMN_ID + "' INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "'" + ChannelDao.COLUMN_NO + "' VARCHAR, "
+                + "'" + ChannelDao.COLUMN_NO + "' INTEGER, "
                 + "'" + ChannelDao.COLUMN_NAME + "' VARCHAR, "
                 + "'" + ChannelDao.COLUMN_CATEGORY_NAME + "' VARCHAR, "
                 + "'" + ChannelDao.COLUMN_PLAY_TIME + "' INTEGER "
@@ -138,10 +138,10 @@ public class ChannelDao extends SQLiteOpenHelper {
         return resultList.get(0);
     }
 
-    public Channel get(Integer id) {
+    public Channel get(Integer channelNo) {
         SQLiteDatabase db = getReadableDatabase();
-        String selection = COLUMN_ID + " = ? ";
-        String[] selectionArgs = new String[]{String.valueOf(id)};
+        String selection = COLUMN_NO + " = ? ";
+        String[] selectionArgs = new String[]{String.valueOf(channelNo)};
         Cursor cursor = db.query(
                 TABLE_NAME,
                 COLUMNS,
@@ -211,7 +211,7 @@ public class ChannelDao extends SQLiteOpenHelper {
         while (cursor.moveToNext()) {
             Channel channel = new Channel();
             channel.setId(cursor.getInt(indexId));
-            channel.setNo(cursor.getString(indexNo));
+            channel.setNo(cursor.getInt(indexNo));
             channel.setName(cursor.getString(indexName));
             channel.setPlayTime(new Date(cursor.getInt(indexPlayTime)));
             channel.setCategoryName(cursor.getString(indexCategoryName));

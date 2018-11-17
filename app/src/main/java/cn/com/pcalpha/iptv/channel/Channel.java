@@ -12,7 +12,7 @@ import cn.com.pcalpha.iptv.category.ChannelCategory;
 
 public class Channel implements Serializable {
     private Integer id;
-    private String no;
+    private Integer no;
     private String name;//名字 例如:央视一套
     private Date playTime;//上次播放标记 0，1
     private String categoryName;//1.央视;2.卫视;9.其他
@@ -24,7 +24,7 @@ public class Channel implements Serializable {
     public Channel() {
     }
 
-    public Channel(String no, String name, String categoryName) {
+    public Channel(Integer no, String name, String categoryName) {
         this.no = no;
         this.name = name;
         this.categoryName = categoryName;
@@ -38,11 +38,11 @@ public class Channel implements Serializable {
         this.id = id;
     }
 
-    public String getNo() {
+    public Integer getNo() {
         return no;
     }
 
-    public void setNo(String no) {
+    public void setNo(Integer no) {
         this.no = no;
     }
 

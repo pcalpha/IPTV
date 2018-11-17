@@ -6,7 +6,7 @@
 
     <cn.com.pcalpha.iptv.widget.MenuListView
         android:id="@+id/menu_list_view"
-        android:layout_width="100dp"
+        android:layout_width="120dp"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"

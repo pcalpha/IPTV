@@ -311,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
             play(mCurrentChannel.getLastPlayStream());
             setLastPlay(channel);
         } else {
-            Toast.makeText(this, "未找到合适的节目", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "未找到合适的频道", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -392,7 +392,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showEpg(Channel channel) {
-        mEpgChannelNo.setText(channel.getNo());
+        mEpgChannelNo.setText(String.valueOf(channel.getNo()));
         mEpgChannelName.setText(channel.getName());
 
         if (View.VISIBLE == mEpgView.getVisibility()) {
@@ -422,7 +422,10 @@ public class MainActivity extends AppCompatActivity {
         Runnable run = new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(MainActivity.this, "频道" + mInputChannelView.getText(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(MainActivity.this, "频道" + mInputChannelView.getText(), Toast.LENGTH_LONG).show();
+                Integer num = Integer.valueOf(mInputChannelView.getText().toString());
+                Channel channel = mChannelDao.get(num);
+                play(channel);
                 hideInputChannelView();
             }
         };
