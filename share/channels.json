@@ -1,0 +1,582 @@
+[
+	{
+		"no": 1,
+		"name": "CCTV-1综合",
+		"categoryName": "央视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://223.110.243.158/PLTV/3/224/3221227400/1.m3u8",
+				"carrier": "CMCC"
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8",
+				"carrier": "CMCC"
+			}
+		]
+	}, 
+
+	{
+		"no": 2,
+		"name": "CCTV-2财经",
+		"categoryName": "央视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://223.110.243.172/PLTV/3/224/3221227207/index.m3u8",
+				"carrier": "CMCC"
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/cctv2.m3u8",
+				"carrier": "CMCC"
+			}
+		]
+	}, 
+	{
+		"no": 3,
+		"name": "CCTV-3综艺",
+		"categoryName": "央视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://223.110.243.158/PLTV/3/224/3221227415/1.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/cctv3hd.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	}, 
+	{
+		"no": 4,
+		"name": "CCTV-4中文国际",
+		"categoryName": "央视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://223.110.242.130:6610/gitv/live1/G_CCTV-4-HQ/1.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/cctv4.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	}, 
+	{
+		"no": 5,
+		"name": "CCTV-5体育",
+		"categoryName": "央视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://223.110.243.158/PLTV/3/224/3221227468/1.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://huaweicdn.hb.chinamobile.com/PLTV/2510088/224/3221225800/index.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/cctv5hd.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	}, 
+	{
+		"no": 6,
+		"name": "CCTV-6电影",
+		"categoryName": "央视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://223.110.243.173/PLTV/3/224/3221227209/index.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/cctv6hd.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 7,
+		"name": "CCTV-7军事农业",
+		"categoryName": "央视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://120.198.235.70/112.50.243.8/PLTV/88888888/224/3221225805/1.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/cctv7.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 8,
+		"name": "CCTV-8电视剧",
+		"categoryName": "央视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://223.110.243.171/PLTV/3/224/3221227204/index.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/cctv8hd.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 9,
+		"name": "CCTV-9纪录",
+		"categoryName": "央视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://120.198.235.70/112.50.243.8/PLTV/88888888/224/3221225929/1.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/cctv9.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 10,
+		"name": "CCTV-10科教",
+		"categoryName": "央视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://120.198.235.70/112.50.243.8/PLTV/88888888/224/3221225931/1.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/cctv10.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 11,
+		"name": "CCTV-11戏曲",
+		"categoryName": "央视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://120.198.235.70/112.50.243.8/PLTV/88888888/224/3221225815/1.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/cctv11.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 12,
+		"name": "CCTV-12社会与法",
+		"categoryName": "央视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://120.198.235.70/112.50.243.8/PLTV/88888888/224/3221225932/1.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/cctv12.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 13,
+		"name": "CCTV-13新闻",
+		"categoryName": "央视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://120.198.235.70/112.50.243.8/PLTV/88888888/224/3221225817/1.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/cctv13.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 14,
+		"name": "CCTV-14少儿",
+		"categoryName": "央视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://120.198.235.70/112.50.243.8/PLTV/88888888/224/3221225819/1.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/cctv14.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 15,
+		"name": "CCTV-15音乐",
+		"categoryName": "央视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://120.198.235.70/112.50.243.8/PLTV/88888888/224/3221225818/1.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/cctv15.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 16,
+		"name": "CCTV-NEWS",
+		"categoryName": "央视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/cctv16.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 17,
+		"name": "北京卫视",
+		"categoryName": "卫视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://huaweicdn.hb.chinamobile.com/PLTV/2510088/224/3221225762/index.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/btv1hd.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 18,
+		"name": "湖南卫视",
+		"categoryName": "卫视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://huaweicdn.hb.chinamobile.com/PLTV/2510088/224/3221225759/index.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/hunanhd.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 19,
+		"name": "浙江卫视",
+		"categoryName": "卫视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://huaweicdn.hb.chinamobile.com/PLTV/2510088/224/3221225755/index.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/zjhd.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 20,
+		"name": "江苏卫视",
+		"categoryName": "卫视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://huaweicdn.hb.chinamobile.com/PLTV/2510088/224/3221225819/index.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/jshd.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 21,
+		"name": "东方卫视",
+		"categoryName": "卫视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://huaweicdn.hb.chinamobile.com/PLTV/2510088/224/3221225810/index.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/dfhd.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 22,
+		"name": "安徽卫视",
+		"categoryName": "卫视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://huaweicdn.hb.chinamobile.com/PLTV/2510088/224/3221225784/index.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/ahhd.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 23,
+		"name": "黑龙江卫视",
+		"categoryName": "卫视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://huaweicdn.hb.chinamobile.com/PLTV/2510088/224/3221225757/index.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/hljhd.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 24,
+		"name": "辽宁卫视",
+		"categoryName": "卫视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://huaweicdn.hb.chinamobile.com/PLTV/2510088/224/3221225818/index.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/lntv.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 25,
+		"name": "深圳卫视",
+		"categoryName": "卫视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://huaweicdn.hb.chinamobile.com/PLTV/2510088/224/3221225760/index.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/szhd.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 26,
+		"name": "广东卫视",
+		"categoryName": "卫视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://huaweicdn.hb.chinamobile.com/PLTV/2510088/224/3221225811/index.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/gdhd.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 27,
+		"name": "天津卫视",
+		"categoryName": "卫视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://huaweicdn.hb.chinamobile.com/PLTV/2510088/224/3221225788/index.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/tjhd.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 28,
+		"name": "湖北卫视",
+		"categoryName": "卫视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://huaweicdn.hb.chinamobile.com/PLTV/2510088/224/3221225764/index.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/hbhd.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 29,
+		"name": "山东卫视",
+		"categoryName": "卫视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://huaweicdn.hb.chinamobile.com/PLTV/2510088/224/3221225763/index.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/sdhd.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 30,
+		"name": "重庆卫视",
+		"categoryName": "卫视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/cqhd.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	},
+	{
+		"no": 31,
+		"name": "东南卫视",
+		"categoryName": "卫视频道",
+		"channelStreams": [
+			{
+				"name": "源1",
+				"url": "http://huaweicdn.hb.chinamobile.com/PLTV/2510088/224/3221225785/index.m3u8",
+				"carrier": "CMCC"
+
+			},
+			{
+				"name": "源1",
+				"url": "http://ivi.bupt.edu.cn/hls/dntv.m3u8",
+				"carrier": "CMCC"
+
+			}
+		]
+	}
+]
