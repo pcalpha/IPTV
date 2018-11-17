@@ -56,7 +56,7 @@ public class AutoUpdateService {
         mChannelStreamDao = ChannelStreamDao.getInstance(context);
     }
 
-    public void execute(){
+    public void execute() {
         new AutoUpdateTask().execute();
     }
 
@@ -72,21 +72,21 @@ public class AutoUpdateService {
 
             String remoteJson = getRemote(URL);
             String remoteSha1 = Sha1Utils.getSha1(remoteJson);
-            if(localSha1!=null&&localSha1.equals(remoteSha1)){
+            if (localSha1 != null && localSha1.equals(remoteSha1)) {
                 return null;
             }
-            if(null==remoteJson){
+            if (null == remoteJson) {
                 return null;
             }
             writeToLocalFile(remoteJson);
 
             List<Channel> channelList = new ArrayList<>();
-            try{
+            try {
                 channelList = JSON.parseArray(remoteJson, Channel.class);
-            }catch (Exception e){
-                Log.e(TAG,e.getMessage());
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
             }
-            if(null==channelList||channelList.size()==0){
+            if (null == channelList || channelList.size() == 0) {
                 return null;
             }
 
@@ -108,8 +108,8 @@ public class AutoUpdateService {
                 int x = 0;
                 for (ChannelStream stream : channel.getChannelStreams()) {
                     stream.setChannelName(channel.getName());
-                    if(null==stream.getName()||"".equals(stream.getName())){
-                        stream.setName("源"+x);
+                    if (null == stream.getName() || "".equals(stream.getName())) {
+                        stream.setName("源" + x);
                         x++;
                     }
                     channelStreamList.add(stream);
@@ -129,6 +129,8 @@ public class AutoUpdateService {
     }
 
     private String getRemote(String path) {
+        InputStream is = null;
+        ByteArrayOutputStream baos = null;
         try {
             URL url = new URL(path.trim());
             //打开连接
@@ -136,8 +138,8 @@ public class AutoUpdateService {
 
             if (200 == urlConnection.getResponseCode()) {
                 //得到输入流
-                InputStream is = urlConnection.getInputStream();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                is = urlConnection.getInputStream();
+                baos = new ByteArrayOutputStream();
                 byte[] buffer = new byte[1024];
                 int len = 0;
                 while (-1 != (len = is.read(buffer))) {
@@ -148,14 +150,27 @@ public class AutoUpdateService {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (null != is) {
+                    is.close();
+                }
+                if (null != baos) {
+                    baos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
-    private String readFromLocalFile(){
+    private String readFromLocalFile() {
+        FileInputStream fis = null;
+        ByteArrayOutputStream baos = null;
         try {
-            FileInputStream fis = mContext.openFileInput(FILE_NAME);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            fis = mContext.openFileInput(FILE_NAME);
+            baos = new ByteArrayOutputStream();
             byte[] buffer = new byte[1024];
             int len = 0;
             while (-1 != (len = fis.read(buffer))) {
@@ -167,14 +182,27 @@ public class AutoUpdateService {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (null != fis) {
+                    fis.close();
+                }
+                if (null != baos) {
+                    baos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
-    private void writeToLocalFile(String json){
+    private void writeToLocalFile(String json) {
+        FileOutputStream fos = null;
+        ByteArrayInputStream bais = null;
         try {
-            FileOutputStream fos = mContext.openFileOutput(FILE_NAME,Context.MODE_PRIVATE);
-            ByteArrayInputStream bais = new ByteArrayInputStream(json.getBytes());
+            fos = mContext.openFileOutput(FILE_NAME, Context.MODE_PRIVATE);
+            bais = new ByteArrayInputStream(json.getBytes());
 
             byte[] buffer = new byte[1024];
             int len = 0;
@@ -182,10 +210,23 @@ public class AutoUpdateService {
                 fos.write(buffer, 0, len);
             }
             fos.flush();
+
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (null != fos) {
+                    fos.close();
+                }
+                if (null != bais) {
+                    bais.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

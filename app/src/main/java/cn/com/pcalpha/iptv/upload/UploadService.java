@@ -108,21 +108,23 @@ public class UploadService extends NanoHTTPD {
     }
 
     public Response responseJson(IHTTPSession session) {
-        BufferedReader br = null;
-        StringBuffer sb = new StringBuffer();
+//        BufferedReader br = null;
+//        StringBuffer sb = new StringBuffer();
+        ByteArrayOutputStream baos = null;
+        FileInputStream fis = null;
         try {
             Map<String, String> files = new HashMap<>();
             session.parseBody(files);
             if (null != files) {
                 File file = new File(files.get("file"));
-                FileInputStream fis = new FileInputStream(file);
 //                br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
 //                String line = "";
 //                while ((line = br.readLine()) != null) {
 //                    sb.append(line);
 //                }
 //                String json = sb.toString();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                fis = new FileInputStream(file);
+                baos = new ByteArrayOutputStream();
                 byte[] buffer = new byte[1024];
                 int len = 0;
                 while (-1 != (len = fis.read(buffer))) {
@@ -180,6 +182,17 @@ public class UploadService extends NanoHTTPD {
         } catch (Exception e) {
             e.printStackTrace();
             return responseFile(session, "web/error.html");
+        } finally {
+            try {
+                if (null != baos) {
+                    baos.close();
+                }
+                if (null != fis) {
+                    fis.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return responseFile(session, "web/success.html");
     }
