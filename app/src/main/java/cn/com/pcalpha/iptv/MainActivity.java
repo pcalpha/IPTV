@@ -109,10 +109,13 @@ public class MainActivity extends AppCompatActivity {
         mChannelCategoryDao = ChannelCategoryDao.getInstance(this);
         mChannelStreamDao = ChannelStreamDao.getInstance(this);
         mAutoUpdateService = AutoUpdateService.getInstance(this);
+        mAutoUpdateService.execute();
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     private void initData() {
+        mAutoUpdateService.execute();
+
         Param4Channel param = Param4Channel.build();
         mCurrentChannel = mChannelDao.getLastPlay();
         mChannelList = mChannelDao.find(param);
@@ -129,8 +132,6 @@ public class MainActivity extends AppCompatActivity {
         if (null != lastPlayStream) {
             mVideoView.setVideoPath(lastPlayStream.getUrl());
         }
-
-        mAutoUpdateService.execute();
     }
 
     @Override
