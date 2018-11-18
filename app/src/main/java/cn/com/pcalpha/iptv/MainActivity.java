@@ -16,6 +16,7 @@ package cn.com.pcalpha.iptv;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -23,6 +24,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -109,13 +111,10 @@ public class MainActivity extends AppCompatActivity {
         mChannelCategoryDao = ChannelCategoryDao.getInstance(this);
         mChannelStreamDao = ChannelStreamDao.getInstance(this);
         mAutoUpdateService = AutoUpdateService.getInstance(this);
-        mAutoUpdateService.execute();
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     private void initData() {
-        mAutoUpdateService.execute();
-
         Param4Channel param = Param4Channel.build();
         mCurrentChannel = mChannelDao.getLastPlay();
         mChannelList = mChannelDao.find(param);
@@ -124,14 +123,14 @@ public class MainActivity extends AppCompatActivity {
                 mCurrentChannel = mChannelList.get(0);
             }
         }
-        if (null == mCurrentChannel) {
-            return;
+        if (null != mCurrentChannel) {
+            loadStream(mCurrentChannel);
+            ChannelStream lastPlayStream = mCurrentChannel.getLastPlayStream();
+            if (null != lastPlayStream) {
+                mVideoView.setVideoPath(lastPlayStream.getUrl());
+            }
         }
-        loadStream(mCurrentChannel);
-        ChannelStream lastPlayStream = mCurrentChannel.getLastPlayStream();
-        if (null != lastPlayStream) {
-            mVideoView.setVideoPath(lastPlayStream.getUrl());
-        }
+        mAutoUpdateService.execute();
     }
 
     @Override
@@ -201,13 +200,42 @@ public class MainActivity extends AppCompatActivity {
                 preStream();
                 return true;
             }
+
+            if (KeyEvent.KEYCODE_BACK == keyCode) {
+                AlertDialog alert=new AlertDialog.Builder(MainActivity.this).create();
+                //alert.setIcon(R.drawable.stop);
+                alert.setTitle("退出提示");
+                alert.setMessage("不想看了吗？");
+                //添加取消按钮
+                alert.setButton(DialogInterface.BUTTON_NEGATIVE,"再看会",new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+
+                    }
+                });
+                //添加"确定"按钮
+                alert.setButton(DialogInterface.BUTTON_POSITIVE,"是的", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        finish();
+                    }
+                });
+                alert.show();
+                return true;
+            }
+
         }
 
         if (KeyEvent.KEYCODE_ENTER == keyCode
                 || KeyEvent.KEYCODE_DPAD_CENTER == keyCode) {
             showMainMenuFragment();
             return true;
-        } else if (KeyEvent.KEYCODE_BACK == keyCode) {
+        }
+
+        if (KeyEvent.KEYCODE_BACK == keyCode) {
             getSupportFragmentManager().popBackStackImmediate();
             return true;
         }
