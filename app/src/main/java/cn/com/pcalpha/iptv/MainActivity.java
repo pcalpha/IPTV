@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                 alert.setTitle("退出提示");
                 alert.setMessage("不想看了吗？");
                 //添加取消按钮
-                alert.setButton(DialogInterface.BUTTON_NEGATIVE,"再看会",new DialogInterface.OnClickListener() {
+                alert.setButton(DialogInterface.BUTTON_NEGATIVE,"再看会儿",new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 //添加"确定"按钮
-                alert.setButton(DialogInterface.BUTTON_POSITIVE,"是的", new DialogInterface.OnClickListener() {
+                alert.setButton(DialogInterface.BUTTON_POSITIVE,"我要退出", new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
