@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import java.util.List;
 
 import cn.com.pcalpha.iptv.R;
+import cn.com.pcalpha.iptv.common.Action;
 import cn.com.pcalpha.iptv.widget.MenuListView;
 
 /**
@@ -66,7 +67,7 @@ public class ChannelFragment extends Fragment {
     }
 
     private void playChannel(Channel channel) {
-        Intent intent = new Intent("cn.com.pcalpha.iptv.action.PLAY_CHANNEL");
+        Intent intent = new Intent(Action.PLAY_CHANNEL_ACTION);
         intent.putExtra("channel", channel);//向广播接收器传递数据
         getActivity().sendBroadcast(intent);
     }

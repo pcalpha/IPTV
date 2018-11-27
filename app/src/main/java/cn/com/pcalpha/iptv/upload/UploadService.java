@@ -1,6 +1,7 @@
 package cn.com.pcalpha.iptv.upload;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.util.Log;
 
@@ -28,6 +29,7 @@ import cn.com.pcalpha.iptv.channel.stream.ChannelStream;
 import cn.com.pcalpha.iptv.channel.stream.ChannelStreamDao;
 import cn.com.pcalpha.iptv.channel.category.ChannelCategory;
 import cn.com.pcalpha.iptv.channel.category.ChannelCategoryDao;
+import cn.com.pcalpha.iptv.common.Action;
 import fi.iki.elonen.NanoHTTPD;
 
 public class UploadService extends NanoHTTPD {
@@ -178,6 +180,8 @@ public class UploadService extends NanoHTTPD {
                 mChannelDao.insert(channelList);
                 mChannelStreamDao.insert(channelStreamList);
                 mChannelCategoryDao.insert(channelCategoryList);
+
+                reloadChannelList();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -195,6 +199,11 @@ public class UploadService extends NanoHTTPD {
             }
         }
         return responseFile(session, "web/success.html");
+    }
+
+    private void reloadChannelList(){
+        Intent intent = new Intent(Action.RELOAD_CHANNEL_LIST_ACTION);
+        mContext.sendBroadcast(intent);
     }
 
 //    public Response responseUpload(IHTTPSession session) {

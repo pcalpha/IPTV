@@ -1,6 +1,7 @@
 package cn.com.pcalpha.iptv.update;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -24,6 +25,7 @@ import cn.com.pcalpha.iptv.channel.stream.ChannelStream;
 import cn.com.pcalpha.iptv.channel.stream.ChannelStreamDao;
 import cn.com.pcalpha.iptv.channel.category.ChannelCategory;
 import cn.com.pcalpha.iptv.channel.category.ChannelCategoryDao;
+import cn.com.pcalpha.iptv.common.Action;
 import cn.com.pcalpha.iptv.tools.Sha1Utils;
 
 public class AutoUpdateService {
@@ -124,8 +126,14 @@ public class AutoUpdateService {
             mChannelStreamDao.insert(channelStreamList);
             mChannelCategoryDao.insert(channelCategoryList);
 
+            reloadChannelList();
             return null;
         }
+    }
+
+    private void reloadChannelList(){
+        Intent intent = new Intent(Action.RELOAD_CHANNEL_LIST_ACTION);
+        mContext.sendBroadcast(intent);
     }
 
     private String getRemote(String path) {

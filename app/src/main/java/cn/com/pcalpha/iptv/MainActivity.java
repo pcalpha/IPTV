@@ -41,6 +41,7 @@ import cn.com.pcalpha.iptv.channel.stream.ChannelStream;
 import cn.com.pcalpha.iptv.channel.stream.ChannelStreamDao;
 import cn.com.pcalpha.iptv.channel.Param4Channel;
 import cn.com.pcalpha.iptv.channel.stream.Param4ChannelStream;
+import cn.com.pcalpha.iptv.common.Action;
 import cn.com.pcalpha.iptv.menu.MenuFragment;
 import cn.com.pcalpha.iptv.update.AutoUpdateService;
 import tv.danmaku.ijk.media.example.widget.media.IjkVideoView;
@@ -50,15 +51,15 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * MainActivity class that loads {@link MainFragment}.
  */
 public class MainActivity extends AppCompatActivity {
-    private static final String CHANNEL_CHANGE_ACTION = "cn.com.pcalpha.iptv.action.PLAY_CHANNEL";
-
     private IjkVideoView mVideoView;
     private TextView mInputChannelView;
     private View mEpgView;
     private TextView mEpgChannelNo;
     private TextView mEpgChannelName;
 
-    private ChannelReceiver mChannelReceiver;
+    private PlayChannelReceiver mPlayChannelReceiver;
+    private ReloadChannelListReceiver reloadChannelListReceiver;
+
     private ChannelDao mChannelDao;
     private ChannelCategoryDao mChannelCategoryDao;
     private ChannelStreamDao mChannelStreamDao;
@@ -75,10 +76,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initReceiver() {
-        mChannelReceiver = new ChannelReceiver();
+        initPlayChannelReceiver();
+        initReloadChannelListReceiver();
+    }
+
+    private void initPlayChannelReceiver(){
+        mPlayChannelReceiver = new PlayChannelReceiver();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(CHANNEL_CHANGE_ACTION);
-        registerReceiver(mChannelReceiver, intentFilter);
+        intentFilter.addAction(Action.PLAY_CHANNEL_ACTION);
+        registerReceiver(mPlayChannelReceiver, intentFilter);
+    }
+
+    private void initReloadChannelListReceiver(){
+        reloadChannelListReceiver = new ReloadChannelListReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Action.RELOAD_CHANNEL_LIST_ACTION);
+        registerReceiver(reloadChannelListReceiver, intentFilter);
     }
 
     private void initViews(Bundle savedInstanceState) {
@@ -114,7 +127,12 @@ public class MainActivity extends AppCompatActivity {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
-    private void initData() {
+    private void initData(){
+        reloadChannelList();
+        mAutoUpdateService.execute();
+    }
+
+    private void reloadChannelList() {
         Param4Channel param = Param4Channel.build();
         mCurrentChannel = mChannelDao.getLastPlay();
         mChannelList = mChannelDao.find(param);
@@ -130,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
                 mVideoView.setVideoPath(lastPlayStream.getUrl());
             }
         }
-        mAutoUpdateService.execute();
     }
 
     @Override
@@ -142,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
         initReceiver();
         initService();
         initData();
-
     }
 
     @Override
@@ -173,7 +189,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mVideoView.release(true);
-        unregisterReceiver(mChannelReceiver);
+        unregisterReceiver(mPlayChannelReceiver);
+        unregisterReceiver(reloadChannelListReceiver);
     }
 
     //
@@ -402,7 +419,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    class ChannelReceiver extends BroadcastReceiver {
+    class PlayChannelReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getExtras();
@@ -413,6 +430,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     class ChannelStreamReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+
+            //Channel channel = (Channel) bundle.get("channel");
+            //play(channel);
+            if (null != mCurrentChannel) {
+                ChannelStream stream = mCurrentChannel.nextStream();
+                play(stream);
+            }
+        }
+    }
+
+    class ReloadChannelListReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getExtras();
