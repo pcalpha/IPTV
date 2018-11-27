@@ -338,6 +338,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
             play(stream);
+            Toast.makeText(this, "切换源", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -348,6 +349,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
             play(stream);
+            Toast.makeText(this, "切换源", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -374,8 +376,6 @@ public class MainActivity extends AppCompatActivity {
             mVideoView.start();
 
             mChannelStreamDao.setLastPlay(stream);
-
-            Toast.makeText(this, "切换源", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "未找到合适的节目源", Toast.LENGTH_SHORT).show();
         }
