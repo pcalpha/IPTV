@@ -363,7 +363,7 @@ public class MainActivity extends AppCompatActivity {
             play(mCurrentChannel.getLastPlayStream());
             setLastPlay(channel);
         } else {
-            Toast.makeText(this, "未找到合适的频道", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "未找到合适的频道", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -374,8 +374,10 @@ public class MainActivity extends AppCompatActivity {
             mVideoView.start();
 
             mChannelStreamDao.setLastPlay(stream);
+
+            Toast.makeText(this, "切换源", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "未找到合适的节目源", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "未找到合适的节目源", Toast.LENGTH_SHORT).show();
         }
     }
 
