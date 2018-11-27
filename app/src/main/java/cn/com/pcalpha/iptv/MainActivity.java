@@ -425,9 +425,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getExtras();
-
-            Channel channel = (Channel) bundle.get("channel");
-            play(channel);
+            Object obj = bundle.get("channel");
+            if(obj instanceof Channel){
+                Channel channel = (Channel) obj;
+                play(channel);
+            }
         }
     }
 
@@ -450,12 +452,8 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getExtras();
 
-            //Channel channel = (Channel) bundle.get("channel");
-            //play(channel);
-            if (null != mCurrentChannel) {
-                ChannelStream stream = mCurrentChannel.nextStream();
-                play(stream);
-            }
+            reloadChannelList();
+            mVideoView.start();
         }
     }
 
